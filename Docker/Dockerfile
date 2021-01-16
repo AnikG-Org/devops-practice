@@ -1,11 +1,9 @@
 FROM centos:latest
 
-RUN yum install -y httpd zip unzip wget
+RUN yum install -y httpd zip unzip
 WORKDIR /var/www/html/
-RUN wget https://templated.co/industrious/download --no-check-certificate && mv ./download templated-industrious.zip
-RUN mkdir /var/www/html/templated-industrious &&  mv templated-industrious.zip ./templated-industrious/ && unzip ./templated-industrious/templated-industrious.zip
-RUN cp -rvf templated-industrious/* . && rm -rf /var/www/html/templated-industrious.zip
+ADD https://www.free-css.com/assets/files/free-css-templates/download/page263/den.zip ./ 
+RUN unzip den.zip
+RUN cp -rvf den/* . && rm -rf /var/www/html/den.zip
 EXPOSE 80
 CMD ["/sbin/httpd", "-D" , "FOREGROUND"]
-
-#https://www.free-css.com/assets/files/free-css-templates/download/page263/den.zip
