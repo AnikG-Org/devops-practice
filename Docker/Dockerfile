@@ -7,3 +7,5 @@ RUN mkdir /var/www/html/templated-industrious &&  mv templated-industrious.zip .
 RUN cp -rvf templated-industrious/* . && rm -rf /var/www/html/templated-industrious.zip
 EXPOSE 80
 CMD ["/sbin/httpd", "-D" , "FOREGROUND"]
+
+#https://www.free-css.com/assets/files/free-css-templates/download/page263/den.zip
