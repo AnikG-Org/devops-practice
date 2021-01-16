@@ -1,0 +1,25 @@
+version: '3'
+services: 
+  web:     //Name of service or dockercontainer/hostname
+    build: .
+    volumes: 
+      - /root/html:/var/www/html/
+    ports: 
+      - 80:80     //clientport:dockercontainerport
+    networks: 
+      - webnetwork //compose by default create network if networks not specified , if specified will use that custom network.
+      dockernetwork:
+        driver: bridge
+
+  jenkins:
+    image: jenkins/jenkins:lts
+    volumes: 
+      - /root/jenkins_home:/var/jenkins_home
+    ports: 
+      - 80:80 
+      - 50000:50000
+    networks: 
+      - webnetwork
+
+// compose_command = docker compose build/ up/down , -d [flag for detach mode], -f [flag for custom file_name] compose file_name.yml, scale -service_name
+
