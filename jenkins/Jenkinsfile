@@ -1,3 +1,4 @@
+#descriptive pipeline
 pipeline {
     agent any
     stages {
