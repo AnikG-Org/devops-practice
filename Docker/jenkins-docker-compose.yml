@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+  jenkins:
+    image: jenkins/jenkins:lts
+    volumes:
+      - /root/jenkins_home:/var/jenkins_home
+    ports:
+      - 8080:80
+      - 50000:50000
+    networks:
+      - jenkinsnetwork
+
+networks:
+  webnetwork:
+    driver: bridge
