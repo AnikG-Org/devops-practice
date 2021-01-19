@@ -12,7 +12,7 @@ services:
   jenkins:
     image: jenkins/jenkins:lts
     volumes:
-      - /root/jenkins_home:/var/jenkins_home
+      - /root/jenkins/jenkins_home:/var/jenkins_home
     ports:
       - 8080:8080
       - 50000:50000
