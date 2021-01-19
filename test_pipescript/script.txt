@@ -1,4 +1,4 @@
-rsync -avh /root/jenkinsnode/workspace/$JOB_NAME /root/job
+rsync -avh /root/jenkins/jenkinsnode/workspace/$JOB_NAME /root/job
 cd /root/job/$JOB_NAME
 ls
 echo "stage test"
