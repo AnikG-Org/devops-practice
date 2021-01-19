@@ -1,0 +1,17 @@
+rsync -avh /root/jenkinsnode/workspace/$JOB_NAME /root/job
+cd /root/job/$JOB_NAME
+ls
+echo "stage test"
+cd maven/my-app/
+mvn clean test
+
+cd ../..
+
+echo "stage Docker"
+cd Docker/
+docker-compose --version
+docker-compose down
+docker-compose up -d
+docker-compose logs
+docker ps -a
+echo "success -Passed"
