@@ -2,8 +2,6 @@ version: '3.8'
 services:
   web:
     build:  .
-    volumes:
-      - /root/html:/var/www/html/
     ports:
       - 80:80
     networks:

@@ -10,8 +10,8 @@ cd ../..
 echo "stage Docker"
 cd Docker/
 docker-compose --version
-docker-compose down
-docker-compose up -d
+ocker-compose -f docker-compose.yml down && docker rmi docker_web:latest
+docker-compose -f docker-compose.yml up -d
 docker-compose logs
 docker ps -a
 echo "success -Passed"
