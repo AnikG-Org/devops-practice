@@ -11,5 +11,5 @@ services:
       - jenkinsnetwork
 
 networks:
-  webnetwork:
+  jenkinsnetwork:
     driver: bridge
