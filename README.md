@@ -13,5 +13,6 @@ sudo chmod +x /usr/local/bin/docker-compose
 sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 
 
+#maven test project: https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html
 
  @nik
