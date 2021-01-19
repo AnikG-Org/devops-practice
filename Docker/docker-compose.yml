@@ -5,17 +5,7 @@ services:
     volumes:
       - /root/html:/var/www/html/
     ports:
-      - 80:80   
-    networks:
-      - webnetwork
-
-  jenkins:
-    image: jenkins/jenkins:lts
-    volumes:
-      - /root/jenkins/jenkins_home:/var/jenkins_home
-    ports:
-      - 8080:8080
-      - 50000:50000
+      - 80:80
     networks:
       - webnetwork
 
