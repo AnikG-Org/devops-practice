@@ -1,20 +1,26 @@
 pipeline {
-    agent any
+    agent { node { label 'agent_al2' } } 
     stages {
         stage('---clean---') {
             steps {
-		sh "cd maven/my-app/ && ls"
-                sh "mvn clean"
+                sh "cd maven/my-app/ && mvn clean && ls"
+                sh "ls"
             }
         }
         stage('--test--') {
             steps {
-                sh "mvn test"
+                sh "cd maven/my-app/ && mvn test"
             }
         }
         stage('--package--') {
             steps {
-                sh "mvn package"
+                sh "cd maven/my-app/ && mvn package"
+            }
+        }
+        stage('--deploy--') {
+            steps {
+                sh "cd Docker/ && docker ps -a && docker-compose -f docker-compose.yml up -d"
+                sh "cd Docker/ && docker ps -a && docker-compose -f docker-compose.yml logs"
             }
         }
     }
