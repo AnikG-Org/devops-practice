@@ -1,0 +1,21 @@
+pipeline {
+    agent { node { label 'agent_al2' } } 
+    stages {
+        stage('---clean---') {
+            steps {
+	        sh "cd maven/my-app/ && mvn clean"
+                sh "ls"
+            }
+        }
+        stage('--test--') {
+            steps {
+                sh "mvn test"
+            }
+        }
+        stage('--package--') {
+            steps {
+                sh "mvn package"
+            }
+        }
+    }
+}
