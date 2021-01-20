@@ -19,6 +19,7 @@ pipeline {
         }
         stage('--deploy--') {
             steps {
+                sh "cd Docker/ && docker ps -a && docker-compose -f docker-compose.yml down && docker ps -a "
                 sh "cd Docker/ && docker ps -a && docker-compose -f docker-compose.yml up -d"
                 sh "cd Docker/ && docker ps -a && docker-compose -f docker-compose.yml logs"
             }
