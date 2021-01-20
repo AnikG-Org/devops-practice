@@ -1,4 +1,3 @@
-#descriptive pipeline
 pipeline {
     agent Devops*
     stages {
