@@ -21,8 +21,8 @@ pipeline {
             steps {
                 sh "cd Docker/ && docker ps -a && export COMPOSE_IGNORE_ORPHANS=True"
                 sh "cd Docker/ && docker ps -a && docker-compose -f docker-compose.yml down && docker ps -a "
-                sh "cd Docker/ && docker ps -a && docker-compose -f docker-compose.yml up -d"
-                sh "cd Docker/ && docker ps -a && docker-compose -f docker-compose.yml logs"
+                sh "cd Docker/ && docker ps -a && docker-compose -f docker-compose.yml build && docker-compose -f docker-compose.yml up -d && docker-compose -f docker-compose.yml logs"
+                sh "cd Docker/ && docker ps -a && echo "success""
             }
         }
     }
