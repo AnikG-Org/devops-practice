@@ -1,9 +1,9 @@
 pipeline {
-    agent Devops*
+    agent Devops
     stages {
         stage('---clean---') {
             steps {
-		sh "cd maven/my-app/"
+		        sh "cd maven/my-app/"
                 sh "mvn clean"
             }
         }
