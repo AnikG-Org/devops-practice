@@ -1,5 +1,5 @@
 pipeline {
-    agent { Devops }
+    agent
     stages {
         stage('---clean---') {
             steps {
