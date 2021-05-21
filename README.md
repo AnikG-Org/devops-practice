@@ -16,3 +16,9 @@ sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 #maven test project: https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html
 
  @nik
+
+
+#kubernetes CKA + advance practice manifist files added which i used to note for all situations while study those , it can re usable based on inputs and customization.
+
+path: devops-practice/kubernetes/*
+
