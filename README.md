@@ -1,5 +1,10 @@
 # devops-practice
 Practice
+
+# Docker-jenkins-practice
+
+1. Docker / Docker compose/ Jenkins - Groovy pipeline/ 
+
 Required packages: 
 #!/bin/bash
 
@@ -17,8 +22,8 @@ sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 
  @nik
 
-
-#kubernetes CKA + advance practice manifist files added which i used to note for all situations while study those , it can re usable based on inputs and customization.
+# kubernetes-practice
+2. #kubernetes CKA + advanced  practice manifist files added which i used to note for all situations while study those , it can re usable based on inputs and customization.
 
 path: devops-practice/kubernetes/*
 
