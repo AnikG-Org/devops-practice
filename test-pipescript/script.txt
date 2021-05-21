@@ -11,7 +11,7 @@ echo "stage Docker"
 cd Docker/
 docker-compose --version
 export COMPOSE_IGNORE_ORPHANS=True
-ocker-compose -f docker-compose.yml down && docker rmi docker_web:latest
+docker-compose -f docker-compose.yml down && docker rmi docker_web:latest
 docker-compose -f docker-compose.yml up -d
 docker-compose logs
 docker ps -a
