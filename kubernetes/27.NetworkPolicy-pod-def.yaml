@@ -1,0 +1,62 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: db
+  labels: 
+    app: mysql
+    role: db
+spec:
+  containers:
+    - name: db
+      image: mysql
+      resources:
+        limits:
+          cpu: "1"
+          memory: 500Mi
+        requests:
+          cpu: "0.5"
+          memory: 256Mi
+      ports:
+        - containerPort: 3306
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: test-network-policy
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      role: db                  #NetworkPolicy for target lable
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - ipBlock:                            #get traffic from ipblock
+        cidr: 172.17.0.0/16
+        #except:                 #except this range
+        #- 172.17.1.0/24
+    - podSelector:                        #NetworkPolicy Traffic from lable
+        matchLabels:
+          name: api-pod
+      namespaceSelector:                  #match namespace lable along with with pod rule # if keep '- namespaceSelector' that will consider as seperate rule
+        matchLabels:
+          name: prod
+    ports:
+    - protocol: TCP
+      port: 3306
+  egress:
+    - {}   #means allow all
+  #- to:
+  #  - ipBlock:
+  #     cidr: 10.0.0.0/24
+  #  ports:
+  #  - protocol: TCP
+  #    port: 3306
+    - ports:
+      - protocol: TCP
+        port: 53
+      - protocol: UDP
+        port: 53
+---

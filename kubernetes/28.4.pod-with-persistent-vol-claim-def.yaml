@@ -1,0 +1,28 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod
+spec:
+  containers:
+  - name: nginx-app
+    image: nginx
+    resources:
+        limits:
+          cpu: "1"
+          memory: 500Mi
+        requests:
+          cpu: "0.5"
+          memory: 256Mi
+    ports:
+        - containerPort: 80
+          name: "nginx-server"
+    volumeMounts:
+        - mountPath: "/var/www/html"
+          name: pod-pv-storage
+
+  volumes:                                  #binding container_vol:persistentVolumeClaim
+      - name: pod-pv-storage
+        persistentVolumeClaim:
+          claimName: pv-claim1 #/pv-claim2 
+---

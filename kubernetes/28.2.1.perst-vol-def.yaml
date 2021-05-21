@@ -1,0 +1,38 @@
+#static pv provitioning after storage mannually crated
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv1
+  labels:
+    name: pv1
+spec:
+  capacity:
+    storage: 20Gi
+  volumeMode: Filesystem
+  accessModes:                              #ReadWriteOnce	ReadWriteMany	ReadOnlyMany
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Recycle        #https://kubernetes.io/docs/concepts/storage/persistent-volumes/#reclaim-policy
+  storageClassName: slow
+  mountOptions:
+    - hard
+    - nfsvers=4.1
+  nfs:                              #nfs
+    path: /tmp
+    server: 172.17.0.2
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv2
+  labels:
+    name: pv2
+    cloud: aws
+spec:
+  accessModes:
+    - ReadWriteMany
+  capacity:
+    storage: 1Gi
+  awsElasticBlockStore:               #with aws ebs
+    volumeID: <volume-id>
+    fsType: ext4

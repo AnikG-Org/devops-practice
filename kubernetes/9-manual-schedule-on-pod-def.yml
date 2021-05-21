@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Pod
+
+metadata:
+  name: my-app
+  labels: 
+    app: myapp
+    type: front-end
+
+
+spec:
+  
+  containers:
+    - name: nginx-container
+      image: nginx:alpine
+      resources:
+        limits:
+          cpu: "1"
+          memory: 500Mi
+        requests:
+          cpu: "0.5"
+          memory: 256Mi
+      ports:
+        - containerPort: 80
+
+  nodeName: kube-01             #manual schedule

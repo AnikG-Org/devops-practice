@@ -1,0 +1,203 @@
+#auth
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nginx-ingress 
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: nginx-ingress 
+  namespace: nginx-ingress
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: nginx-ingress
+rules:
+- apiGroups: [""]
+  resources: ["*"]
+  verbs: ["*"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: nginx-ingress
+subjects:
+- kind: ServiceAccount
+  name: nginx-ingress
+  namespace: nginx-ingress
+roleRef:
+  kind: ClusterRole
+  name: nginx-ingress
+  apiGroup: rbac.authorization.k8s.io
+---
+# nginx config and ingress-controler app
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: nginx-config
+  namespace: nginx-ingress
+#data: 
+#  proxy-protocol: "True"
+#  real-ip-header: "proxy_protocol"
+#  set-real-ip-from: "0.0.0.0/0"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-ingress-controler
+  namespace: nginx-ingress
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-ingress-controler
+  template:
+    metadata:
+      labels:
+        app: nginx-ingress-controler
+    spec:
+      serviceAccountName: nginx-ingress
+      containers:
+      - image: quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.21.0
+        imagePullPolicy: IfNotPresent
+        name: nginx-ingress-controler
+        resources:
+          limits:
+            cpu: "0.5"
+            memory: 100Mi
+          requests:
+            cpu: "0.25"
+            memory: 50Mi
+        ports:
+        - name: http
+          containerPort: 80
+        - name: https
+          containerPort: 443
+       #- name: prometheus
+         #containerPort: 9113
+        readinessProbe:
+          httpGet:
+            path: /nginx-ready
+            port: readiness-port
+          periodSeconds: 1
+        securityContext:
+          allowPrivilegeEscalation: true
+          runAsUser: 101 #nginx
+          capabilities:
+            drop:
+            - ALL
+            add:
+            - NET_BIND_SERVICE
+        env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        args:
+          - /nginx-ingress-controler
+          - --configmap=$(POD_NAMESPACE)/nginx-config
+          - --default-backend-service=app-space/default-http-backend      #that is for default service #404 not found (Optional) #default address for ingress-notfound
+         #- -default-server-tls-secret=$(POD_NAMESPACE)/default-server-secret
+         #- -v=3 # Enables extensive logging. Useful for troubleshooting.
+         #- -report-ingress-status
+         #- -external-service=nginx-ingress
+         #- -enable-prometheus-metrics
+         #- -global-configuration=$(POD_NAMESPACE)/nginx-configuration
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-ingress-controler-svc
+  namespace: nginx-ingress
+spec:
+  type: NodePort 
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    nodePort: 30080
+    name: http
+  - port: 443
+    targetPort: 443
+    protocol: TCP
+    name: https
+  selector:
+    app: nginx-ingress-controler
+---                                      #--- Nginx setup ready --- now use ingress to route traffic between services
+#ingress
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nginx-ingress
+spec:
+  rules:
+  - host:                                   #path based route
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: myapp              #add service name with path and rule for ingress load balance, here app/deploy = myapp
+            Port:
+              number: 80
+      - path: /admin
+        pathType: Prefix
+        backend:
+          service:
+            name: myapp-admin
+            port:
+              number: 8080                          
+---                                    #(OPTIONAL) for default-http-backend
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-404-notfound
+  namespace: nginx-ingress
+  labels:
+    name: default-http-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: web-404-notfound
+  template:
+    metadata:
+      labels: 
+        name: web-404-notfound
+    spec:
+      containers:
+      - image: kodekloud/ecommerce:404
+        imagePullPolicy: Always
+        name: web-404-notfound
+        resources:
+          limits:
+            cpu: "0.3"
+            memory: 50Mi
+          requests:
+            cpu: "0.1"
+            memory: 10Mi
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: back-end-service
+spec:
+  type: ClusterIP
+  ports:
+  - targetPort: 8080        
+    port: 80                        
+  selector:
+    name: default-http-backend   
+--- 

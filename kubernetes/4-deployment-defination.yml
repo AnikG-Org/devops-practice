@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp
+  namespace: default
+  labels:
+    name: myapp
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      name: my_app-pod
+      labels: 
+        app: myapp
+        type: front-end
+
+    spec:
+
+      containers:
+        - name: nginx-container
+          image: nginx:alpine
+          resources:
+            limits:
+              cpu: "1"
+              memory: 500Mi
+            requests:
+              cpu: "0.5"
+              memory: 256Mi
+          ports:
+            - containerPort: 80

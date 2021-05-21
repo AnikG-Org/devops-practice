@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myapp-with-affinity
+spec:
+    containers:
+    - name: nginx-container
+      image: nginx
+      imagePullPolicy: IfNotPresent
+      resources:
+          limits:
+            cpu: "1"
+            memory: 500Mi
+          requests:
+            cpu: "0.5"
+            memory: 256Mi
+    affinity:
+      nodeAffinity:
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100                           #weight for the node, 1-100. The node that with highest weight is preferred.
+            preference:
+              matchExpressions:
+              - key: size
+                operator: In                    #Operator value Can be In, NotIn, Exists, or DoesNotExist.    
+                values:
+                  - "largeInstance"
+                  - "mediumInstance"
+
+
+# AFFINITY SELECTOR	                             REQ MET	REQ NOT MET	    REQ LOST
+# requiredDuringSchedulingIgnoredDuringExecution	Runs	      Fails	     	Keeps Running     hard rule
+# preferredDuringSchedulingIgnoredDuringExecution	Runs	      Runs	     	Keeps Running     soft rule
+# requiredDuringSchedulingRequiredDuringExecution	Runs	      Fails	     	Fails

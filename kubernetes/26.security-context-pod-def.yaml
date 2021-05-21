@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: security-context-demo-2
+spec:
+  securityContext:                          #securityContext at Pod level
+    runAsUser: 1000
+  containers:
+  - name: sec-ctx-demo-2
+    image: gcr.io/google-samples/node-hello:1.0
+    resources:
+        limits:
+          cpu: "1"
+          memory: 500Mi
+        requests:
+          cpu: "0.5"
+          memory: 256Mi
+    securityContext:                         #securityContext at container level
+      runAsUser: 2000
+      capabilities:
+        add: ["SYS_TIME"]
+      allowPrivilegeEscalation: false         #AllowPrivilegeEscalation: Controls whether a process can gain more privileges than its parent process.

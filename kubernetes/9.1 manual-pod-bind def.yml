@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Binding
+metadata:
+  Name: nginx-container
+target:
+  apiVersion: v1
+  kind: Node
+  name: node01

@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: blue
+
+spec:
+  replicas: 6
+  selector:
+    matchLabels:
+      run: nginx
+  template:
+    metadata:
+      labels: 
+        run: nginx
+
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        resources:
+          limits:
+            cpu: "1"
+            memory: 500Mi
+          requests:
+            cpu: "0.5"
+            memory: 256Mi
+      affinity:                 #target node lable color=blue
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: node-role.kubernetes.io/master     #using existing master node lable node-role.kubernetes.io/master=
+                operator: Exists   

@@ -1,0 +1,36 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nginx-ingress
+spec:
+  tls:
+  - hosts:
+    - myapp.example.com
+    secretName: myapp-secret
+  rules:
+  - host:                                   #path based route
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          serviceName: myapp              #add service name with path and rule for ingress load balance, here app/deploy = myapp
+          servicePort: 80
+      - path: /admin
+        pathType: Prefix
+        backend:
+          service:
+            name: myapp-admin
+            port:
+              number: 8080
+                           
+  - host: myapp.example.com                 #host & path based route
+    http:
+      paths:
+      - path: /home
+        pathType: Prefix
+        backend:
+          service:
+            name: myapp-1
+            port:
+              number: 80

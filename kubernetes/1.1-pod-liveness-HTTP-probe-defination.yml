@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Pod
+
+metadata:
+  name: my-app
+  namespace: prod
+  labels: 
+    app: myapp
+    type: front-end
+
+
+spec:
+  restartPolicy: Always 
+  containers:
+    - name: nginx-container
+      image: nginx:alpine
+      resources:
+        limits:
+          cpu: "1"
+          memory: 500Mi
+        requests:
+          cpu: "0.5"
+          memory: 256Mi
+      ports:
+        - containerPort: 80
+
+      livenessProbe:            #liveness http probe    #liveness probe= healthy/sick
+      httpGet:
+        path: /index.html
+        port: 80
+      initialDelaySeconds: 15
+      timeoutSeconds: 2
+      periodSeconds: 5
+      failureThreshold: 1
+
+#Many applications running for long periods of time eventually transition to broken states, and cannot recover except by being restarted. Kubernetes provides liveness probes to detect and remedy such situations.
+#Readiness probes are configured similarly to liveness probes. The only difference is that you use the 'readinessProbe' field instead of the 'livenessProbe' field.
+#Kubernetes provides readiness probes to detect and mitigate these situations. A pod with containers reporting that they are not ready does not receive traffic through Kubernetes Services.
+#Note: Readiness probes runs on the container during its whole lifecycle.

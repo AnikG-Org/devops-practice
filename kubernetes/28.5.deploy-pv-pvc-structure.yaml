@@ -1,0 +1,78 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapp-prd
+  labels:
+    app: webapp
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: webapp
+      type: front-end
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: webapp
+        type: front-end
+    spec:
+      containers:
+      - image: kodekloud/event-simulator
+        imagePullPolicy: IfNotPresent
+        name: event-simulator 
+        env:
+        - name: LOG_HANDLERS
+          value: file
+        resources:
+          limits:
+            cpu: "1"
+            memory: 500Mi
+          requests:
+            cpu: "0.5"
+            memory: 256Mi
+        volumeMounts:
+        - mountPath: /log
+          name: host-data-volume
+      #  volumes:                          
+      #  - name: host-data-volume
+      #    hostPath:                          #localhost:docker mounting /data:/opt
+      #      path: /var/log/webapp
+      #      type: Directory
+      volumes:                                  #binding container_vol:persistentVolumeClaim
+        - name: host-data-volume
+          persistentVolumeClaim:
+            claimName: claim-log-1 
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-log
+  labels:
+    name: pv-log
+spec:
+  capacity:
+    storage: 100Mi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:                         
+    path: /pv/log
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: claim-log-1
+spec:
+  resources:
+    requests:
+      storage: 100Mi
+  accessModes:
+    - ReadWriteMany
+  selector:               
+    matchLabels:
+      name: pv-log
+---

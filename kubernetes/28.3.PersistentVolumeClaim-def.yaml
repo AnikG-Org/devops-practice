@@ -1,0 +1,28 @@
+#using Static pv provition
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pv-claim1
+spec:
+  accessModes:              #accessmode must need to same accross pv - pvc
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  selector:               #bind with lable matched pv
+    matchLabels:
+      name: pv1
+---
+#using Dynamic pv provition
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pv-claim2
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: aws-ebs

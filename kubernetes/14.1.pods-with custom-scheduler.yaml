@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myapp-with-custom-scheduler
+  labels:
+    name: myapp-with-custom-scheduler
+    
+spec:
+    containers:
+    - name: nginx-container
+      image: nginx
+      imagePullPolicy: IfNotPresent
+      resources:
+          limits:
+            cpu: "1"
+            memory: 500Mi
+          requests:
+            cpu: "0.5"
+            memory: 256Mi
+    
+    schedulerName: my-custom-scheduler     #

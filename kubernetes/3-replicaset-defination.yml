@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+
+metadata:
+  name: myapp-rs
+  #namespace: prod
+  labels:
+    type: front-end
+spec:
+  template:
+    metadata:
+      name: my_app-pod
+      labels: 
+        app: myapp-1
+        type: front-end
+
+    spec:
+
+      containers:
+        - name: nginx-container
+          image: nginx:alpine
+          resources:
+            limits:
+              cpu: "1"
+              memory: 500Mi
+            requests:
+              cpu: "0.5"
+              memory: 256Mi
+          ports:
+            - containerPort: 80
+
+  replicas: 3
+  selector:
+    matchLables:              #selector used to match lebel of pods
+      type: front-end
+      app: myapp-1

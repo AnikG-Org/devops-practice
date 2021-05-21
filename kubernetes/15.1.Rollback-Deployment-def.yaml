@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: blue
+  labels:
+    name: my app-with-rollover-deployment
+
+spec:
+  replicas: 6
+  strategy:                       #rolling update strategy, updateStrategy can use on deploy/rs etc.
+    type: RollingUpdate
+    RollingUpdate: 
+      maxSurge: 0                     #maxSurge is an optional field that specifies the maximum number of Pods that can be created over the desired number of Pods
+      maxUnavailable: 1
+  revisionHistoryLimit: 3
+  minReadySeconds: 5
+  selector:
+    matchLabels:
+      run: nginx
+  template:
+    metadata:
+      labels: 
+        run: nginx
+
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        resources:
+          limits:
+            cpu: "1"
+            memory: 500Mi
+          requests:
+            cpu: "0.5"
+            memory: 256Mi

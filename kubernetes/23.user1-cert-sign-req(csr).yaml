@@ -1,0 +1,39 @@
+apiVersion: certificates.k8s.io/v1beta1
+kind: CertificateSigningRequest
+metadata:
+  name: user1
+spec:
+  groups:
+  - system:authenticated
+  usages:
+  - digital signature
+  - key encipherment
+  - server auth
+  - client auth 
+  request:                                                  #putting encoded cert value here  #As of kubernetes 1.19 ++, the API to use for CSR is certificates.k8s.io/v1.
+      LS0tLS1CRUdJTiBDRVJUSUZJQ0FURSBSRVFVRVNULS0tLS0KTUlJQ1dEQ0NBVUFDQVFBd0V6RVJNQThHQTFVRUF3d0libVYzTFhWelpYSXdnZ0VpTUEwR0NTcUdTSWIzRFFFQgpBUVVBQTRJQkR3QXdnZ0VLQW9JQkFRRE8wV0pXK0RYc0FKU0lyanBObzV2UklCcGxuemcrNnhjOStVVndrS2kwCkxmQzI3dCsxZUVuT041TXVxOTlOZXZtTUVPbnJ
+  signerName: kubernetes.io/kube-apiserver-client
+
+---
+# created user1.csr
+#  -----BEGIN CERTIFICATE REQUEST-----
+#  MIICWDCCAUACAQAwEzERMA8GA1UEAwwIbmV3LXVzZXIwggEiMA0GCSqGSIb3DQEB
+#  AQUAA4IBDwAwggEKAoIBAQDO0WJW+DXsAJSIrjpNo5vRIBplnzg+6xc9+UVwkKi0
+#  LfC27t+1eEnON5Muq99NevmMEOnrDUO/thyVqP2w2XNIDRXjYyF40FbmD+5zWyCK
+#  9w0BAQsFAAOCAQEAS9iS6C1uxTuf5BBYSU7QFQHUzalNxAdYsaORRQNwHZwHqGi4
+#  hOK4a2zyNyi44OOijyaD6tUW8DSxkr8BLK8Kg3srREtJql5rLZy9LRVrsJghD4gY
+#  P9NL+aDRSxROVSqBaB2nWeYpM5cJ5TF53lesNSNMLQ2++RMnjDQJ7juPEic8/dhk
+#  Wr2EUM6UawzykrdHImwTv2mlMY0R+DNtV1Yie+0H9/YElt+FSGjh5L5YUvI1Dqiy
+#  4l3E/y3qL71WfAcuH3OsVpUUnQISMdQs0qWCsbE56CC5DhPGZIpUbnKUpAwka+8E
+#  vwQ07jG+hpknxmuFAeXxgUwodALaJ7ju/TDIcw==
+#  -----END CERTIFICATE REQUEST-----
+
+#encode this cert>> cat jane.csr | base64
+#  LS0tLS1CRUdJTiBDRVJUSUZJQ0FURSBSRVFVRVNULS0
+#  tLS0KTUlJQ1dEQ0NBVUFDQVFBd0V6RVJNQThHQTFVRU
+#  F3d0libVYzTFhWelpYSXdnZ0VpTUEwR0NTcUdTSWIzR
+#  FFFQgpBUVVBQTRJQkR3QXdnZ0VLQW9JQkFRRE8wV0pX
+#  K0RYc0FKU0lyanBObzV2UklCcGxuemcrNnhjOStVVnd
+#  rS2kwCkxmQzI3dCsxZUVuT041TXVxOTlOZXZtTUVPbn
+#  J
+---

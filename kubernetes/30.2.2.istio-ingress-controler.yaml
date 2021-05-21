@@ -1,0 +1,156 @@
+---
+#STEP 1: SA FOR IC * After istio Pilot done
+apiVersion: v1    
+kind: ServiceAccount
+metadata:
+  name: istio-ingress
+---
+#STEP 2: CLUSTER ROLE FOR IC 
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: istio-ingress
+rules:
+  - apiGroups: [""]
+    resources: ["configmaps", "endpoints", "pods", "services"]
+    verbs: ["*"]
+  - apiGroups: ["extensions"]
+    resources: ["thirdpartyresources", "thirdpartyresources.extensions", "ingresses"]
+    verbs: ["*"]
+  - apiGroups: ["istio.io"]
+    resources: ["istioconfigs", "istioconfigs.istio.io"]
+    verbs: ["*"]
+---
+#STEP 3: ROLEBINDING FOR IC
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: istio-ingress
+subjects:
+  - kind: ServiceAccount
+    name: istio-ingress
+roleRef:
+  kind: ClusterRole
+  name: istio-ingress
+  apiGroup: rbac.authorization.k8s.io
+---
+#STEP 4: A DaemonSet will be used to ensure a single Istio Ingress Controller runs on each node in the istio-ingress-pool node pool
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: istio-ingress
+spec:
+  selector:
+    matchLabels:
+      istio: ingress
+  template:
+    metadata:
+      annotations:
+        alpha.istio.io/sidecar: ignore
+      labels:
+        istio: ingress
+    spec:
+      serviceAccountName: istio-ingress
+      containers:
+        - name: istio-ingress
+          image: docker.io/istio/proxy_debug:0.1.6
+          env:
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+          args:
+            - "proxy"
+            - "ingress"
+            - "-v=2"
+          ports:
+            - name: http
+              containerPort: 80
+            - name: https
+              containerPort: 443
+---
+#STEP 5: APP/POD DEPLOY
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  labels:
+    app: istio-test
+    version: v1
+  name: istio-test-v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: istio-test
+  template:
+    metadata:
+      labels:
+        app: istio-test
+        version: v1
+      name: istio-test
+    spec:
+      containers:
+        - name: istio-test
+          image: gcr.io/hightowerlabs/server:0.0.1
+          imagePullPolicy: Always
+          args:
+            - "-name=istio-test-v1"
+---
+#STEP 6: the Istio Ingress Controllers(ds)
+apiVersion: v1
+kind: Service
+metadata:
+  name: istio-ingress
+  labels:
+    istio: ingress
+    name: istio-ingress
+spec:
+  externalTrafficPolicy: Local
+  ports:
+    - name: http
+      port: 80
+    - name: https
+      port: 443
+  selector:
+    istio: ingress
+  type: LoadBalancer
+---
+---
+#STEP 7: app with nodeport
+apiVersion: v1
+kind: Service
+metadata:
+  name: istio-test
+  labels:
+    app: istio-test
+    name: istio-test
+spec:
+  ports:
+  - port: 80
+    name: http
+    targetPort: 80
+    protocol: TCP
+  selector:
+    app: istio-test
+  type: NodePort
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: istio
+  name: istio-test
+spec:
+  rules:
+  - host:
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: istio-test
+            port:
+              number: 80
+---

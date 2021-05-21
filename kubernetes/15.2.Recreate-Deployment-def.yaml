@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: blue
+  labels:
+    name: my app-with-Recreate-deployment
+
+spec:
+  replicas: 6
+  strategy:                       #recrate update strategy, updateStrategy can use on deploy/rs etc.
+    type: Recreate
+  minReadySeconds: 5
+  selector:
+    matchLabels:
+      run: nginx
+  template:
+    metadata:
+      labels: 
+        run: nginx
+
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        resources:
+          limits:
+            cpu: "1"
+            memory: 500Mi
+          requests:
+            cpu: "0.5"
+            memory: 256Mi
