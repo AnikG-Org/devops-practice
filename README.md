@@ -25,7 +25,7 @@ sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 
 
 # kubernetes-practice
-2. #kubernetes CKA + advanced  practice manifist files added which i used to note for all situations while study those , it can re usable based on inputs and customization.
+2. #kubernetes CKA + advanced  practice manifest files added which I used to note for all situations while study those , it can re useable based on inputs and customisation.
 
 path: devops-practice/kubernetes/*
 
