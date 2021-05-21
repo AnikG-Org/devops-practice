@@ -3,7 +3,8 @@ Practice
 
 # Docker-jenkins-practice
 
-1. Docker / Docker compose/ Jenkins - Groovy pipeline/ 
+1. Docker / Docker compose/ Jenkins - Groovy pipeline
+
 Path: devops-practice/docker/*   devops-practice/jenkins/*   devops-practice/maven/* [for jenkins test build]
 
 Required packages: 
