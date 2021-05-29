@@ -1,0 +1,100 @@
+﻿
+# method 1: Install & run jenkins :
+
+sudo yum install java-1.8.0 -y
+sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
+sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+sudo yum install jenkins -y
+
+sudo systemctl start jenkins.service
+
+#To start the jenkins service at boot-up
+
+sudo systemctl enable jenkins.service
+
+
+#to setup jenkins:--> sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+
+#For Redhat: jenkins config / dir/port change path: vim /etc/sysconfig/jenkins
+
+#######
+#Make proxy with nginx:
+sudo amazon-linux-extras install nginx1 -y
+#edit nginx config add proxy_pass port section for jenkins
+sudo vi /etc/nginx/nginx.conf
+##################
+    include /etc/nginx/conf.d/*.conf;
+
+    server {
+        listen       80;
+        listen       [::]:80;
+        server_name  _;
+        location / {
+        proxy_pass http://127.0.0.1:8080;
+        }
+
+##################
+sudo service jenkins restart
+sudo service nginx restart
+
+----------------------------------------------
+: Method 2: Install & run jenkins.war using tomcat:
+
+
+sudo yum install java-1.8.0 -y
+sudo wget http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-apache-maven.repo -O /etc/yum.repos.d/epel-apache-maven.repo
+sudo sed -i s/\$releasever/6/g /etc/yum.repos.d/epel-apache-maven.repo
+sudo yum install -y apache-maven
+mvn -version
+sudo wget https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.0.M10/bin/apache-tomcat-9.0.0.M10.tar.gz
+tar -xvzf apache-tomcat-9.0.0.M10.tar.gz
+mv apache-tomcat-9.0.0.M10 tomcat9
+rm apache-tomcat-9.0.0.M10.tar.gz or rm -rf apache-tomcat-9.0.0.M10.tar.gz
+
+#start/stop tomcat
+
+#sudo tomcat9/bin/startup.sh
+#sudo tomcat9/bin/shutdown.sh
+
+vi tomcat9/webapps/manager/META-INF/context.xml
+#· Open context.xml and comment Valve section as below
+########################
+<Context antiResourceLocking=”false” privileged=”true” >
+<! —
+<Valve className=”org.apache.catalina.valves.RemoteAddrValve”
+allow=”127\.\d+\.\d+\.\d+|::1|0:0:0:0:0:0:0:1|0.0.0.0" />
+</Context>
+########################
+
+#to edit tomcat app manager cred edit and remove default and paste the below file. 
+vi tomcat9/conf/tomcat-users.xml
+-----------------------------------------
+<?xml version='1.0' encoding='utf-8'?>
+<tomcat-users>
+    <role rolename="manager-gui"/>
+    <role rolename="manager-script"/>
+    <role rolename="manager-jmx"/>
+    <role rolename="manager-jmx"/>
+    <role rolename="admin-gui"/>
+    <role rolename="admin-script"/>
+    <user username="admin" password="admin" roles="manager-gui,manager-script,manager-jmx,manager-status,admin-gui,admin-script"/>
+</tomcat-users>
+-----------------------------------------
+#install Jenkins war
+
+wget https://get.jenkins.io/war-stable/2.263.1/jenkins.war -P tomcat9/webapps/
+
+sudo tomcat9/bin/startup.sh
+
+Link->
+http://Ip:8080/jenkins
+
+######################
+#jenkins on docker with host volume
+
+mkdir jenkins_home
+pwd
+#/root/jenkins_home
+chmod 777 jenkins_home
+
+docker run -d -v /root/jenkins_home:/var/jenkins_home -p 8080:8080 -p 50000:50000 jenkins/jenkins:lts

@@ -1,0 +1,58 @@
+#!/bin/bash
+#$ubuntu="apt-get"; $redhat="yum";		#this script will check sevice is installed or not, if not then install stop , process and start
+OS_library="yum"
+serviceName="httpd"
+
+#-------------------------------------------------
+#checking if $serviceName.service is exist & running or not
+ 
+if systemctl --all --type service | grep -q "$serviceName";then
+    echo "STPE1: $serviceName already installed."
+else
+    echo "STPE1: $serviceName does NOT installed."
+    echo "STPE1: $serviceName installing now."
+	"$OS_library" install -y "$serviceName"
+	sleep 2
+	echo "STPE1: $serviceName installed successfully"
+	sudo systemctl enable "$serviceName"
+fi
+#-------------------------------------------------
+#Verifing Service status
+ps -C $serviceName >/dev/null && echo "$serviceName status: is running" || echo "$serviceName status: is NOT running"
+
+if systemctl --all --type service | grep -q "$serviceName";then   
+    echo "$serviceName already installed & re-verified."
+else
+    echo "$serviceName not installed."  
+ 	exit
+fi
+#-------------------------------------------------
+# if $serviceName.service is installed & then stop
+
+if (( $(ps -ef | grep -v grep | grep $serviceName | wc -l) > 0 ))
+then
+	echo "STPE2: $serviceName is in **RUNNING** state"
+	sudo systemctl stop "$serviceName"
+	echo "STPE2: $serviceName is NOW stopped"
+else
+	echo "STPE2: $serviceName is already in **STOPPED** state"
+fi
+#-------------------------------------------------
+
+echo " Code_updating in process"
+
+#-------------------------------------------------
+# if $serviceName.service start after process done stop
+
+if (( $(ps -ef | grep -v grep | grep $serviceName | wc -l) > 0 ))
+then
+	echo "STPE3: $serviceName is already in **RUNNING** state"
+																#sudo systemctl stop "$serviceName"
+																#echo "$serviceName is NOW stopped"
+else
+	echo "STPE3: $serviceName is in **STOPPED** state"
+	sudo systemctl start "$serviceName"
+	echo "STPE3: $serviceName is NOW started"
+fi
+#-------------------------------------------------
+ sudo systemctl status "$serviceName"
