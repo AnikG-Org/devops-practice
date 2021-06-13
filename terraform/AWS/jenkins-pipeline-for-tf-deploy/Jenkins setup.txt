@@ -1,0 +1,52 @@
+
+sudo amazon-linux-extras install docker -y
+sudo service docker start
+sudo systemctl  enable docker
+sudo systemctl  status docker
+
+# Create a Jenkins container
+docker pull jenkins/jenkins:lts
+mkdir $HOME/jenkins_home -p && chmod 777 $HOME/jenkins_home
+docker run -p 8080:8080 -p 50000:50000 -d -v $HOME/jenkins_home:/var/jenkins_home --name jenkins jenkins/jenkins:lts
+docker logs jenkins
+
+#Copy the admin password
+http://127.0.0.1:8080
+
+# Install suggested plugins
+# Create a user
+# Manage jenkins
+# Manage plugins
+# Search for Terraform in Available and install without restart
+# Back to Manage jenkins
+# Global Tool Configuration
+# Add Terraform
+# Name: terraform 
+# Install automatically
+# Version - latest for linux (amd64)
+# Click Save
+
+
+# Go to credentials -> global
+
+# Create a credential of type secret text with ID AWS_ACCESS_KEY_ID and the access key as the secret
+# Create a credential of type secret text with ID AWS_SECRET_ACCESS_KEY and the access secret as the secret
+
+#(OPTIONAL) for TF_API_TOKEN run base64 -w0 credentials.tfrc.json get the outpout in single string : paste the value after Create a credential of type secret text with ID TF_API_TOKEN
+
+
+# Create a new item
+# Name: TF-deploy
+# Type pipeline
+# Select poll SCM
+# Definition: Pipeline script from SCM
+# SCM: Git
+# Repo URL: YOUR_REPO_URL 
+# Jenkinsfile Script path
+# Uncheck lightweight checkout
+
+
+# Run a new build WITH parameters
+#verify parameters env values before build
+
+
