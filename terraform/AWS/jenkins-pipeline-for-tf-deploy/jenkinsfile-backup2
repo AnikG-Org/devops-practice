@@ -21,15 +21,16 @@ pipeline {
 
     }
 
-    stage('Checkout') {
-      steps {
-        checkout scm
-        sh 'mkdir -p $HOME/.terraform.d/' 
-        sh 'echo $TF_API_TOKEN | base64 -d > $HOME/.terraform.d/credentials.tfrc.json'
-      }
-    }
 
     stages {
+
+        stage('Checkout') {
+            steps {
+                checkout scm
+                sh 'mkdir -p $HOME/.terraform.d/' 
+                sh 'echo $TF_API_TOKEN | base64 -d > $HOME/.terraform.d/credentials.tfrc.json'
+            }
+        }
         stage('Init'){
             steps {
                 dir("terraform/AWS/AWS_modules/projects/project_demo"){
