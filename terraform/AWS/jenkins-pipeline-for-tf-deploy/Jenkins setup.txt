@@ -10,6 +10,10 @@ mkdir $HOME/jenkins_home -p && chmod 777 $HOME/jenkins_home
 docker run -p 8080:8080 -p 50000:50000 -d -v $HOME/jenkins_home:/var/jenkins_home --name jenkins jenkins/jenkins:lts
 docker logs jenkins
 
+#handy commands to troubleshoot jenkins
+#docker ps -a
+#docker restart jenkins
+
 #Copy the admin password
 http://127.0.0.1:8080
 
