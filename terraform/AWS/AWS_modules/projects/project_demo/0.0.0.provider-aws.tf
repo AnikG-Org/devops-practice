@@ -7,8 +7,7 @@ provider "aws" {
   access_key              = var.AWS_ACCESS_KEY_ID
   secret_key              = var.AWS_SECRET_ACCESS_KEY
 
-  plugin_cache_dir   = "$HOME/.terraform.d/plugin-cache"
-  disable_checkpoint = true  
+ 
   default_tags {
     tags = {
       # Environment     = var.environment
