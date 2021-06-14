@@ -57,8 +57,10 @@ pipeline {
         stage('Plan'){
             steps {
                 dir("terraform/AWS/AWS_modules/projects/project_demo"){
-                    sh "terraform plan  -out tfplan  --var-file=${path.module}/terraform.auto.tfvars;echo \$? > status"
-                    sh 'terraform show -no-color tfplan > tfplan.txt'
+                    sh  """
+                        cd terraform plan  -out tfplan  --var-file=${path.module}/terraform.auto.tfvars
+                        terraform show -no-color tfplan > tfplan.txt
+                        """  
                   }
                 }
             }
