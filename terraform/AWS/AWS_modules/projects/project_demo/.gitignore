@@ -7,6 +7,7 @@
 # .tfstate files
 *.tfstate
 *.tfstate.*
+*.terraformignore
 #cred
 cred*
 creds/*
@@ -28,9 +29,9 @@ override.tf.json
 
 # Ignore backend, provider & local tfvars files used for testing locally and so
 # are not checked in
-**backend.tf
-**provider.tf
-/*.tfvars
+# **backend.tf
+# **provider.tf
+# /*.tfvars
 
 # Include override files you do wish to add to version control using negated pattern
 #
