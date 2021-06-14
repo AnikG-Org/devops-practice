@@ -16,11 +16,11 @@ module "provider_version_tf13" {
 }
 
 ################### Local state ##############
-# terraform {
-#   backend "local" {
-#     path = "./terraform.tfstate"
-#   }
-# }
+terraform {
+  backend "local" {
+    path = "./terraform.tfstate"
+  }
+}
 #############################################
 ## DATA SOURCES FOR LOCAL STATE REFERENCE
 #  data "terraform_remote_state" "local" {
