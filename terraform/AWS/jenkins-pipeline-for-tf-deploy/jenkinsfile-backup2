@@ -55,7 +55,7 @@ pipeline {
                         } catch (err) {
                             sh "terraform workspace select ${environment}"
                         }
-                        sh "terraform plan  -out tfplan  --var-file=${path.module}/${params.environment}.tfvars"
+                        sh "terraform plan  -out tfplan  --var-file=${path.module}/terraform.auto.tfvars"
                         sh 'terraform show -no-color tfplan > tfplan.txt'
                     }
                 }
