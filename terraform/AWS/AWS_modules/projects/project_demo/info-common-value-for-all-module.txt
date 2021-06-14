@@ -1,0 +1,35 @@
+
+# module "module_1" {
+#   source          = "../../module_path"
+
+#   ################################################################################
+#
+#   ############################### common tag #####################################
+#   environment     = var.environment 
+#   project         = var.project
+#   git_repo        = var.git_repo
+#   ServiceProvider = var.ServiceProvider
+#   ################################################################################
+    # variable thsoe for common tfvar or hardcode based on module name
+
+and &when >>>
+provider "aws" {
+  region     = var.provider_region
+
+  default_tags {
+    tags = {
+      Environment     = var.environment
+      Created_Via     = "Terraform IAAC"
+      Project         = var.project
+      SCM             = var.git_repo
+      ServiceProvider = var.ServiceProvider
+    }
+  }
+}    
+
+#-------------------------------------------
+# variable "provider_region" { default = "us-east-1" }
+# variable "ServiceProvider" {  default = "" } 
+# variable "git_repo" { default = "" }
+# variable "project" { default = "" }
+# variable "environment" { default = "" }

@@ -1,0 +1,21 @@
+locals{
+
+    #bucket  = var.create_remote_state_s3 ? data.aws_s3_bucket.remote_state.output.bucket_id : var.backend_s3_bucket
+    #key     = var.backend_s3_key
+    #encrypt = var.encrypt
+    #region  = var.create_remote_state_s3 ? data.aws_s3_bucket.remote_state.output.region : var.backend_s3_region
+    #dynamodb_table = var.create_table ? data.aws_dynamodb_table.terraform_state_lock.output.region : var.dynamodb_table 
+
+}
+
+
+terraform {
+  backend "s3" {
+    bucket = "remote-backends"
+    key    = "demo.tfstate"
+    region = "us-east-1"
+    access_key = "YOUR-ACCESS-KEY"
+    secret_key = "YOUR-SECRET-KEY"
+    dynamodb_table = "name"
+  }
+}
