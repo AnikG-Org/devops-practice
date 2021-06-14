@@ -28,7 +28,7 @@ pipeline {
             steps {
                 checkout scm
                 sh 'mkdir -p $HOME/.terraform.d/' 
-                sh 'echo $TF_API_TOKEN | base64 -d > /root/.terraform.d/credentials.tfrc.json'
+                sh 'echo $TF_API_TOKEN | base64 -d > $HOME/.terraform.d/credentials.tfrc.json'
             }
         }
         stage('Init'){
@@ -55,8 +55,10 @@ pipeline {
                         } catch (err) {
                             sh "terraform workspace select ${environment}"
                         }
-                        sh "terraform plan  -out tfplan  --var-file=${path.module}/terraform.auto.tfvars"
-                        sh 'terraform show -no-color tfplan > tfplan.txt'
+                        sh  """
+                            cd terraform plan  -out tfplan  --var-file=${path.module}/terraform.auto.tfvars
+                            terraform show -no-color tfplan > tfplan.txt
+                           """                        
                     }
                 }
             }        
