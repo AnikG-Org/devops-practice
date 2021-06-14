@@ -12,7 +12,7 @@
 cred*
 creds/*
 # Crash log files
-crash.log
+*.log
 
 # Ignore any .tfvars files that are generated automatically for each Terraform run. Most
 # .tfvars files are managed as part of configuration and so should be included in
@@ -30,7 +30,7 @@ override.tf.json
 # Ignore backend, provider & local tfvars files used for testing locally and so
 # are not checked in
 # **backend.tf
-# **provider.tf
+# *provider.tf
 # /*.tfvars
 
 # Include override files you do wish to add to version control using negated pattern
