@@ -13,11 +13,11 @@ pipeline {
         TF_API_TOKEN          = credentials('terraform-auth')
         TF_HOME               = tool('terraform')
         PATH                  = "$TF_HOME:$PATH"
-        TF_INPUT              = "0"
-        TF_LOG                ="WARN"
+        // TF_INPUT              = "0"
+        // TF_LOG                ="WARN"
         // AWS_ACCESS_KEY_ID     = credentials('AWS_ACCESS_KEY_ID')
         // AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
-        TF_IN_AUTOMATION      = "TRUE"
+        // TF_IN_AUTOMATION      = "TRUE"
 
     }
 
@@ -34,32 +34,30 @@ pipeline {
         stage('Init'){
             steps {
                 dir("terraform/AWS/AWS_modules/projects/project_demo"){
-                    sh 'terraform --version'
-                    sh "terraform init"
+                    
+                  script {
+                      sh 'terraform --version'
+                      sh "terraform init"
+                      
+                        try {
+                           sh "terraform workspace new ${environment}"
+                        } catch (Exception e) {
+                            sh "terraform workspace select ${environment}"
+                        }
+                        sh 'terraform validate'
+                    }
                 }
             }
         }
-        stage('Validate'){
-            steps {
-                dir("terraform/AWS/AWS_modules/projects/project_demo"){
-                    sh 'terraform validate'
-                }
-            }
-        }
-        stage('SelectWorkspace'){
-            steps {
-                dir("terraform/AWS/AWS_modules/projects/project_demo"){
-                    sh "terraform workspace show"
-                    sh "terraform workspace select ${environment}"
-                  }
-                }
-            }        
-        stage('Plan'){
+
+     
+       stage('Plan'){
             steps {
                 dir("terraform/AWS/AWS_modules/projects/project_demo"){
                     sh  """
-                        cd terraform plan  -out tfplan  --var-file=${path.module}/terraform.auto.tfvars;echo \$? > status
-                        terraform show -no-color tfplan > tfplan.txt
+                        terraform plan  -out tfplan  --var-file=terraform.auto.tfvars;echo \$? > status
+                        terraform show -no-color tfplan > ./tfplan.txt
+                        cat './tfplan.txt'
                         """  
                   }
                 }
@@ -73,7 +71,7 @@ pipeline {
             }
             steps {
                 script {
-                    def plan = readFile 'tfplan.txt'
+                    def plan = readFile './tfplan.txt'
                     input message: "Do you want to apply the plan?",
                         parameters: [text(name: 'Plan', description: 'Please review the plan', defaultValue: plan)]
                 }
