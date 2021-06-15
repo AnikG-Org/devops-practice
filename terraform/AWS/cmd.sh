@@ -19,13 +19,14 @@ terraform state #list ...
 #     show                Show a resource in the state
 terraform destroy -force
 terraform console #https://www.terraform.io/docs/language/functions/index.html
-terraform fmt -recursive  #-diff #-recursive
+terraform fmt -recursive  #-diff #-recursive #-list=false
 terraform validate
 terraform get -update=true
 terraform workspace # -h , show , list,delete,new,show, select [env_name]
 terraform import #tf_resource.name #aws_resource_id #eg: terraform import aws_instance.myec2 i-xxxxxxxxxx    #https://www.terraform.io/docs/cli/import/index.html#currently-state-only
 
-terraform taint aws_instance.myec2  #tainting resource 
+terraform taint aws_instance.myec2  #tainting resource #-state=path
+terraform state pull / push
 
 terraform graph > graph.dot   #GraphiViz Documentation Referred in Course: https://graphviz.gitlab.io/download/
 yum install graphviz
