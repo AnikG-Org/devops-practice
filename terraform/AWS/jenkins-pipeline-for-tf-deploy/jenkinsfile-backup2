@@ -57,7 +57,7 @@ pipeline {
                     sh  """
                         terraform plan  -out tfplan  --var-file=terraform.auto.tfvars;echo \$? > status
                         terraform show -no-color tfplan > ./tfplan.txt
-                        // cat './tfplan.txt'
+                        # cat './tfplan.txt'
                         """  
                   }
                 }
