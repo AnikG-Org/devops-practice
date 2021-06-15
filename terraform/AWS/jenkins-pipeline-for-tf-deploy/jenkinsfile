@@ -81,7 +81,9 @@ pipeline {
 
         stage('Apply') {
             steps {
+              dir("terraform/AWS/AWS_modules/projects/project_demo"){  
                 sh "terraform apply tfplan"
+              }
             }
         }
     
