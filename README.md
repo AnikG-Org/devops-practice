@@ -29,6 +29,10 @@ sudo ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 
 path: devops-practice/kubernetes/*
 
+<p align="center">
+  <img src="https://kubernetes.io/images/kubernetes-horizontal-color.png" width="414" height="220" />
+</p>
+
 
 # Terraform-practice (Upcoming)
 
