@@ -35,15 +35,14 @@ pipeline {
             steps {
                 dir("terraform/AWS/AWS_modules/projects/project_demo"){
                     
-                  script {
-                      sh 'terraform --version'
-                      sh "terraform init"
-                      
+                  script {                      
                         try {
                            sh "terraform workspace new ${environment}"
                         } catch (Exception e) {
                             sh "terraform workspace select ${environment}"
                         }
+                        sh 'terraform --version'
+                        sh "terraform init"                        
                         sh 'terraform validate'
                     }
                 }
