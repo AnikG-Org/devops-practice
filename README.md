@@ -35,7 +35,7 @@ path: devops-practice/kubernetes/*
 path: devops-practice/terraform/*
 
 <p align="center">
-  <img src="https://github.com/AnikG-Org/devops-practice/blob/main/terraform/AWS/Untitled%20Diagram.png" width="814" height="720" />
+  <img src="https://github.com/AnikG-Org/devops-practice/blob/main/terraform/AWS/Untitled%20Diagram.png" width="814" height="420" />
 </p>
 
 
