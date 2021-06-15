@@ -136,7 +136,9 @@ pipeline {
 
     post {
         always {
+          dir("terraform/AWS/AWS_modules/projects/project_demo"){    
             archiveArtifacts artifacts: 'tfplan.txt'
         }
-    }
+      }
+  }
 }
