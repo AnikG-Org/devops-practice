@@ -640,15 +640,15 @@ resource "aws_wafv2_web_acl" "main" {
     }
   }
 
-  tags = merge(  
+  tags = merge(
     {
-      
+
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project
       SCM             = var.git_repo
       ServiceProvider = var.ServiceProvider
-      sequence    = count.index + 001
+      sequence        = count.index + 001
     },
     var.tags
   )

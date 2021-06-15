@@ -65,8 +65,8 @@ variable "vpn_gateway_id" {
 }
 ####################################################### VPN Connection
 variable "create_vpn_connection" {
-  type        = bool
-  default     = true
+  type    = bool
+  default = true
 }
 variable "transit_gateway_id" {
   description = "Attach if existing transit_gateway in place insted of VGW"
@@ -109,8 +109,8 @@ variable "bgp_asn" {
 # variable "remote_ipv6_network_cidr" { default = "::/0"}
 ####################################################### route propagation
 variable "enable_route_propagation" {
-  type        = bool
-  default     = true  
+  type    = bool
+  default = true
 }
 
 variable "route_tables" {

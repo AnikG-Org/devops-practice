@@ -4,8 +4,8 @@ resource "aws_s3_bucket" "mys3_log" {
   acl    = "private"
   versioning {
     enabled = false
-  } 
-    lifecycle_rule {
+  }
+  lifecycle_rule {
     prefix  = "log/"
     enabled = false
     noncurrent_version_transition {
@@ -20,10 +20,10 @@ resource "aws_s3_bucket" "mys3_log" {
       days = 90
     }
   }
- 
-  tags   = {
-    s3_Name = "${var.myec2tagname["Name"]}-${var.myec2tagname["created_by"]}"
+
+  tags = {
+    s3_Name    = "${var.myec2tagname["Name"]}-${var.myec2tagname["created_by"]}"
     created_by = "TF"
-    timestamp = "${timestamp()}"
+    timestamp  = "${timestamp()}"
   }
 }

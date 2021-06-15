@@ -11,7 +11,7 @@ locals {
         "key"                 = "Project"
         "value"               = var.project
         "propagate_at_launch" = true
-      },        
+      },
       {
         "key"                 = "Environment"
         "value"               = var.environment
@@ -31,22 +31,22 @@ locals {
         "key"                 = "SCM"
         "value"               = var.git_repo
         "propagate_at_launch" = true
-      }, 
+      },
       {
         "key"                 = "ServiceProvider"
         "value"               = var.ServiceProvider
         "propagate_at_launch" = true
-      }, 
-              
+      },
+
     ],
     var.tags,
     null_resource.tags_as_list_of_maps.*.triggers,
-  ) 
+  )
   #for LT tag
   tags_as_map = merge(
     var.additional_tags,
     {
-      Name        = var.lt_name ,
+      Name            = var.lt_name,
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project
@@ -55,22 +55,22 @@ locals {
       #timestamp   = format("Created or Modified Date: %s", formatdate("MM/DD/YYYY", timestamp())),
     },
   )
-  
-#   tag_specifications = [
-#     {
-#       resource_type = "instance"
-#       tags          = merge({ WhatAmI = "Instance" }, local.tags_as_map)
-#     },
-#     {
-#       resource_type = "volume"
-#       tags          = merge({ WhatAmI = "Volume" }, local.tags_as_map)
-#     },
-#     # {
-#     #   resource_type = "spot-instances-request"
-#     #   tags          = merge({ WhatAmI = "SpotInstanceRequest" }, local.tags_as_map)
-#     # },
-#   ]
-#   default_tag_specifications = merge(var.tag_specifications, local.tag_specifications)    #marging LT variable{tag_specifications} default value with local{tag_specifications}
+
+  #   tag_specifications = [
+  #     {
+  #       resource_type = "instance"
+  #       tags          = merge({ WhatAmI = "Instance" }, local.tags_as_map)
+  #     },
+  #     {
+  #       resource_type = "volume"
+  #       tags          = merge({ WhatAmI = "Volume" }, local.tags_as_map)
+  #     },
+  #     # {
+  #     #   resource_type = "spot-instances-request"
+  #     #   tags          = merge({ WhatAmI = "SpotInstanceRequest" }, local.tags_as_map)
+  #     # },
+  #   ]
+  #   default_tag_specifications = merge(var.tag_specifications, local.tag_specifications)    #marging LT variable{tag_specifications} default value with local{tag_specifications}
 
 }
 

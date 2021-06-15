@@ -3,7 +3,7 @@
 #ELB TG attach
 resource "aws_lb_target_group_attachment" "lb_tg" {
   target_group_arn = aws_lb_target_group.lb_tg_1.arn
-  count = var.instance_count_sequence
+  count            = var.instance_count_sequence
   target_id        = element(aws_instance.myec2_count.*.id, count.index)
   port             = 80
 }
@@ -35,6 +35,6 @@ resource "aws_iam_role_policy_attachment" "myec2-role-attach_01" {
   policy_arn = aws_iam_policy.myec2_admin_policy_01.arn
 }
 resource "aws_iam_instance_profile" "myec2role_profile_01" {
-  name  = "myec2role_profile_01"
+  name = "myec2role_profile_01"
   role = aws_iam_role.myec2role_01.name
 }

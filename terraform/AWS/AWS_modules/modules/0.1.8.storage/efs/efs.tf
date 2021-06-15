@@ -7,7 +7,7 @@ resource "random_string" "name_1" {
 
 locals {
   random_string = random_string.name_1.result
-  dns_name = "${join("", aws_efs_file_system.default.*.id)}.efs.${var.provider_region}.amazonaws.com"
+  dns_name      = "${join("", aws_efs_file_system.default.*.id)}.efs.${var.provider_region}.amazonaws.com"
 }
 resource "aws_efs_file_system" "default" {
   count                           = var.enabled ? 1 : 0
@@ -16,7 +16,7 @@ resource "aws_efs_file_system" "default" {
   performance_mode                = var.performance_mode
   provisioned_throughput_in_mibps = var.provisioned_throughput_in_mibps
   throughput_mode                 = var.throughput_mode
-  tags = merge(  
+  tags = merge(
     {
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
@@ -63,7 +63,7 @@ resource "aws_efs_access_point" "default" {
     }
   }
 
-  tags = merge(  
+  tags = merge(
     {
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
@@ -85,7 +85,7 @@ resource "aws_security_group" "efs" {
     create_before_destroy = true
   }
 
-  tags = merge(  
+  tags = merge(
     {
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"

@@ -47,7 +47,7 @@ resource "aws_lb" "this" {
       Project         = var.project
       SCM             = var.git_repo
       ServiceProvider = var.ServiceProvider
-    },    
+    },
     var.lb_tags,
     {
       Name = var.name != null ? var.name : var.name_prefix
@@ -367,7 +367,7 @@ resource "aws_lb_listener_rule" "https_listener_rule" {
       Project         = var.project
       SCM             = var.git_repo
       ServiceProvider = var.ServiceProvider
-    },    
+    },
     var.https_listener_rules_tags,
     lookup(var.https_listener_rules[count.index], "tags", {}),
   )
@@ -416,14 +416,14 @@ resource "aws_lb_listener" "frontend_http_tcp" {
 
   tags = merge(
     var.tags,
-      {
+    {
       #timestamp     = format("Created or Modified Date: %s", formatdate("MM/DD/YYYY", timestamp()))
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project
       SCM             = var.git_repo
       ServiceProvider = var.ServiceProvider
-    },  
+    },
     var.http_tcp_listeners_tags,
     lookup(var.http_tcp_listeners[count.index], "tags", {}),
   )
@@ -525,7 +525,7 @@ resource "aws_lb_listener" "frontend_https" {
       Project         = var.project
       SCM             = var.git_repo
       ServiceProvider = var.ServiceProvider
-    },    
+    },
     var.https_listeners_tags,
     lookup(var.https_listeners[count.index], "tags", {}),
   )

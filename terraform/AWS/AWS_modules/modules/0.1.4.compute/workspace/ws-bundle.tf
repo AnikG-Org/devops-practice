@@ -19,5 +19,5 @@ data "aws_workspaces_bundle" "value_Windows_10_Office_2016" {
 }
 ########################### OP ###############################
 output "ws_bundle_id" {
-  value = zipmap(["standard_windows_10","value_windows_10","value_Windows_10_Office_2016","value_al_2","power_al_2"], [data.aws_workspaces_bundle.standard_windows_10.id, data.aws_workspaces_bundle.value_windows_10.id, data.aws_workspaces_bundle.value_Windows_10_Office_2016.id,data.aws_workspaces_bundle.value_al_2.id, data.aws_workspaces_bundle.power_al_2.id])
+  value = zipmap(["standard_windows_10", "value_windows_10", "value_Windows_10_Office_2016", "value_al_2", "power_al_2"], [data.aws_workspaces_bundle.standard_windows_10.id, data.aws_workspaces_bundle.value_windows_10.id, data.aws_workspaces_bundle.value_Windows_10_Office_2016.id, data.aws_workspaces_bundle.value_al_2.id, data.aws_workspaces_bundle.power_al_2.id])
 }

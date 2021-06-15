@@ -444,6 +444,6 @@ variable "iam_role_max_session_duration" {
 }
 
 variable "aws_db_parameter_group_family" {
-  type        = string
-  default     = ""
+  type    = string
+  default = ""
 }

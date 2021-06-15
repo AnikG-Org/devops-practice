@@ -33,7 +33,7 @@ variable "public_subnets" {
 variable "root_certificate_chain_arn" {
   description = "The ARN of the client certificate. The certificate must be signed by a certificate authority (CA) and it must be provisioned in AWS Certificate Manager (ACM)."
   type        = string
-  default     = "" 
+  default     = ""
 }
 
 variable "server_certificate_arn" {
@@ -63,10 +63,10 @@ variable "transport_protocol" { default = "tcp" } #udp
 # }
 # variable "access_group_id" { default = "" }
 variable "aws_ec2_client_vpn_authorization_rule" {
-  type        = map(map(any))
-  default     = {}
-}  
+  type    = map(map(any))
+  default = {}
+}
 variable "aws_ec2_client_vpn_route" {
-  type        = map(map(any))
-  default     = {}
+  type    = map(map(any))
+  default = {}
 }

@@ -68,7 +68,7 @@ resource "aws_iam_role" "role_1" {
 }
 
 resource "aws_iam_role_policy_attachment" "code_deploy_policy_attachment_1" {
-  policy_arn = "arn:aws:iam::aws:policy/AWSCodeDeployRoleForECS"  #AWSCodeDeployRoleForECS
+  policy_arn = "arn:aws:iam::aws:policy/AWSCodeDeployRoleForECS" #AWSCodeDeployRoleForECS
   role       = aws_iam_role.role_1.name
 }
 #-----------------------------------------------------------------------
@@ -79,7 +79,7 @@ resource "aws_codedeploy_deployment_group" "deployment_group" {
   autoscaling_groups     = var.autoscaling_groups
   deployment_config_name = var.deployment_config_name
   deployment_group_name  = local.deployment_group_name
-  
+
   dynamic "ec2_tag_filter" {
     for_each = var.ec2_tag_key != "" && var.ec2_tag_value != "" ? [local.ec2_tag_filters] : []
     content {
@@ -103,7 +103,7 @@ resource "aws_codedeploy_deployment_group" "deployment_group" {
     for_each = var.enable_bluegreen == true ? [1] : []
     content {
       deployment_ready_option {
-        action_on_timeout = var.bluegreen_timeout_action
+        action_on_timeout    = var.bluegreen_timeout_action
         wait_time_in_minutes = var.wait_time_in_minutes
       }
 
@@ -124,7 +124,7 @@ resource "aws_codedeploy_deployment_group" "deployment_group" {
       trigger_target_arn = var.trigger_target_arn
     }
   }
-   
+
   load_balancer_info {
     dynamic "elb_info" {
       for_each = var.clb_name == "" ? [] : [var.clb_name]
@@ -151,7 +151,7 @@ resource "aws_codedeploy_deployment_group" "ecs_deployment_group" {
   autoscaling_groups     = var.autoscaling_groups
   deployment_config_name = var.deployment_config_name
   deployment_group_name  = local.deployment_group_name
-  
+
   dynamic "ec2_tag_filter" {
     for_each = var.ec2_tag_key != "" && var.ec2_tag_value != "" ? [local.ec2_tag_filters] : []
     content {
@@ -182,7 +182,7 @@ resource "aws_codedeploy_deployment_group" "ecs_deployment_group" {
       }
 
       terminate_blue_instances_on_deployment_success {
-        action = var.blue_termination_behavior
+        action                           = var.blue_termination_behavior
         termination_wait_time_in_minutes = var.termination_wait_time_in_minutes
       }
       green_fleet_provisioning_option {
@@ -200,9 +200,9 @@ resource "aws_codedeploy_deployment_group" "ecs_deployment_group" {
       dynamic "test_traffic_route" {
         for_each = var.test_traffic_route == true ? [1] : []
         content {
-            listener_arns = var.test_traffic_route_listener_arns
+          listener_arns = var.test_traffic_route_listener_arns
         }
-      }    
+      }
       # test_traffic_route {
       #   listener_arns = [var.test_traffic_route_listener_arns] #(OPTIONAL)
       # }      
@@ -223,6 +223,6 @@ resource "aws_codedeploy_deployment_group" "ecs_deployment_group" {
       trigger_target_arn = var.trigger_target_arn
     }
   }
-   
+
 }
 ###########################################

@@ -6,7 +6,7 @@ resource "random_string" "name" {
 }
 locals {
   random_name = random_string.name.result
-}  
+}
 #####
 # Autoscaling Target
 #####
@@ -115,16 +115,16 @@ resource "aws_cloudwatch_metric_alarm" "high" {
     }
   }
 
- tags = merge(
-   {
+  tags = merge(
+    {
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project
       SCM             = var.git_repo
       ServiceProvider = var.ServiceProvider
-   },
-   var.tags
-   )
+    },
+    var.tags
+  )
 
   depends_on = [aws_appautoscaling_policy.scale_up]
 }

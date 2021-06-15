@@ -18,16 +18,16 @@ resource "aws_acm_certificate" "this" {
     certificate_transparency_logging_preference = var.certificate_transparency_logging_preference ? "ENABLED" : "DISABLED"
   }
 
- tags = merge(
-   {
+  tags = merge(
+    {
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project
       SCM             = var.git_repo
       ServiceProvider = var.ServiceProvider
-   },
-   var.tags
-   )
+    },
+    var.tags
+  )
 
   lifecycle {
     create_before_destroy = true

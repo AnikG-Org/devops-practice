@@ -2,15 +2,15 @@
 #VPC---------------------------------------
 
 resource "aws_vpc" "default" {
-  cidr_block           = var.cidr_block
-  instance_tenancy     = "default"
-  enable_dns_support   = true
-  enable_dns_hostnames = true
+  cidr_block                       = var.cidr_block
+  instance_tenancy                 = "default"
+  enable_dns_support               = true
+  enable_dns_hostnames             = true
   assign_generated_ipv6_cidr_block = false
 
   tags = merge(
     {
-      Name        = "${var.project}-${var.name}-VPC-NetWork" ,
+      Name = "${var.project}-${var.name}-VPC-NetWork",
     },
     var.tags
   )
@@ -23,7 +23,7 @@ resource "aws_route_table" "private" {
   vpc_id = aws_vpc.default.id
   tags = merge(
     {
-      Name        = "${var.project}-Private_RT_NetWork" ,
+      Name = "${var.project}-Private_RT_NetWork",
       #timestamp = format("Created or Modified Date: %s", formatdate("MM/DD/YYYY", timestamp()))
     },
     var.tags
@@ -34,7 +34,7 @@ resource "aws_route_table" "public" {
   vpc_id = aws_vpc.default.id
   tags = merge(
     {
-      Name        = "${var.project}-Public_RT_NetWork",
+      Name = "${var.project}-Public_RT_NetWork",
       #timestamp = format("Created or Modified Date: %s", formatdate("MM/DD/YYYY", timestamp()))
     },
     var.tags
@@ -87,7 +87,7 @@ resource "aws_subnet" "private" {
 
   tags = merge(
     {
-      Name        = "${var.project}-Private_SubNet_NetWork-${count.index + 1}"
+      Name = "${var.project}-Private_SubNet_NetWork-${count.index + 1}"
     },
     var.tags
   )
@@ -103,7 +103,7 @@ resource "aws_subnet" "public" {
 
   tags = merge(
     {
-      Name        = "${var.project}-Public_SubNet_NetWork-${count.index + 1}",
+      Name = "${var.project}-Public_SubNet_NetWork-${count.index + 1}",
       #timestamp = format("Created or Modified Date: %s", formatdate("MM/DD/YYYY", timestamp()))
     },
     var.tags
@@ -136,7 +136,7 @@ resource "aws_internet_gateway" "default" {
 
   tags = merge(
     {
-      Name        = "${var.project}-IGW",
+      Name = "${var.project}-IGW",
       #timestamp = format("Created or Modified Date: %s", formatdate("MM/DD/YYYY", timestamp()))
     },
     var.tags
@@ -150,9 +150,9 @@ resource "aws_eip" "nat" {
   # = length(var.public_subnet_cidr_blocks)
   vpc = true
   tags = {
-    Name        = "${var.project}-NGW-EIP",
+    Name      = "${var.project}-NGW-EIP",
     timestamp = format("Created or Modified Date: %s", formatdate("MM/DD/YYYY", timestamp()))
-  }  
+  }
 }
 
 resource "aws_nat_gateway" "default" {
@@ -165,7 +165,7 @@ resource "aws_nat_gateway" "default" {
   #allocation_id = aws_eip.nat[count.index].id
   tags = merge(
     {
-      Name        = "${var.project}-NGW",
+      Name = "${var.project}-NGW",
       #timestamp = format("Created or Modified Date: %s", formatdate("MM/DD/YYYY", timestamp()))
     },
     var.tags

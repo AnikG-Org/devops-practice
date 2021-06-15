@@ -19,7 +19,7 @@ terraform state #list ...
 #     show                Show a resource in the state
 terraform destroy -force
 terraform console #https://www.terraform.io/docs/language/functions/index.html
-terraform fmt
+terraform fmt -recursive  #-diff #-recursive
 terraform validate
 terraform get -update=true
 terraform workspace # -h , show , list,delete,new,show, select [env_name]

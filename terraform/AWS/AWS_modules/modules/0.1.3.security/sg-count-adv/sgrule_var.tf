@@ -15,8 +15,8 @@ variable "ingress_with_cidr_blocks" {
 }
 #variable "aws_vpc_id" { default = "" }
 variable "sgrule_security_group_id" {
-  type        = string 
-  default     = ""
+  type    = string
+  default = ""
 }
 # variable "from_sgrule_ports" {
 #   type        = set(string)
@@ -28,15 +28,15 @@ variable "sgrule_security_group_id" {
 variable "sgrule_prefix_list_ids" {
   type        = list(string)
   description = "list of ingress prefix_list_ids for SG"
-  default     = [] 
+  default     = []
 }
 variable "ingress_cidr_blocks" {
   type        = list(string)
   description = "ingress list of CIDR for SG"
-  default     = [] 
+  default     = []
 }
 variable "sgrule_ipv6_cidr_blocks" {
   type        = list(string)
   description = "list of ingress IPV6 CIDR for SG"
-  default     = [] 
+  default     = []
 }

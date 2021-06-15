@@ -1,6 +1,6 @@
 resource "aws_ssm_patch_baseline" "baseline" {
 
-  name             = format("%s-%s-patch-baseline-%s", var.patch_baseline_label,var.environment, lower(var.operating_system))
+  name             = format("%s-%s-patch-baseline-%s", var.patch_baseline_label, var.environment, lower(var.operating_system))
   description      = var.description
   operating_system = var.operating_system
 

@@ -1,6 +1,6 @@
 resource "aws_sns_topic" "topic" {
-  count = var.create_sns_topic ? 1 : 0  
-  name = var.name
+  count       = var.create_sns_topic ? 1 : 0
+  name        = var.name
   name_prefix = var.name_prefix
 
   display_name                             = var.display_name
@@ -20,15 +20,15 @@ resource "aws_sns_topic" "topic" {
   sqs_failure_feedback_role_arn            = var.sqs_failure_feedback_role_arn
   kms_master_key_id                        = var.kms_master_key_id
 
-  tags = merge( 
+  tags = merge(
     {
-      
+
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project
       SCM             = var.git_repo
       ServiceProvider = var.ServiceProvider
-      sequence    = count.index + 001
+      sequence        = count.index + 001
     },
     var.tags
   )

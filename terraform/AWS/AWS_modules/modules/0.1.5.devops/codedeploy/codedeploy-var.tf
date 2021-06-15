@@ -33,12 +33,12 @@ variable "deployment_group_name" {
   type        = string
 }
 variable "enable_auto_rollback_configuration" {
-  default     = true
-  type        = bool
+  default = true
+  type    = bool
 }
 variable "enable_bluegreen" {
-  default     = false
-  type        = bool 
+  default = false
+  type    = bool
 }
 variable "bluegreen_timeout_action" {
   description = "When to reroute traffic from an original environment to a replacement environment. Only relevant when `enable_bluegreen` is `true`"
@@ -103,12 +103,12 @@ variable "target_group_name" {
 #######################################
 variable "lb_listener_arns" {
   type        = list(string)
-  default     = [] 
+  default     = []
   description = "List of Amazon Resource Names (ARNs) of the load balancer listeners."
 }
 variable "test_traffic_route" {
-  default     = false
-  type        = bool 
+  default = false
+  type    = bool
 }
 variable "test_traffic_route_listener_arns" {
   default     = null

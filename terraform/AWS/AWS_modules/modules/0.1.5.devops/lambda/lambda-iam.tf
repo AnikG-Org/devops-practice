@@ -1,5 +1,5 @@
 locals {
-  create_role = var.create && var.create_function && !var.create_layer && var.create_role
+  create_role = var.create && var.create_function && ! var.create_layer && var.create_role
 
   # Lambda@Edge uses the Cloudwatch region closest to the location where the function is executed
   # The region part of the LogGroup ARN is then replaced with a wildcard (*) so Lambda@Edge is able to log in every region
@@ -24,7 +24,7 @@ locals {
       type        = principal.type
       identifiers = tolist(principal.identifiers)
     }
-    if !can(tostring(principal))
+    if ! can(tostring(principal))
   ]
 }
 
@@ -84,7 +84,7 @@ data "aws_iam_policy_document" "logs" {
     effect = "Allow"
 
     actions = compact([
-      !var.use_existing_cloudwatch_log_group ? "logs:CreateLogGroup" : "",
+      ! var.use_existing_cloudwatch_log_group ? "logs:CreateLogGroup" : "",
       "logs:CreateLogStream",
       "logs:PutLogEvents"
     ])
@@ -98,7 +98,7 @@ resource "aws_iam_policy" "logs" {
 
   name   = "${local.role_name}-logs"
   policy = data.aws_iam_policy_document.logs[0].json
-  tags   = merge(var.tags,  local.lambda_tags)
+  tags   = merge(var.tags, local.lambda_tags)
 }
 
 resource "aws_iam_policy_attachment" "logs" {
@@ -135,7 +135,7 @@ resource "aws_iam_policy" "dead_letter" {
 
   name   = "${local.role_name}-dl"
   policy = data.aws_iam_policy_document.dead_letter[0].json
-  tags   = merge(var.tags,  local.lambda_tags)
+  tags   = merge(var.tags, local.lambda_tags)
 }
 
 resource "aws_iam_policy_attachment" "dead_letter" {
@@ -163,7 +163,7 @@ resource "aws_iam_policy" "vpc" {
 
   name   = "${local.role_name}-vpc"
   policy = data.aws_iam_policy.vpc[0].policy
-  tags   = merge(var.tags,  local.lambda_tags)
+  tags   = merge(var.tags, local.lambda_tags)
 }
 
 resource "aws_iam_policy_attachment" "vpc" {
@@ -190,7 +190,7 @@ resource "aws_iam_policy" "tracing" {
 
   name   = "${local.role_name}-tracing"
   policy = data.aws_iam_policy.tracing[0].policy
-  tags   = merge(var.tags,  local.lambda_tags)
+  tags   = merge(var.tags, local.lambda_tags)
 }
 
 resource "aws_iam_policy_attachment" "tracing" {
@@ -227,7 +227,7 @@ resource "aws_iam_policy" "async" {
 
   name   = "${local.role_name}-async"
   policy = data.aws_iam_policy_document.async[0].json
-  tags   = merge(var.tags,  local.lambda_tags)
+  tags   = merge(var.tags, local.lambda_tags)
 }
 
 resource "aws_iam_policy_attachment" "async" {
@@ -247,7 +247,7 @@ resource "aws_iam_policy" "additional_json" {
 
   name   = local.role_name
   policy = var.policy_json
-  tags   = merge(var.tags,  local.lambda_tags)
+  tags   = merge(var.tags, local.lambda_tags)
 }
 
 resource "aws_iam_policy_attachment" "additional_json" {
@@ -267,7 +267,7 @@ resource "aws_iam_policy" "additional_jsons" {
 
   name   = "${local.role_name}-${count.index}"
   policy = var.policy_jsons[count.index]
-  tags   = merge(var.tags,  local.lambda_tags)
+  tags   = merge(var.tags, local.lambda_tags)
 }
 
 resource "aws_iam_policy_attachment" "additional_jsons" {
@@ -351,7 +351,7 @@ resource "aws_iam_policy" "additional_inline" {
 
   name   = "${local.role_name}-inline"
   policy = data.aws_iam_policy_document.additional_inline[0].json
-  tags   = merge(var.tags,  local.lambda_tags)
+  tags   = merge(var.tags, local.lambda_tags)
 }
 
 resource "aws_iam_policy_attachment" "additional_inline" {

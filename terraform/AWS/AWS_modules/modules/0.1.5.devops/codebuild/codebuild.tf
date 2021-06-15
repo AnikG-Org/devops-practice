@@ -173,16 +173,16 @@ resource "aws_codebuild_project" "cb_project" {
   }
 
   # Tags
- tags = merge(
-   {
+  tags = merge(
+    {
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project
       SCM             = var.git_repo
       ServiceProvider = var.ServiceProvider
-   },
-   var.tags
-   )
+    },
+    var.tags
+  )
 
 }
 

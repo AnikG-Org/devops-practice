@@ -27,8 +27,8 @@ module "secrets-manager-2" {
   ]
 
   tags = {
-    Owner       = "DevOps team"
-    Terraform   = true
+    Owner     = "DevOps team"
+    Terraform = true
   }
 
 }

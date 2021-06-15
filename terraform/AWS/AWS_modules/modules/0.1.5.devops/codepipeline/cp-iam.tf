@@ -1,4 +1,4 @@
-data "aws_region" "current" {}  
+data "aws_region" "current" {}
 locals {
   role_name = var.role_arn == "" ? "AWSCodePipelineServiceRole-${data.aws_region.current.name}-${var.name}" : ""
 }

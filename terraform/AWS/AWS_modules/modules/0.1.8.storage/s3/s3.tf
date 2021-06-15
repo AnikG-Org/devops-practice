@@ -22,13 +22,13 @@ resource "aws_s3_bucket" "mys3" {
   tags = merge(
     var.additional_tags,
     {
-      s3_sequence = count.index + 001
+      s3_sequence     = count.index + 001
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project
       SCM             = var.git_repo
       ServiceProvider = var.ServiceProvider
-      SCM         = var.git_repo
+      SCM             = var.git_repo
     },
     var.tags
   )

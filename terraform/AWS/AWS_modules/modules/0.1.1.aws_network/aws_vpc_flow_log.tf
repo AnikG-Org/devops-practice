@@ -18,8 +18,8 @@ resource "aws_flow_log" "flow_log" {
 
   tags = merge(
     {
-      Name        = "${var.project}-VPC-flow-log",
-      Flowlog     = "cloudwatch-flow-log-group"
+      Name            = "${var.project}-VPC-flow-log",
+      Flowlog         = "cloudwatch-flow-log-group"
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project
@@ -93,8 +93,8 @@ resource "aws_flow_log" "s3_flow_log" {
 
   tags = merge(
     {
-      Name        = "${var.project}-S3-VPC-flow-log",
-      Flowlog     = "S3"
+      Name            = "${var.project}-S3-VPC-flow-log",
+      Flowlog         = "S3"
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project
@@ -170,7 +170,7 @@ resource "aws_s3_bucket" "flow_log" {
 
   tags = merge(
     {
-      used_for = "${var.project}-VPC-flow-log"
+      used_for        = "${var.project}-VPC-flow-log"
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project

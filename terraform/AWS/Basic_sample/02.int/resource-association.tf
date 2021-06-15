@@ -30,7 +30,7 @@ resource "aws_network_interface_sg_attachment" "sg_attachment_myec2" {
 }*/
 
 resource "aws_eip_association" "eipass_myec2" {
-  instance_id = aws_instance.myec2.id
+  instance_id   = aws_instance.myec2.id
   allocation_id = aws_eip.lb.id
 }
 
@@ -40,6 +40,6 @@ resource "aws_iam_role_policy_attachment" "myec2-role-attach" {
   policy_arn = aws_iam_policy.myec2_admin_policy.arn
 }
 resource "aws_iam_instance_profile" "myec2role_profile" {
-  name  = "myec2role_profile"
+  name = "myec2role_profile"
   role = aws_iam_role.myec2role.name
 }

@@ -122,10 +122,10 @@ variable "ram_resource_share_arn" {
   default     = ""
 }
 variable "aws_ec2_transit_gateway_peering_attachment" {
-  type        = map(map(any))
-  default     = {}
+  type    = map(map(any))
+  default = {}
 }
 variable "aws_ec2_transit_gateway_peering_attachment_accepter" {
-  type        = map(map(any))
-  default     = {}
+  type    = map(map(any))
+  default = {}
 }

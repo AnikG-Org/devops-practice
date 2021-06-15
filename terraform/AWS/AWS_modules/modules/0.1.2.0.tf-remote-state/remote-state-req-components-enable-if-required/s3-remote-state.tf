@@ -244,7 +244,7 @@ resource "aws_s3_bucket" "remote_state" {
 
 resource "aws_s3_bucket_public_access_block" "s3" {
   provider = aws.s3_aws_region
-  count = var.enable_bucket_public_access_blocking ? 1 : 0
+  count    = var.enable_bucket_public_access_blocking ? 1 : 0
   # S3 bucket-level Public Access Block configuration # default = true
   # Chain resources (s3_bucket -> s3_bucket_policy -> s3_bucket_public_access_block)
   # to prevent "A conflicting conditional operation is currently in progress against this resource." 

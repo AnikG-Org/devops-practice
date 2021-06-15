@@ -43,18 +43,18 @@ locals {
     XRay           = "AWS X-Ray"
   }
   local_tags = {
-      Environment     = var.environment
-      Created_Via     = "Terraform IAAC"
-      Project         = var.project
-      SCM             = var.git_repo
-      ServiceProvider = var.ServiceProvider
-  } 
+    Environment     = var.environment
+    Created_Via     = "Terraform IAAC"
+    Project         = var.project
+    SCM             = var.git_repo
+    ServiceProvider = var.ServiceProvider
+  }
 }
 
 resource "aws_sns_topic" "account_budgets_alarm_topic" {
   name = "account-budget-alarms-topic"
 
-  tags = merge(var.tags,local.local_tags)
+  tags = merge(var.tags, local.local_tags)
 }
 
 resource "aws_sns_topic_policy" "account_budgets_alarm_policy" {
@@ -164,7 +164,7 @@ resource "aws_iam_role" "chatbot_notification" {
       }
     ]
   })
-  tags = merge(var.tags,local.local_tags)
+  tags = merge(var.tags, local.local_tags)
 }
 
 resource "aws_iam_role_policy" "chatbot_notification" {
@@ -203,7 +203,7 @@ resource "aws_cloudformation_stack" "chatbot_slack_configuration" {
     SnsTopicArnsParameter      = aws_sns_topic.account_budgets_alarm_topic.arn
   }
 
-   tags = merge(var.tags)
+  tags = merge(var.tags)
   # ignore_tags {
   #   keys = ["Environment", "Project", "SCM", "ServiceProvider"]
   # }  

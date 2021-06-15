@@ -22,7 +22,7 @@ resource "random_integer" "min_numeric" {
 }
 
 locals {
-  length = 10
+  length    = 10
   random_pw = random_password.password.result
 }
 

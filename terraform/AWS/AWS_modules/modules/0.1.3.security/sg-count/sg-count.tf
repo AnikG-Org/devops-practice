@@ -6,7 +6,7 @@ resource "aws_security_group" "dynamicsg_2" {
   revoke_rules_on_delete = true
   tags = merge(
     {
-      Name = "${var.project}-${var.sg2_custom_name01}-${count.index + 1}",
+      Name            = "${var.project}-${var.sg2_custom_name01}-${count.index + 1}",
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project

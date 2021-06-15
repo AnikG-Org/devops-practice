@@ -1,5 +1,5 @@
 variable "enable_directory_service" {
-  type = bool
+  type    = bool
   default = true
 }
 variable "name" {

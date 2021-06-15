@@ -8,7 +8,7 @@ locals {
 data "aws_partition" "current" {}
 
 resource "random_id" "snapshot_identifier" {
-  count = var.create && !var.skip_final_snapshot ? 1 : 0
+  count = var.create && ! var.skip_final_snapshot ? 1 : 0
 
   keepers = {
     id = var.identifier

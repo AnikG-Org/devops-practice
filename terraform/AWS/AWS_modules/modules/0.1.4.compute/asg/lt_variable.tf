@@ -178,7 +178,7 @@ variable "lttagname" {
 }
 ##marging LT variable{tag_specifications} default value with local{tag_specifications} need to change type > to map(list(any))
 variable "tag_specifications" {
-  description = "(LT) The tags to apply to the resources during launch"     
+  description = "(LT) The tags to apply to the resources during launch"
   type        = list(any)
   default     = []
 }

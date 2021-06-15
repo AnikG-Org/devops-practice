@@ -67,7 +67,7 @@ variable "storage_type" {
 variable "subnet_ids" {
   description = "(required)"
   type        = list(string)
-  default     = [] 
+  default     = []
 }
 
 variable "tags" {
@@ -79,7 +79,7 @@ variable "tags" {
 variable "throughput_capacity" {
   description = "(required)"
   type        = number
-  default     =  8
+  default     = 8
 }
 
 variable "weekly_maintenance_start_time" {

@@ -1,14 +1,14 @@
 resource "aws_ecs_task_definition" "service" {
-  count                 = var.enable_task_definition ? 1 : 0
-  container_definitions = jsonencode(var.container_definitions)
+  count                    = var.enable_task_definition ? 1 : 0
+  container_definitions    = jsonencode(var.container_definitions)
   requires_compatibilities = var.requires_compatibilities
   task_role_arn            = var.task_role_arn
 
-  execution_role_arn    = var.execution_role_arn
-  family                = var.family
-  ipc_mode              = var.ipc_mode
-  network_mode          = var.network_mode
-  pid_mode              = var.pid_mode
+  execution_role_arn = var.execution_role_arn
+  family             = var.family
+  ipc_mode           = var.ipc_mode
+  network_mode       = var.network_mode
+  pid_mode           = var.pid_mode
 
   # Fargate requires cpu and memory to be defined at the task level
   cpu    = var.cpu
@@ -48,19 +48,19 @@ resource "aws_ecs_task_definition" "service" {
   dynamic "proxy_configuration" {
     for_each = var.proxy_configuration
     content {
-      properties           = lookup(proxy_configuration.value, "properties", null)
-      type                 = lookup(proxy_configuration.value.type, "type", null)
-      container_name       = lookup(proxy_configuration.value.type, "container_name", null)
+      properties     = lookup(proxy_configuration.value, "properties", null)
+      type           = lookup(proxy_configuration.value.type, "type", null)
+      container_name = lookup(proxy_configuration.value.type, "container_name", null)
     }
-  }    
- tags = merge(
-   {
+  }
+  tags = merge(
+    {
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project
       SCM             = var.git_repo
       ServiceProvider = var.ServiceProvider
-   },
-   var.tags
-   )
-} 
+    },
+    var.tags
+  )
+}

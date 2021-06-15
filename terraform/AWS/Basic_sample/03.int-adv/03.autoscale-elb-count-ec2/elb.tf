@@ -1,25 +1,25 @@
 #alb on AWS
 # Create a new load balancer
 resource "aws_lb" "application_alb" {
-  name               = "application-elb"
-  internal           = false
-  enable_deletion_protection = false
-  enable_cross_zone_load_balancing  = false
-  load_balancer_type = "application"
-  security_groups    = ["${aws_security_group.lb_sg.id}"]
-  subnets = var.elb_pub_subnet
+  name                             = "application-elb"
+  internal                         = false
+  enable_deletion_protection       = false
+  enable_cross_zone_load_balancing = false
+  load_balancer_type               = "application"
+  security_groups                  = ["${aws_security_group.lb_sg.id}"]
+  subnets                          = var.elb_pub_subnet
 
   access_logs {
-    bucket        = aws_s3_bucket.mys3_log.id
-    prefix        = "log/log-elb"
-    enabled       = false
+    bucket  = aws_s3_bucket.mys3_log.id
+    prefix  = "log/log-elb"
+    enabled = false
   }
 
   tags = {
-    Name = format("${var.myec2tagname["Name"]}-02")
+    Name         = format("${var.myec2tagname["Name"]}-02")
     created_from = "TF"
-    created_by = var.myec2tagname["created_by"]
-    timestamp = "${timestamp()}"
+    created_by   = var.myec2tagname["created_by"]
+    timestamp    = "${timestamp()}"
   }
 }
 #lb rules
@@ -120,48 +120,48 @@ resource "aws_lb_listener_rule" "host_based_routing" {
 
 #target_group----------------------------------------------
 resource "aws_lb_target_group" "lb_tg_1" {
-  name = "elb-${var.myec2tagname["Name"]}-tg-01"
-  port     = 80
-  protocol = "HTTP"
-  target_type = "instance"
-  vpc_id   = var.myec2_vpc_id
+  name                 = "elb-${var.myec2tagname["Name"]}-tg-01"
+  port                 = 80
+  protocol             = "HTTP"
+  target_type          = "instance"
+  vpc_id               = var.myec2_vpc_id
   deregistration_delay = "300"
   stickiness {
-    type = "lb_cookie"
-    enabled  = false
+    type    = "lb_cookie"
+    enabled = false
   }
   tags = {
     created_from = "TF"
-    created_by = var.myec2tagname["created_by"]
-    timestamp = "${timestamp()}"
+    created_by   = var.myec2tagname["created_by"]
+    timestamp    = "${timestamp()}"
   }
 }
 
 resource "aws_lb_target_group" "lb_autoscale_tg_1" {
-  name = "elb-${var.myec2tagname["Name"]}-autoscale-tg-01"
-  port     = 80
-  protocol = "HTTP"
-  target_type = "instance"
-  vpc_id   = var.myec2_vpc_id
+  name                 = "elb-${var.myec2tagname["Name"]}-autoscale-tg-01"
+  port                 = 80
+  protocol             = "HTTP"
+  target_type          = "instance"
+  vpc_id               = var.myec2_vpc_id
   deregistration_delay = "300"
   stickiness {
-    type = "lb_cookie"
-    enabled  = true
+    type            = "lb_cookie"
+    enabled         = true
     cookie_duration = 86400
   }
   health_check {
-    path = "/"
-    port = 80
-    healthy_threshold = 6
+    path                = "/"
+    port                = 80
+    healthy_threshold   = 6
     unhealthy_threshold = 2
-    timeout = 2
-    interval = 5
-    matcher = "200"  # has to be HTTP 200 or fails
-  }  
+    timeout             = 2
+    interval            = 5
+    matcher             = "200" # has to be HTTP 200 or fails
+  }
   tags = {
     created_from = "TF"
-    created_by = var.myec2tagname["created_by"]
-    timestamp = "${timestamp()}"
+    created_by   = var.myec2tagname["created_by"]
+    timestamp    = "${timestamp()}"
   }
 }
 

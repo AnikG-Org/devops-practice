@@ -44,7 +44,7 @@ variable "kms_key_id" {
   default     = ""
 }
 variable "enable_bucket_public_access_blocking" {
-  type = bool
+  type    = bool
   default = false
 }
 variable "lifecycle_rule" {

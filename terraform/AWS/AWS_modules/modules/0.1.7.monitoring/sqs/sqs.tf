@@ -13,20 +13,20 @@ resource "aws_sqs_queue" "queue" {
   name                              = var.name
   receive_wait_time_seconds         = var.receive_wait_time_seconds
   redrive_policy                    = var.enable_redrive_policy ? local.redrive_policy : ""
-  tags = merge( 
-    var.additional_tags,  
+  tags = merge(
+    var.additional_tags,
     {
-      
+
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project
       SCM             = var.git_repo
       ServiceProvider = var.ServiceProvider
-      sequence    = count.index + 001
+      sequence        = count.index + 001
     },
     var.tags
   )
-  visibility_timeout_seconds        = var.visibility_timeout_seconds
+  visibility_timeout_seconds = var.visibility_timeout_seconds
 }
 
 # SQS Queue Policy.

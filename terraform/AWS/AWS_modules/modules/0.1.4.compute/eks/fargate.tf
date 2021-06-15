@@ -9,7 +9,7 @@ module "fargate" {
   iam_path                          = var.iam_path
   iam_policy_arn_prefix             = local.policy_arn_prefix
   subnets                           = var.subnets
-  tags                              = merge(local.local_tags,var.tags)
+  tags                              = merge(local.local_tags, var.tags)
 
   # Hack to ensure ordering of resource creation.
   # This is a homemade `depends_on` https://discuss.hashicorp.com/t/tips-howto-implement-module-depends-on-emulation/2305/2

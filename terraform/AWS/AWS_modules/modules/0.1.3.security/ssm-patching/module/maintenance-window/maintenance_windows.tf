@@ -1,15 +1,15 @@
 locals {
-  random_string = random_string.name_1.result
+  random_string    = random_string.name_1.result
   service_role_arn = aws_iam_role.ssm_maintenance_window[0].arn
   iam_service_role_arn = element(
     compact(
       concat(
-        local.service_role_arn,        
+        local.service_role_arn,
         [var.service_role_arn],
       ),
     ),
     0,
-  )  
+  )
 }
 
 
@@ -27,11 +27,11 @@ resource "aws_ssm_maintenance_window" "scan_window" {
 }
 
 resource "aws_ssm_maintenance_window_task" "task_scan_patches" {
-  count            = var.enable_mode_scan ? 1 : 0
-  window_id        = aws_ssm_maintenance_window.scan_window[0].id
-  task_type        = "RUN_COMMAND"
-  task_arn         = "AWS-RunPatchBaseline"
-  priority         = var.task_scan_priority
+  count     = var.enable_mode_scan ? 1 : 0
+  window_id = aws_ssm_maintenance_window.scan_window[0].id
+  task_type = "RUN_COMMAND"
+  task_arn  = "AWS-RunPatchBaseline"
+  priority  = var.task_scan_priority
   #service_role_arn = var.service_role_arn
   service_role_arn = local.iam_service_role_arn
   max_concurrency  = var.max_concurrency
@@ -105,10 +105,10 @@ resource "aws_ssm_maintenance_window" "install_window" {
 }
 
 resource "aws_ssm_maintenance_window_task" "task_install_patches" {
-  window_id        = aws_ssm_maintenance_window.install_window.id
-  task_type        = "RUN_COMMAND"
-  task_arn         = "AWS-RunPatchBaseline"
-  priority         = var.task_install_priority
+  window_id = aws_ssm_maintenance_window.install_window.id
+  task_type = "RUN_COMMAND"
+  task_arn  = "AWS-RunPatchBaseline"
+  priority  = var.task_install_priority
   #service_role_arn = var.service_role_arn
   service_role_arn = local.iam_service_role_arn
   max_concurrency  = var.max_concurrency
@@ -179,8 +179,8 @@ resource "random_string" "name_1" {
 }
 resource "aws_iam_role" "ssm_maintenance_window" {
   count = enable_ssm_mw_role == true ? 1 : 0
-  name = "role-${var.environment}-ssm-mw-role-${local.random_string}"
-  path = "/system/"
+  name  = "role-${var.environment}-ssm-mw-role-${local.random_string}"
+  path  = "/system/"
 
   assume_role_policy = <<EOF
 {
@@ -201,7 +201,7 @@ EOF
 }
 
 resource "aws_iam_role_policy_attachment" "role_attach_ssm_mw" {
-  count      = enable_ssm_mw_role == true ? 1 : 0
+  count = enable_ssm_mw_role == true ? 1 : 0
 
   role       = aws_iam_role.ssm_maintenance_window[0].name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonSSMMaintenanceWindowRole"

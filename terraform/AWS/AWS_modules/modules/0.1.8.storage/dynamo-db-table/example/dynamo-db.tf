@@ -1,6 +1,6 @@
 module "dynamodb_table" {
-  source = "../"
-  provider_region  = var.provider_region
+  source          = "../"
+  provider_region = var.provider_region
   table_name      = "my-table"
   hash_key        = "id"
   range_key       = "title"

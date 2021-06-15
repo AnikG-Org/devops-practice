@@ -1,26 +1,26 @@
 #alb on AWS
 # Create a new load balancer
 resource "aws_lb" "application_alb" {
-  name               = "application-elb"
-  internal           = false
-  enable_deletion_protection = false
-  enable_cross_zone_load_balancing  = false
-  load_balancer_type = "application"
-  security_groups    = ["${aws_security_group.lb_sg.id}"]
+  name                             = "application-elb"
+  internal                         = false
+  enable_deletion_protection       = false
+  enable_cross_zone_load_balancing = false
+  load_balancer_type               = "application"
+  security_groups                  = ["${aws_security_group.lb_sg.id}"]
   #subnets            = aws_subnet.public.*.id
   subnets = var.elb_pub_subnet
 
   access_logs {
-    bucket        = aws_s3_bucket.mys3.id
-    prefix        = "log/log-elb"
-    enabled       = false
+    bucket  = aws_s3_bucket.mys3.id
+    prefix  = "log/log-elb"
+    enabled = false
   }
 
   tags = {
-    Name = "elb-${var.myec2tagname["Name"]}-01"
+    Name         = "elb-${var.myec2tagname["Name"]}-01"
     created_from = "TF"
-    created_by = var.myec2tagname["created_by"]
-    timestamp = "${timestamp()}"
+    created_by   = var.myec2tagname["created_by"]
+    timestamp    = "${timestamp()}"
   }
 }
 #lb rules
@@ -121,19 +121,19 @@ resource "aws_lb_listener_rule" "host_based_routing" {
 
 #target_group
 resource "aws_lb_target_group" "lb_tg_1" {
-  name = "elb-${var.myec2tagname["Name"]}-tg-01"
-  port     = 80
-  protocol = "HTTP"
-  target_type = "instance"
-  vpc_id   = var.myec2_vpc_id
+  name                 = "elb-${var.myec2tagname["Name"]}-tg-01"
+  port                 = 80
+  protocol             = "HTTP"
+  target_type          = "instance"
+  vpc_id               = var.myec2_vpc_id
   deregistration_delay = "300"
   stickiness {
-    type = "lb_cookie"
-    enabled  = false
+    type    = "lb_cookie"
+    enabled = false
   }
   tags = {
     created_from = "TF"
-    created_by = var.myec2tagname["created_by"]
-    timestamp = "${timestamp()}"
+    created_by   = var.myec2tagname["created_by"]
+    timestamp    = "${timestamp()}"
   }
 }

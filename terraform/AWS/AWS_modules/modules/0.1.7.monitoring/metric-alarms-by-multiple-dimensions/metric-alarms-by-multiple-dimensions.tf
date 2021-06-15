@@ -50,16 +50,16 @@ resource "aws_cloudwatch_metric_alarm" "this" {
     }
   }
 
-  tags = merge( 
-    var.additional_tags,  
+  tags = merge(
+    var.additional_tags,
     {
-      
+
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project
       SCM             = var.git_repo
       ServiceProvider = var.ServiceProvider
-      sequence    = count.index + 001
+      sequence        = count.index + 001
     },
     var.tags
   )

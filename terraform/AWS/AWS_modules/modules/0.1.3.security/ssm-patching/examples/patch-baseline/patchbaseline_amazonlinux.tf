@@ -1,5 +1,5 @@
 locals {
-  operating_system_amazon_linux  = "AMAZON_LINUX"
+  operating_system_amazon_linux = "AMAZON_LINUX"
 }
 
 #####

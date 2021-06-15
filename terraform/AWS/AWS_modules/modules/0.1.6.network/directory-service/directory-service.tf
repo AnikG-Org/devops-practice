@@ -1,6 +1,6 @@
-  
+
 resource "aws_directory_service_directory" "this" {
-  count       = var.enable_directory_service ? 1 : 0  
+  count       = var.enable_directory_service ? 1 : 0
   name        = var.name
   short_name  = var.short_name
   password    = var.password
@@ -10,16 +10,16 @@ resource "aws_directory_service_directory" "this" {
   description = var.description
   enable_sso  = var.enable_sso
   edition     = var.edition
- tags = merge(
-   {
+  tags = merge(
+    {
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project
       SCM             = var.git_repo
       ServiceProvider = var.ServiceProvider
-   },
-   var.tags
-   )
+    },
+    var.tags
+  )
 
   dynamic "vpc_settings" {
     for_each = var.type != "ADConnector" ? ["1"] : []

@@ -7,11 +7,11 @@ locals {
       SCM             = var.git_repo
       ServiceProvider = var.ServiceProvider
     },
-  )    
+  )
 }
 
 #tag#--------------------------------------- 
-variable "ServiceProvider" {  default = "" }
+variable "ServiceProvider" { default = "" }
 
 
 variable "git_repo" { default = "" }

@@ -1,6 +1,6 @@
 #resource assoiciation created by tf
 resource "aws_eip_association" "eipass_myec2" {
-  instance_id = aws_instance.myec2.id
+  instance_id   = aws_instance.myec2.id
   allocation_id = aws_eip.lb.id
 }
 

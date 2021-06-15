@@ -1,5 +1,5 @@
 module "this" {
-  source  = "./null-label"
+  source = "./null-label"
 
   enabled             = var.enabled
   namespace           = var.namespace

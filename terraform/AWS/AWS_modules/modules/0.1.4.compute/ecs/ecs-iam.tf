@@ -2,16 +2,16 @@ resource "aws_iam_role" "this" {
   name = "${var.name}_ecs_instance_role"
   path = "/ecs/"
 
- tags = merge(
-   {
+  tags = merge(
+    {
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project
       SCM             = var.git_repo
       ServiceProvider = var.ServiceProvider
-   },
-   var.tags
-   )
+    },
+    var.tags
+  )
 
   assume_role_policy = <<EOF
 {

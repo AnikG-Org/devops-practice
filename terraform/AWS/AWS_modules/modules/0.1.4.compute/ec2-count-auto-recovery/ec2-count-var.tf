@@ -1,7 +1,7 @@
 #EC2 variable
 variable "instance_count" {
-  type = number
-  default = 1 
+  type    = number
+  default = 1
 }
 variable "ami" {}
 variable "instance_type" { default = "t3.micro" }
@@ -36,7 +36,7 @@ variable "vpc_security_group_ids" {
   type        = list(string)
   default     = [] #[null]
 }
- /*
+/*
 variable "private_ip" {
   description = "Private IP address to associate with the instance in a VPC"
   type        = string
@@ -89,7 +89,7 @@ variable "metadata_options" {
   default     = {}
 }
 variable "ec2_count_depends_on" {
-  type = any
+  type    = any
   default = []
 }
 #storage
@@ -142,7 +142,7 @@ variable "enable_private_route53_record" {
 variable "route53_hosted_zone_id" { default = "" }
 variable "health_check_path" { default = "" }
 variable "record_name" {
-   type = string
-   default = ""
-} 
+  type    = string
+  default = ""
+}
 

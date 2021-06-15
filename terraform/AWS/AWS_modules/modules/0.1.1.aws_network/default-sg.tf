@@ -6,7 +6,7 @@ resource "aws_security_group" "myec2common_01" {
   revoke_rules_on_delete = true
   tags = merge(
     {
-      Name = "${var.project}-commonsg_01-cloud",
+      Name            = "${var.project}-commonsg_01-cloud",
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project
@@ -40,7 +40,7 @@ resource "aws_security_group" "myec2common_02" {
   revoke_rules_on_delete = true
   tags = merge(
     {
-      Name = "${var.project}-commonsg_02-on-prem",
+      Name            = "${var.project}-commonsg_02-on-prem",
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project

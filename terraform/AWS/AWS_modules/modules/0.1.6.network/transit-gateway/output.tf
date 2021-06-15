@@ -93,10 +93,10 @@ output "ram_principal_association_id" {
 
 #aws_ec2_transit_gateway_peering_attachment
 output "aws_ec2_transit_gateway_peering_attachment_id" {
-  value = [ for k, v in var.aws_ec2_transit_gateway_peering_attachment : aws_ec2_transit_gateway_peering_attachment.this[k].id ]
+  value = [for k, v in var.aws_ec2_transit_gateway_peering_attachment : aws_ec2_transit_gateway_peering_attachment.this[k].id]
 }
 
 
 output "aws_ec2_transit_gateway_peering_attachment_accepter_id" {
-  value = [ for k, v in var.aws_ec2_transit_gateway_peering_attachment_accepter : aws_ec2_transit_gateway_peering_attachment_accepter.this[k].id ]
+  value = [for k, v in var.aws_ec2_transit_gateway_peering_attachment_accepter : aws_ec2_transit_gateway_peering_attachment_accepter.this[k].id]
 }

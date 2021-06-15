@@ -5,7 +5,7 @@ variable "name" {
   description = "Name of the VPC"
 }
 
-variable "git_repo" {default = "test-git-repo" }
+variable "git_repo" { default = "test-git-repo" }
 
 variable "project" {
   default     = "test-project"
@@ -51,7 +51,7 @@ variable "private_subnet_cidr_blocks" {
 }
 ##---------------------------------------
 variable "availability_zones" {
-  default     = ["us-east-1a", "us-east-1b","us-east-1c"]
+  default     = ["us-east-1a", "us-east-1b", "us-east-1c"]
   type        = list
   description = "List of Subnet Network availability zones"
 }

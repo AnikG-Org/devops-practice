@@ -1,10 +1,10 @@
 data "aws_ami" "al2_ami" {
-  most_recent = true 
-  owners = ["amazon"]
+  most_recent = true
+  owners      = ["amazon"]
   filter {
-     name   = "architecture"
-     values = ["x86_64"]
-     }  
+    name   = "architecture"
+    values = ["x86_64"]
+  }
   filter {
     name   = "name"
     values = ["amzn2-ami-hvm*"]
@@ -13,11 +13,11 @@ data "aws_ami" "al2_ami" {
 
 data "aws_ami" "ubuntu_ami" {
   most_recent = true
-  owners = ["099720109477"]
+  owners      = ["099720109477"]
   filter {
-     name   = "architecture"
-     values = ["x86_64"]
-     }
+    name   = "architecture"
+    values = ["x86_64"]
+  }
   filter {
     name   = "name"
     values = ["ubuntu/images/hvm-ssd/ubuntu-focal-*"]
@@ -25,5 +25,5 @@ data "aws_ami" "ubuntu_ami" {
 }
 
 output "ami" {
-  value = zipmap(["al2_ami", "ubuntu_ami"], [data.aws_ami.ubuntu_ami.id , data.aws_ami.al2_ami.id])
+  value = zipmap(["al2_ami", "ubuntu_ami"], [data.aws_ami.ubuntu_ami.id, data.aws_ami.al2_ami.id])
 }

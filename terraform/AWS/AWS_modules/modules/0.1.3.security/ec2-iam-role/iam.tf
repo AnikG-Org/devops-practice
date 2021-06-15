@@ -5,16 +5,16 @@ resource "aws_iam_role" "servicerole" {
 
   assume_role_policy = local.assume_role_policy
 
-      tags = merge(
-      {
+  tags = merge(
+    {
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project
       SCM             = var.git_repo
-      ServiceProvider = var.ServiceProvider       
-      },
-      var.tags
-    )
+      ServiceProvider = var.ServiceProvider
+    },
+    var.tags
+  )
 }
 
 resource "aws_iam_policy" "custom_profile" {
@@ -29,22 +29,22 @@ resource "aws_iam_instance_profile" "custom_profile" {
   name = var.custom_iam_name
   role = aws_iam_role.servicerole.name
 
-      tags = merge(
-      {
+  tags = merge(
+    {
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project
       SCM             = var.git_repo
-      ServiceProvider = var.ServiceProvider        
-      },
-      var.tags
-    )
+      ServiceProvider = var.ServiceProvider
+    },
+    var.tags
+  )
 
 }
 resource "aws_iam_policy_attachment" "attach" {
-  name       = "policy-attachment"
+  name = "policy-attachment"
   #users      = [aws_iam_user.user.name]
-  roles      = [aws_iam_role.servicerole.name]
+  roles = [aws_iam_role.servicerole.name]
   #groups     = [aws_iam_group.group.name]
   policy_arn = aws_iam_policy.custom_profile.arn
 }
@@ -52,7 +52,7 @@ resource "aws_iam_policy_attachment" "attach" {
 
 variable "custom_iam_name" { default = "custom_iam_role" }
 variable "policy" {
-  type = any
+  type    = any
   default = {}
 }
 

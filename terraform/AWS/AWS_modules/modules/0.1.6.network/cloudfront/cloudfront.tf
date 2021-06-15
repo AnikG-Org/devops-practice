@@ -21,16 +21,16 @@ resource "aws_cloudfront_distribution" "cdn" {
   retain_on_delete    = var.retain_on_delete
   wait_for_deployment = var.wait_for_deployment
   web_acl_id          = var.web_acl_id
- tags = merge(
-   {
+  tags = merge(
+    {
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project
       SCM             = var.git_repo
       ServiceProvider = var.ServiceProvider
-   },
-   var.tags
-   )
+    },
+    var.tags
+  )
 
   dynamic "logging_config" {
     for_each = length(keys(var.logging_config)) == 0 ? [] : [var.logging_config]
@@ -146,7 +146,7 @@ resource "aws_cloudfront_distribution" "cdn" {
           lambda_arn   = l.value.lambda_arn
           include_body = lookup(l.value, "include_body", null)
         }
-      } 
+      }
     }
   }
 

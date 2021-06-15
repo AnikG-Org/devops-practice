@@ -16,7 +16,7 @@
 # }
 #tag#--------------------------------------- 
 #VPC#---------------------------------------
-variable "ServiceProvider" {  default = "" } 
+variable "ServiceProvider" { default = "" }
 variable "provider_region" {
   default     = "us-east-1"
   type        = string

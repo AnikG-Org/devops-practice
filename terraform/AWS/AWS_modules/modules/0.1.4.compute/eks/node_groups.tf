@@ -6,7 +6,7 @@ module "node_groups" {
   workers_group_defaults               = local.workers_group_defaults
   worker_security_group_id             = local.worker_security_group_id
   worker_additional_security_group_ids = var.worker_additional_security_group_ids
-  tags                                 = merge(local.local_tags,var.tags)
+  tags                                 = merge(local.local_tags, var.tags)
   node_groups_defaults                 = var.node_groups_defaults
   node_groups                          = var.node_groups
 

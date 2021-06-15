@@ -30,8 +30,8 @@ module "secrets-manager-4" {
 # Lambda to rotate secrets
 # AWS temaplates available here https://github.com/aws-samples/aws-secrets-manager-rotation-lambdas
 module "rotate_secret_lambda" {
-  source          = "../../modules/0.1.5.devops/lambda"
-  
+  source = "../../modules/0.1.5.devops/lambda"
+
   function_name = "secrets_manager_rotation"
   description   = "My awesome lambda function Created via Terraform IAAC"
   handler       = "index.lambda_handler"
@@ -39,12 +39,12 @@ module "rotate_secret_lambda" {
   create_role   = true
 
   source_path = "${path.module}/secrets_manager_rotation.zip"
- 
+
   environment = {
     variables = {
       SECRETS_MANAGER_ENDPOINT = "https://secretsmanager.us-east-1.amazonaws.com"
     }
-  } 
+  }
 }
 
 

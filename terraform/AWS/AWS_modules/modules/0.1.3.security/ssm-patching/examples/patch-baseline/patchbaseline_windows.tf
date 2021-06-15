@@ -20,8 +20,8 @@ module "patch_baseline_windows" {
   # define rules inside patch baseline
   patch_baseline_approval_rules = [
     {
-      approve_after_days = 7
-      compliance_level   = "UNSPECIFIED"
+      approve_after_days  = 7
+      compliance_level    = "UNSPECIFIED"
       enable_non_security = false
       patch_baseline_filters = [
         {

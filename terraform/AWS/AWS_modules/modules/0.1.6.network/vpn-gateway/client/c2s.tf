@@ -4,7 +4,7 @@ resource "aws_cloudwatch_log_group" "client_vpn" {
   tags = merge(
     var.tags,
     {
-      "Name" = "${var.name}-${var.project}-ClientVpnConnection"
+      "Name"          = "${var.name}-${var.project}-ClientVpnConnection"
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project
@@ -27,7 +27,7 @@ resource "aws_ec2_client_vpn_endpoint" "client_vpn" {
   transport_protocol     = var.transport_protocol
   tags = merge(
     {
-      "Name" = "${var.name}-${var.project}-ClientVpnEndPoint"
+      "Name"          = "${var.name}-${var.project}-ClientVpnEndPoint"
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project
@@ -41,21 +41,21 @@ resource "aws_ec2_client_vpn_endpoint" "client_vpn" {
       type                       = "certificate-authentication"
       root_certificate_chain_arn = var.root_certificate_chain_arn
     }
-  } 
+  }
   dynamic "authentication_options" {
     for_each = var.type == "directory-service-authentication" ? [var.type] : []
     content {
-      type                  = "directory-service-authentication"
-      active_directory_id   = var.active_directory_id
-    }    
+      type                = "directory-service-authentication"
+      active_directory_id = var.active_directory_id
+    }
   }
   dynamic "authentication_options" {
     for_each = var.type == "federated-authentication" ? [var.type] : []
     content {
-      type                           = "federated-authentication"
-      saml_provider_arn              = var.saml_provider_arn
+      type              = "federated-authentication"
+      saml_provider_arn = var.saml_provider_arn
       #self_service_saml_provider_arn = var.self_service_saml_provider_arn
-    }    
+    }
   }
   connection_log_options {
     cloudwatch_log_group  = aws_cloudwatch_log_group.client_vpn.name
@@ -102,7 +102,7 @@ resource "aws_security_group" "client_vpn_security_group" {
 
   tags = merge(
     {
-      "Name" = "${var.name}-${var.project}-ClientVpnSecurityGroup"
+      "Name"          = "${var.name}-${var.project}-ClientVpnSecurityGroup"
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project
@@ -120,11 +120,11 @@ resource "aws_ec2_client_vpn_authorization_rule" "all_authorization_rule" {
 
   for_each = var.aws_ec2_client_vpn_authorization_rule
 
-  client_vpn_endpoint_id      = aws_ec2_client_vpn_endpoint.client_vpn.id
-  target_network_cidr         = each.value["target_network_cidr"]
-  authorize_all_groups        = each.value["authorize_all_groups"]
-  access_group_id             = each.value["access_group_id"]
-  description                 = each.value["description"]
+  client_vpn_endpoint_id = aws_ec2_client_vpn_endpoint.client_vpn.id
+  target_network_cidr    = each.value["target_network_cidr"]
+  authorize_all_groups   = each.value["authorize_all_groups"]
+  access_group_id        = each.value["access_group_id"]
+  description            = each.value["description"]
 }
 
 resource "aws_ec2_client_vpn_route" "route" {

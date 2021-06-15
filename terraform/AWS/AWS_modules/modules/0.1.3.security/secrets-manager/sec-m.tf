@@ -1,12 +1,12 @@
 locals {
 
-    tags = {
-      Environment     = var.environment
-      Created_Via     = "Terraform IAAC"
-      Project         = var.project
-      SCM             = var.git_repo
-      ServiceProvider = var.ServiceProvider
-    }
+  tags = {
+    Environment     = var.environment
+    Created_Via     = "Terraform IAAC"
+    Project         = var.project
+    SCM             = var.git_repo
+    ServiceProvider = var.ServiceProvider
+  }
   secrets = [
     for secret in var.secrets : {
       name                    = lookup(secret, "name", null)
@@ -48,7 +48,7 @@ resource "aws_secretsmanager_secret" "sm" {
   recovery_window_in_days = lookup(element(local.secrets, count.index), "recovery_window_in_days")
 
 
-  tags = merge(var.tags,local.tags, lookup(element(local.secrets, count.index), "tags"))
+  tags = merge(var.tags, local.tags, lookup(element(local.secrets, count.index), "tags"))
 
 
 }
@@ -87,7 +87,7 @@ resource "aws_secretsmanager_secret" "rsm" {
   recovery_window_in_days = lookup(element(local.rotate_secrets, count.index), "recovery_window_in_days")
 
   # Tags
-  tags = merge(var.tags,local.tags, lookup(element(local.rotate_secrets, count.index), "tags"))
+  tags = merge(var.tags, local.tags, lookup(element(local.rotate_secrets, count.index), "tags"))
 
 
 }

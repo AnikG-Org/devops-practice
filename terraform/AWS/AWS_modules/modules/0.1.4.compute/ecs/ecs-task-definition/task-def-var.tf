@@ -3,8 +3,8 @@ variable "enable_task_definition" {
   description = "Registers a new task definition from the supplied family and containerDefinitions"
 }
 variable "container_definitions" {
-  type        = list(any)
-  default     = []
+  type    = list(any)
+  default = []
 }
 variable "requires_compatibilities" {
   default     = ["EC2"]
@@ -30,7 +30,7 @@ variable "ipc_mode" {
 variable "network_mode" {
   default     = "bridge"
   description = "(Optional) Docker networking mode to use for the containers in the task. Valid values are none, bridge, awsvpc, and host."
-}  
+}
 variable "pid_mode" {
   default     = null
   description = " (Optional) Process namespace to use for the containers in the task. The valid values are host and task."
@@ -56,10 +56,10 @@ variable "proxy_configuration" {
   description = "proxy_configuration https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecs_task_definition#proxy_configuration"
   #type        = list(any)
   type = list(object({
-    type       = string
+    type           = string
     container_name = string
     properties     = list(any)
-  })) 
+  }))
 }
 variable "placement_constraints" {
   default     = []

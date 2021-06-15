@@ -1,6 +1,6 @@
 
 locals {
-  aws_customer_gateway_id  = [for k, v in aws_customer_gateway.this : v.id]
+  aws_customer_gateway_id = [for k, v in aws_customer_gateway.this : v.id]
   # vpn_gateway = element(
   #   compact(
   #     concat(aws_vpn_gateway.this.*.id, [var.existing_vpn_gateway]),
@@ -31,7 +31,7 @@ resource "aws_vpn_gateway" "this" {
 
   tags = merge(
     {
-      "Name" = "${var.customvgwname}-VPNGateway-${var.project}"
+      "Name"             = "${var.customvgwname}-VPNGateway-${var.project}"
       "transitvpc:spoke" = var.spoke_vpc ? "True" : "False"
     },
     var.tags,
@@ -39,10 +39,10 @@ resource "aws_vpn_gateway" "this" {
   )
 }
 resource "aws_vpn_gateway_attachment" "this" {
-  count          = var.vpn_gateway_attachment ? 1 : 0
+  count = var.vpn_gateway_attachment ? 1 : 0
 
   vpc_id         = var.vpc_id
-  vpn_gateway_id = element(compact(concat(aws_vpn_gateway.this.*.id, [var.existing_vpn_gateway]),),0,)
+  vpn_gateway_id = element(compact(concat(aws_vpn_gateway.this.*.id, [var.existing_vpn_gateway]), ), 0, )
 }
 
 ###########################################################################################
@@ -50,14 +50,14 @@ resource "aws_vpn_gateway_attachment" "this" {
 resource "aws_vpn_connection" "vpn" {
   count = var.create_vpn_connection ? 1 : 0
 
-  customer_gateway_id   = element(compact(concat(local.aws_customer_gateway_id,[var.existing_customer_gateway],),),0,)
+  customer_gateway_id   = element(compact(concat(local.aws_customer_gateway_id, [var.existing_customer_gateway], ), ), 0, )
   static_routes_only    = var.disable_bgp
   tunnel1_inside_cidr   = length(var.bgp_inside_cidrs) >= 2 ? element(var.bgp_inside_cidrs, 0) : null
   tunnel1_preshared_key = length(var.preshared_keys) > 0 ? element(var.preshared_keys, 0) : null
   tunnel2_inside_cidr   = length(var.bgp_inside_cidrs) >= 2 ? element(var.bgp_inside_cidrs, 1) : null
   tunnel2_preshared_key = length(var.preshared_keys) > 0 ? element(var.preshared_keys, 1) : null
   type                  = "ipsec.1"
-  vpn_gateway_id        = element(compact(concat(aws_vpn_gateway.this.*.id, [var.existing_vpn_gateway]),),0,)
+  vpn_gateway_id        = element(compact(concat(aws_vpn_gateway.this.*.id, [var.existing_vpn_gateway]), ), 0, )
   transit_gateway_id    = var.transit_gateway_id
 
   # local_ipv4_network_cidr  = var.local_ipv4_network_cidr
@@ -83,7 +83,7 @@ resource "aws_vpn_connection_route" "static_routes" {
 resource "aws_vpn_gateway_route_propagation" "route_propagation" {
   count = var.enable_route_propagation ? length(var.route_tables) : 0
 
-  route_table_id = element(var.route_tables, count.index)   #tfvar use EXAMPLE >> route_tables  = concat(module.aws_network_1.public_aws_route_table, module.aws_network_1.private_aws_route_table)
-  vpn_gateway_id = element(compact(concat(aws_vpn_gateway.this.*.id, [var.existing_vpn_gateway]),),0,)
+  route_table_id = element(var.route_tables, count.index) #tfvar use EXAMPLE >> route_tables  = concat(module.aws_network_1.public_aws_route_table, module.aws_network_1.private_aws_route_table)
+  vpn_gateway_id = element(compact(concat(aws_vpn_gateway.this.*.id, [var.existing_vpn_gateway]), ), 0, )
 }
 ################################################################################

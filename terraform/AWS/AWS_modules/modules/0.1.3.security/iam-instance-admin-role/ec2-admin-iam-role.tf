@@ -2,16 +2,16 @@ resource "aws_iam_instance_profile" "myec2role_profile" {
   name = "ec2_admin_role-${local.random_string}"
   role = aws_iam_role.myec2role.name
 
-      tags = merge(
-      {
+  tags = merge(
+    {
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project
       SCM             = var.git_repo
-      ServiceProvider = var.ServiceProvider       
-      },
-      var.tags
-    )  
+      ServiceProvider = var.ServiceProvider
+    },
+    var.tags
+  )
 }
 
 #---------IAM-------
@@ -34,16 +34,16 @@ resource "aws_iam_role" "myec2role" {
   ]
 }
 EOF
-      tags = merge(
-      {
+  tags = merge(
+    {
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project
       SCM             = var.git_repo
-      ServiceProvider = var.ServiceProvider       
-      },
-      var.tags
-    )
+      ServiceProvider = var.ServiceProvider
+    },
+    var.tags
+  )
 }
 
 resource "aws_iam_policy" "myec2_admin_policy" {
@@ -64,21 +64,21 @@ resource "aws_iam_policy" "myec2_admin_policy" {
   ]
 }
 EOF
-      tags = merge(
-      {
+  tags = merge(
+    {
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project
       SCM             = var.git_repo
-      ServiceProvider = var.ServiceProvider       
-      },
-    ) 
+      ServiceProvider = var.ServiceProvider
+    },
+  )
 }
 
 resource "aws_iam_policy_attachment" "attach" {
-  name       = "policy-attachment"
+  name = "policy-attachment"
   #users      = [aws_iam_user.user.name]
-  roles      = [aws_iam_role.myec2role.name]
+  roles = [aws_iam_role.myec2role.name]
   #groups     = [aws_iam_group.group.name]
   policy_arn = aws_iam_policy.myec2_admin_policy.arn
 }

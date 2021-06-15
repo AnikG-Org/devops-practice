@@ -37,8 +37,8 @@ module "aws_workspaces_directory" {
 
 ############################   Work Space ############################
 module "workspace" {
-  source           = "../../modules/0.1.4.compute/workspace"
-  
+  source = "../../modules/0.1.4.compute/workspace"
+
   enable_workspace = false
 
   bundle_id                      = module.workspace.ws_bundle_id.standard_windows_10
@@ -68,8 +68,8 @@ module "workspace" {
 }
 ##################  #aws_workspaces_ip_group ##################
 module "workspace_ip_group" {
-  source                    = "../../modules/0.1.4.compute/workspace"
-  
+  source = "../../modules/0.1.4.compute/workspace"
+
   enable_workspace_ip_group = false
 
   ip_group_name = "ip-pool"

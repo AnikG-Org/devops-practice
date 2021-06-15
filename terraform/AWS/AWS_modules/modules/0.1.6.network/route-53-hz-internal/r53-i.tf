@@ -1,16 +1,16 @@
 resource "aws_route53_zone" "internal_zone" {
   comment = "${var.name}- Hosted zone for ENV ${var.environment}.${var.project}"
   name    = lower(var.name)
- tags = merge(
-   {
+  tags = merge(
+    {
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project
       SCM             = var.git_repo
       ServiceProvider = var.ServiceProvider
-   },
-   var.tags
-   )
+    },
+    var.tags
+  )
 
   vpc {
     vpc_id = var.vpc_id

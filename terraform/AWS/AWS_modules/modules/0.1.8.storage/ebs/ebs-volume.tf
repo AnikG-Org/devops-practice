@@ -3,24 +3,24 @@ locals {
 }
 
 resource "aws_ebs_volume" "ec2ebs_additional" {
-  count  = var.ebs_count  
+  count = var.ebs_count
 
-  availability_zone     = element(var.availability_zone, count.index)   #var.availability_zone
-  size                  = var.volume_size
-  type                  = var.volume_type
+  availability_zone = element(var.availability_zone, count.index) #var.availability_zone
+  size              = var.volume_size
+  type              = var.volume_type
 
-  snapshot_id           = var.snapshot_id
-  iops                  = var.iops
-  multi_attach_enabled  = var.multi_attach_enabled
-  throughput            = var.throughput
-  encrypted             = var.encryption
-  kms_key_id            = var.kms_key_id
+  snapshot_id          = var.snapshot_id
+  iops                 = var.iops
+  multi_attach_enabled = var.multi_attach_enabled
+  throughput           = var.throughput
+  encrypted            = var.encryption
+  kms_key_id           = var.kms_key_id
 
   tags = merge(
     var.additional_tags,
     {
-      Name              = "${var.ebstagname}-${count.index + 001}"
-      ebs_sequence      = count.index + 001
+      Name            = "${var.ebstagname}-${count.index + 001}"
+      ebs_sequence    = count.index + 001
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project
@@ -35,10 +35,10 @@ resource "aws_ebs_volume" "ec2ebs_additional" {
 
 }
 resource "aws_volume_attachment" "ebs_attachment" {
-  count                       = var.enable_aws_volume_attachment ? var.ebs_count : 0
-  device_name                 = element(var.device_name, count.index)
-  volume_id                   = element(aws_ebs_volume.ec2ebs_additional.*.id, count.index)
-  instance_id                 = element(var.instance_id[*], count.index)
+  count       = var.enable_aws_volume_attachment ? var.ebs_count : 0
+  device_name = element(var.device_name, count.index)
+  volume_id   = element(aws_ebs_volume.ec2ebs_additional.*.id, count.index)
+  instance_id = element(var.instance_id[*], count.index)
 
   depends_on = [var.ebs_attachment_depends_on]
 }
@@ -56,7 +56,7 @@ variable "enable_aws_volume_attachment" {
 variable "availability_zone" {
   description = "Additional EBS block devices availability_zones"
   type        = list(string)
-  default     = ["us-east-1a","us-east-1b", "us-east-1c"] #["ap-south-1a" , "ap-south-1b", "ap-south-1c"]
+  default     = ["us-east-1a", "us-east-1b", "us-east-1c"] #["ap-south-1a" , "ap-south-1b", "ap-south-1c"]
 }
 variable "multi_attach_enabled" {
   type    = bool
@@ -83,8 +83,8 @@ variable "encryption" {
 variable "kms_key_id" { default = "" }
 #attachment vars
 variable "device_name" {
-  type     = list(string)
-  default = ["/dev/sdf","/dev/sdb", "/dev/sdd", "/dev/sde","/dev/sda2", "/dev/sda1", "/dev/sdh", "xvdf"] #"xvdf" for windows
+  type    = list(string)
+  default = ["/dev/sdf", "/dev/sdb", "/dev/sdd", "/dev/sde", "/dev/sda2", "/dev/sda1", "/dev/sdh", "xvdf"] #"xvdf" for windows
 }
 variable "instance_id" {
   description = "Additional EBS block devices will attach to instance_id"
@@ -92,7 +92,7 @@ variable "instance_id" {
   #default     = []
 }
 variable "ebs_attachment_depends_on" {
-  type = any
+  type    = any
   default = []
 }
 

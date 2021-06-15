@@ -12,7 +12,7 @@ resource "aws_eks_cluster" "this" {
   enabled_cluster_log_types = var.cluster_enabled_log_types
   role_arn                  = local.cluster_iam_role_arn
   version                   = var.cluster_version
-  tags                      = merge(var.tags,local.local_tags)
+  tags                      = merge(var.tags, local.local_tags)
 
   vpc_config {
     security_group_ids      = compact([local.cluster_security_group_id])
@@ -120,7 +120,7 @@ resource "aws_iam_role" "cluster" {
   permissions_boundary  = var.permissions_boundary
   path                  = var.iam_path
   force_detach_policies = true
-  tags                  = merge(local.local_tags,var.tags)
+  tags                  = merge(local.local_tags, var.tags)
 }
 
 resource "aws_iam_role_policy_attachment" "cluster_AmazonEKSClusterPolicy" {
@@ -166,7 +166,7 @@ resource "aws_iam_policy" "cluster_elb_sl_role_creation" {
   description = "Permissions for EKS to create AWSServiceRoleForElasticLoadBalancing service-linked role"
   policy      = data.aws_iam_policy_document.cluster_elb_sl_role_creation[0].json
   path        = var.iam_path
-  tags        = merge(local.local_tags,var.tags)
+  tags        = merge(local.local_tags, var.tags)
 }
 
 resource "aws_iam_role_policy_attachment" "cluster_elb_sl_role_creation" {

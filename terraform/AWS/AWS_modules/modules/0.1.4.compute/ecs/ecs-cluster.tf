@@ -21,14 +21,14 @@ resource "aws_ecs_cluster" "this" {
     value = var.container_insights ? "enabled" : "disabled"
   }
 
- tags = merge(
-   {
+  tags = merge(
+    {
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project
       SCM             = var.git_repo
       ServiceProvider = var.ServiceProvider
-   },
-   var.tags
-   )
+    },
+    var.tags
+  )
 }

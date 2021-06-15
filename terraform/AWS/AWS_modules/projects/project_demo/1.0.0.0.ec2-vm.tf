@@ -19,8 +19,8 @@ module "ec2_iam_admin_role" {
 }
 
 module "ec2_count_autorecovery" {
-  source                      = "../../modules/0.1.4.compute/ec2-count-auto-recovery"
-  
+  source = "../../modules/0.1.4.compute/ec2-count-auto-recovery"
+
   instance_count              = 0
   ec2tagname                  = module.naming.name_prefix
   ami                         = module.ec2_count_autorecovery.ami_linux.ubuntu_ami

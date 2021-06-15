@@ -73,7 +73,7 @@ data "aws_iam_policy_document" "codebuild_role_extra_policies" {
       "ecs:*",
       "ecr:*",
       "eks:*",
-      "iam:PassRole",      
+      "iam:PassRole",
       "codedeploy:*",
       "codepipeline:*"
     ]

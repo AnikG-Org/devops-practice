@@ -43,12 +43,12 @@ resource "aws_db_subnet_group" "this" {
   subnet_ids  = var.subnets
 
   tags = merge(var.tags, {
-      Name = local.name
-      Environment     = var.environment
-      Created_Via     = "Terraform IAAC"
-      Project         = var.project
-      SCM             = var.git_repo
-      ServiceProvider = var.ServiceProvider  
+    Name            = local.name
+    Environment     = var.environment
+    Created_Via     = "Terraform IAAC"
+    Project         = var.project
+    SCM             = var.git_repo
+    ServiceProvider = var.ServiceProvider
   })
 }
 
@@ -118,7 +118,7 @@ resource "aws_rds_cluster" "this" {
       Project         = var.project
       SCM             = var.git_repo
       ServiceProvider = var.ServiceProvider
-    }
+    },
     var.tags, var.cluster_tags
   )
 }
@@ -159,7 +159,7 @@ resource "aws_rds_cluster_instance" "this" {
       Project         = var.project
       SCM             = var.git_repo
       ServiceProvider = var.ServiceProvider
-    }
+    },
     var.tags
   )
 }
@@ -194,12 +194,12 @@ resource "aws_iam_role" "rds_enhanced_monitoring" {
   max_session_duration  = var.iam_role_max_session_duration
 
   tags = merge(var.tags, {
-      Environment     = var.environment
-      Created_Via     = "Terraform IAAC"
-      Project         = var.project
-      SCM             = var.git_repo
-      ServiceProvider = var.ServiceProvider
-      Name = local.name
+    Environment     = var.environment
+    Created_Via     = "Terraform IAAC"
+    Project         = var.project
+    SCM             = var.git_repo
+    ServiceProvider = var.ServiceProvider
+    Name            = local.name
   })
 }
 
@@ -259,12 +259,12 @@ resource "aws_security_group" "this" {
   description = var.security_group_description == "" ? "Control traffic to/from RDS Aurora ${var.name}" : var.security_group_description
 
   tags = merge(var.tags, var.security_group_tags, {
-      Name = local.name
-      Environment     = var.environment
-      Created_Via     = "Terraform IAAC"
-      Project         = var.project
-      SCM             = var.git_repo
-      ServiceProvider = var.ServiceProvider
+    Name            = local.name
+    Environment     = var.environment
+    Created_Via     = "Terraform IAAC"
+    Project         = var.project
+    SCM             = var.git_repo
+    ServiceProvider = var.ServiceProvider
   })
 }
 
@@ -300,7 +300,7 @@ resource "aws_db_parameter_group" "example" {
   name        = "${var.name}-aurora-${var.engine}-parameter-group"
   family      = var.aws_db_parameter_group_family
   description = "${var.name}-aurora-${var.engine}-parameter-group"
-  tags = merge(  
+  tags = merge(
     {
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
@@ -318,7 +318,7 @@ resource "aws_rds_cluster_parameter_group" "example" {
   name        = "${var.name}-aurora-${var.engine}-cluster-parameter-group"
   family      = var.aws_db_parameter_group_family
   description = "${var.name}-aurora-${var.engine}-cluster-parameter-group"
-  tags = merge(  
+  tags = merge(
     {
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"

@@ -14,7 +14,7 @@ resource "aws_s3_bucket" "ssm_patch_log_bucket" {
   bucket = "s3-${var.environment}-ssm-patch-logs-bucket"
   acl    = "private"
 
-  tags = merge({Name = "s3-${var.environment}-ssm-patch-logs-bucket"}, var.tags)
+  tags = merge({ Name = "s3-${var.environment}-ssm-patch-logs-bucket" }, var.tags)
 }
 
 ###############
@@ -61,7 +61,7 @@ module "ssm-patch-management" {
   environment = var.environment
 
   # global parameters
-  s3_bucket_name   = aws_s3_bucket.ssm_patch_log_bucket.id
+  s3_bucket_name     = aws_s3_bucket.ssm_patch_log_bucket.id
   enable_ssm_mw_role = true
   #service_role_arn = aws_iam_role.ssm_maintenance_window.arn
 

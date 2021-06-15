@@ -99,10 +99,10 @@ data "http" "wait_for_cluster" {
   ]
 }
 variable "worker_has_linux_ami" {
-  type = bool
+  type    = bool
   default = true
 }
 variable "worker_has_windows_ami" {
-  type = bool
+  type    = bool
   default = true
 }

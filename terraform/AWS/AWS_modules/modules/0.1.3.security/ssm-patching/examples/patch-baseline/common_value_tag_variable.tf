@@ -17,19 +17,19 @@
 
 
 locals {
-    tags = {
-      Environment     = var.environment
-      Created_Via     = "Terraform IAAC"
-      Project         = var.project
-      SCM             = var.git_repo
-      ServiceProvider = var.ServiceProvider
-    }
+  tags = {
+    Environment     = var.environment
+    Created_Via     = "Terraform IAAC"
+    Project         = var.project
+    SCM             = var.git_repo
+    ServiceProvider = var.ServiceProvider
+  }
 }
 
 
 
 #tag#--------------------------------------- 
-variable "ServiceProvider" {  default = "" }
+variable "ServiceProvider" { default = "" }
 #VPC#---------------------------------------
 variable "provider_region" {
   default     = "us-east-1"

@@ -1,7 +1,7 @@
 ########################################## CGW
 output "cgw_id" {
   description = "List of IDs of Customer Gateway"
-  value       = (concat(local.aws_customer_gateway_id,[var.existing_customer_gateway]))  #[for k, v in aws_customer_gateway.this : v.id]
+  value       = (concat(local.aws_customer_gateway_id, [var.existing_customer_gateway])) #[for k, v in aws_customer_gateway.this : v.id]
 }
 output "customer_gateway" {
   description = "Map of Customer Gateway attributes"

@@ -5,13 +5,13 @@ locals {
 #################################
 variable "app_name" {
   description = "app_name or instance name"
-  type = string
-  default = "NGNX-webinstance"
+  type        = string
+  default     = "NGNX-webinstance"
 }
 variable "custom_name1" {
   description = "custom_name"
-  type = string
-  default = ""
+  type        = string
+  default     = ""
 }
 # variable "custom_name2" {
 #   description = "custom_name"
@@ -19,6 +19,6 @@ variable "custom_name1" {
 #   default = ""
 # }
 variable "sequence" {
-  type = string
+  type    = string
   default = "001"
 }

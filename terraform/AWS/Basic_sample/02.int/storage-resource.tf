@@ -1,25 +1,25 @@
 #ebs
 resource "aws_ebs_volume" "myec2ebs_backup" {
-  size   = 1
+  size              = 1
   availability_zone = var.ec2_az
-  type   =  "gp2"
-  tags   = {
-    Name = "${var.myec2tagname["Name"]}-backup-ebs"
+  type              = "gp2"
+  tags = {
+    Name         = "${var.myec2tagname["Name"]}-backup-ebs"
     created_from = "TF"
-    created_by = var.myec2tagname["created_by"]
-    timestamp = "${timestamp()}"
+    created_by   = var.myec2tagname["created_by"]
+    timestamp    = "${timestamp()}"
   }
 }
 
 resource "aws_ebs_volume" "myec2ebs_additional" {
-  size   = 1
+  size              = 1
   availability_zone = var.ec2_az
-  type   =  "gp3"
-  tags   = {
-    Name = "${var.myec2tagname["Name"]}-ebs-additional"
+  type              = "gp3"
+  tags = {
+    Name         = "${var.myec2tagname["Name"]}-ebs-additional"
     created_from = "TF"
-    created_by = var.myec2tagname["created_by"]
-    timestamp = "${timestamp()}"
+    created_by   = var.myec2tagname["created_by"]
+    timestamp    = "${timestamp()}"
   }
 }
 
@@ -30,8 +30,8 @@ resource "aws_s3_bucket" "mys3" {
   acl    = "private"
   versioning {
     enabled = false
-  } 
-    lifecycle_rule {
+  }
+  lifecycle_rule {
     prefix  = "log/"
     enabled = false
     noncurrent_version_transition {
@@ -46,10 +46,10 @@ resource "aws_s3_bucket" "mys3" {
       days = 90
     }
   }
- 
-  tags   = {
-    s3_Name = "${var.myec2tagname["Name"]}-${var.myec2tagname["created_by"]}"
+
+  tags = {
+    s3_Name    = "${var.myec2tagname["Name"]}-${var.myec2tagname["created_by"]}"
     created_by = "TF"
-    timestamp = "${timestamp()}"
+    timestamp  = "${timestamp()}"
   }
 }

@@ -19,8 +19,8 @@ module "security_groups_1" {
 }
 ############################################### sg-count
 module "count_security_groups_1" {
-  source            = "../../modules/0.1.3.security/sg-count"
-  
+  source = "../../modules/0.1.3.security/sg-count"
+
   count_dynamicsg_2 = 1
   #tag
   sg2_custom_name01 = "ec2box"
@@ -93,8 +93,8 @@ module "count_security_groups_2" {
 }
 ###############################################
 module "count_security_groups_3" {
-  source            = "../../modules/0.1.3.security/sg-count"
-  
+  source = "../../modules/0.1.3.security/sg-count"
+
   count_dynamicsg_2 = 0
   #tag
   sg2_custom_name01 = "db-sg"

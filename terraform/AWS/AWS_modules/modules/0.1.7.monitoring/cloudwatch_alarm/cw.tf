@@ -1,9 +1,9 @@
 locals {
   # favor name over alarm name if both are set
-  alarm_name             = var.name != "" ? var.name : var.alarm_name
-  sp_alarm_config = var.sp_alarms_enabled && var.sp_managed ? "enabled" : "disabled"
-  customer_alarm_config  = var.customer_alarms_enabled || false == var.sp_managed ? "enabled" : "disabled"
-  customer_ok_config     = var.customer_alarms_cleared && var.customer_alarms_enabled || false == var.sp_managed ? "enabled" : "disabled"
+  alarm_name            = var.name != "" ? var.name : var.alarm_name
+  sp_alarm_config       = var.sp_alarms_enabled && var.sp_managed ? "enabled" : "disabled"
+  customer_alarm_config = var.customer_alarms_enabled || false == var.sp_managed ? "enabled" : "disabled"
+  customer_ok_config    = var.customer_alarms_cleared && var.customer_alarms_enabled || false == var.sp_managed ? "enabled" : "disabled"
 
   sp_alarm_actions = {
     enabled  = [local.sp_sns_topic[var.severity]]

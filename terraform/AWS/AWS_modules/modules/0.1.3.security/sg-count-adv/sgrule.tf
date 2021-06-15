@@ -5,19 +5,19 @@ resource "aws_security_group_rule" "sg_rule" {
   security_group_id = element(aws_security_group.dynamicsg_2.*.id, count.index)
   type              = "ingress"
 
-  cidr_blocks              = var.ingress_cidr_blocks
-  ipv6_cidr_blocks         = var.sgrule_ipv6_cidr_blocks
-  prefix_list_ids          = var.sgrule_prefix_list_ids
-  description              = var.rules[var.ingress_rules[count.index]][3]
+  cidr_blocks      = var.ingress_cidr_blocks
+  ipv6_cidr_blocks = var.sgrule_ipv6_cidr_blocks
+  prefix_list_ids  = var.sgrule_prefix_list_ids
+  description      = var.rules[var.ingress_rules[count.index]][3]
 
   from_port = var.rules[var.ingress_rules[count.index]][0]
   to_port   = var.rules[var.ingress_rules[count.index]][1]
   protocol  = var.rules[var.ingress_rules[count.index]][2]
 
-  depends_on = [ aws_security_group_rule.sg_rule ]
+  depends_on = [aws_security_group_rule.sg_rule]
 }
 resource "aws_security_group_rule" "ingress_with_cidr_blocks" {
-  count = var.create_sg_rule ? length(var.ingress_with_cidr_blocks) : 0
+  count             = var.create_sg_rule ? length(var.ingress_with_cidr_blocks) : 0
   security_group_id = element(aws_security_group.dynamicsg_2.*.id, count.index)
   type              = "ingress"
 
@@ -51,6 +51,6 @@ resource "aws_security_group_rule" "ingress_with_cidr_blocks" {
     "protocol",
     var.rules[lookup(var.ingress_with_cidr_blocks[count.index], "rule", "_")][2],
   )
-  
-  depends_on = [ aws_security_group_rule.sg_rule ]
+
+  depends_on = [aws_security_group_rule.sg_rule]
 }

@@ -33,8 +33,8 @@ module "db_subnet_group" {
       Project         = var.project
       SCM             = var.git_repo
       ServiceProvider = var.ServiceProvider
-    }
-    var.tags, 
+    },
+    var.tags,
     var.db_subnet_group_tags
   )
 }

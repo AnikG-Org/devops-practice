@@ -2,28 +2,28 @@ resource "aws_eip" "eip" {
   count = var.eip_count
   vpc   = true
 
-  tags = merge( 
-    var.additional_tags,  
+  tags = merge(
+    var.additional_tags,
     {
-      Name        = "${var.project}-${var.eiptagname}-${count.index + 001}"
+      Name            = "${var.project}-${var.eiptagname}-${count.index + 001}"
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project
       SCM             = var.git_repo
       ServiceProvider = var.ServiceProvider
-      sequence    = count.index + 001
+      sequence        = count.index + 001
     },
     var.tags
   )
 }
 ##########################################################
-variable "eiptagname" { default = "eip"}
+variable "eiptagname" { default = "eip" }
 variable "eip_count" {
-  type = number
+  type    = number
   default = 1
 }
 variable "additional_tags" {
-  type =  map(string)
+  type    = map(string)
   default = {}
 }
 ##########################################################

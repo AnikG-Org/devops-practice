@@ -1,10 +1,10 @@
 locals {
-  role_arn  = var.role_arn == "" ? aws_iam_role.pipeline.0.arn : var.role_arn
+  role_arn = var.role_arn == "" ? aws_iam_role.pipeline.0.arn : var.role_arn
 }
 resource "aws_codepipeline" "pipe" {
   artifact_store {
-    location       = var.artifact_store["location"]
-    type           = var.artifact_store["type"]
+    location = var.artifact_store["location"]
+    type     = var.artifact_store["type"]
     #encryption_key = var.artifact_store["encryption_key"]
   }
 
@@ -36,16 +36,16 @@ resource "aws_codepipeline" "pipe" {
     }
   }
 
- tags = merge(
-   {
+  tags = merge(
+    {
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project
       SCM             = var.git_repo
       ServiceProvider = var.ServiceProvider
-   },
-   var.tags
-   )
+    },
+    var.tags
+  )
 }
 # locals {
 #   webhook_secret = join("", random_string.webhook_secret.*.result)

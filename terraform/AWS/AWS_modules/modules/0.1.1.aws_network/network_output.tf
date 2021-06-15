@@ -36,4 +36,4 @@ output "custom_dhcp_options" {
 }
 output "aws_s3_vpc_endpoint" {
   value = aws_vpc_endpoint.s3[*].id
-} 
+}

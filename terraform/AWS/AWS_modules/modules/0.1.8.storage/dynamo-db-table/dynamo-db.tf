@@ -1,5 +1,5 @@
 resource "aws_dynamodb_table" "db_table" {
-  count = var.create_table ? 1 : 0
+  count            = var.create_table ? 1 : 0
   name             = "${var.project}-${var.table_name}-${local.random_string}"
   read_capacity    = var.read_capacity
   write_capacity   = var.write_capacity
@@ -27,7 +27,7 @@ resource "aws_dynamodb_table" "db_table" {
   server_side_encryption {
     enabled     = var.server_side_encryption_enabled
     kms_key_arn = var.server_side_encryption_kms_key_arn
-  }  
+  }
 
   dynamic "local_secondary_index" {
     for_each = var.local_secondary_indexes
@@ -80,5 +80,5 @@ resource "aws_dynamodb_table" "db_table" {
   )
   lifecycle {
     ignore_changes = [tags.timestamp]
-  }  
+  }
 }

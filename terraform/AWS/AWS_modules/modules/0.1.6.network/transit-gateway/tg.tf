@@ -14,7 +14,7 @@ locals {
 
   tgw_default_route_table_tags_merged = merge(
     {
-      "Name" = format("%s-%s-tgw-default-route-table",var.name,var.project)
+      "Name"          = format("%s-%s-tgw-default-route-table", var.name, var.project)
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project
@@ -49,7 +49,7 @@ resource "aws_ec2_transit_gateway" "this" {
 
   tags = merge(
     {
-      "Name" = format("%s-%s-tgw",var.name,var.project)
+      "Name"          = format("%s-%s-tgw", var.name, var.project)
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project
@@ -78,7 +78,7 @@ resource "aws_ec2_transit_gateway_route_table" "this" {
 
   tags = merge(
     {
-      "Name" = format("%s-%s-tgw-route-table",var.name,var.project)
+      "Name"          = format("%s-%s-tgw-route-table", var.name, var.project)
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project
@@ -127,7 +127,7 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "this" {
 
   tags = merge(
     {
-      Name = format("%s-%s-%s", var.name, var.project, each.key)
+      Name            = format("%s-%s-%s", var.name, var.project, each.key)
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project
@@ -166,7 +166,7 @@ resource "aws_ram_resource_share" "this" {
 
   tags = merge(
     {
-      "Name" = format("%s", coalesce(var.ram_name, var.name))
+      "Name"          = format("%s", coalesce(var.ram_name, var.name))
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project
@@ -193,7 +193,7 @@ resource "aws_ram_principal_association" "this" {
 }
 
 resource "aws_ram_resource_share_accepter" "this" {
-  count = !var.create_tgw && var.share_tgw ? 1 : 0
+  count = ! var.create_tgw && var.share_tgw ? 1 : 0
 
   share_arn = var.ram_resource_share_arn
 }
@@ -210,7 +210,7 @@ resource "aws_ec2_transit_gateway_peering_attachment" "this" {
   transit_gateway_id      = each.value["transit_gateway_id"]
   tags = merge(
     {
-      Name = format("%s-%s-%s-peering-attachment", var.name, var.project, each.key)
+      Name            = format("%s-%s-%s-peering-attachment", var.name, var.project, each.key)
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project
@@ -218,7 +218,7 @@ resource "aws_ec2_transit_gateway_peering_attachment" "this" {
       ServiceProvider = var.ServiceProvider
     },
     var.tags,
-  )  
+  )
 }
 
 resource "aws_ec2_transit_gateway_peering_attachment_accepter" "this" {
@@ -227,7 +227,7 @@ resource "aws_ec2_transit_gateway_peering_attachment_accepter" "this" {
   transit_gateway_attachment_id = each.value["transit_gateway_attachment_id"]
   tags = merge(
     {
-      Name = format("%s-%s-%s-attachment-accepter", var.name, var.project, each.key)
+      Name            = format("%s-%s-%s-attachment-accepter", var.name, var.project, each.key)
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project
@@ -235,5 +235,5 @@ resource "aws_ec2_transit_gateway_peering_attachment_accepter" "this" {
       ServiceProvider = var.ServiceProvider
     },
     var.tags,
-  )  
+  )
 }

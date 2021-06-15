@@ -21,7 +21,7 @@ resource "aws_instance" "ec2_count" {
   vpc_security_group_ids      = var.vpc_security_group_ids #If you are creating Instances in a VPC, use vpc_security_group_ids instead.
 
   private_ip = element(concat(var.private_ips, [""]), count.index)
-  credit_specification { cpu_credits   = var.cpu_credits }
+  credit_specification { cpu_credits = var.cpu_credits }
   source_dest_check                    = var.source_dest_check       #true
   disable_api_termination              = var.disable_api_termination #false
   instance_initiated_shutdown_behavior = var.instance_initiated_shutdown_behavior
@@ -31,14 +31,14 @@ resource "aws_instance" "ec2_count" {
   tags = merge(
     var.additional_tags,
     {
-      Name              = "${var.ec2tagname}${count.index + 001}"
+      Name = "${var.ec2tagname}${count.index + 001}"
       #timestamp         = format("Created or Modified Date: %s", formatdate("MM/DD/YYYY", timestamp()))
       instance_sequence = count.index + 001
-      Environment     = var.environment
-      Created_Via     = "Terraform IAAC"
-      Project         = var.project
-      SCM             = var.git_repo
-      ServiceProvider = var.ServiceProvider
+      Environment       = var.environment
+      Created_Via       = "Terraform IAAC"
+      Project           = var.project
+      SCM               = var.git_repo
+      ServiceProvider   = var.ServiceProvider
     },
     var.tags
   )
@@ -55,15 +55,15 @@ resource "aws_instance" "ec2_count" {
     tags = merge(
       var.additional_tags,
       {
-        Name           = "${var.ec2tagname}${count.index + 001}-root-block"
+        Name = "${var.ec2tagname}${count.index + 001}-root-block"
         #timestamp      = format("Created or Modified Date: %s", formatdate("MM/DD/YYYY", timestamp()))
-        block_sequence = count.index + 001
+        block_sequence  = count.index + 001
         Environment     = var.environment
         Created_Via     = "Terraform IAAC"
         Project         = var.project
         SCM             = var.git_repo
-        ServiceProvider = var.ServiceProvider 
-        block_device   = "Root-Volume"      
+        ServiceProvider = var.ServiceProvider
+        block_device    = "Root-Volume"
       },
       var.tags
     )
@@ -121,7 +121,7 @@ resource "aws_route53_record" "public_route53_record" {
   }
   set_identifier = element(aws_instance.ec2_count.*.id, count.index)
 
-  records        = [element(aws_instance.ec2_count.*.public_ip, count.index)]
+  records = [element(aws_instance.ec2_count.*.public_ip, count.index)]
   #health_check_id = element(aws_route53_health_check.route53_health_check.*.id, count.index)
 }
 resource "aws_route53_record" "private_route53_record" {
@@ -136,8 +136,8 @@ resource "aws_route53_record" "private_route53_record" {
     weight = 10
   }
   set_identifier = element(aws_instance.ec2_count.*.id, count.index)
-  
-  records        = [element(aws_instance.ec2_count.*.private_ip, count.index)]
+
+  records = [element(aws_instance.ec2_count.*.private_ip, count.index)]
   #health_check_id = element(aws_route53_health_check.route53_health_check.*.id, count.index)
 }
 

@@ -11,7 +11,7 @@ resource "aws_customer_gateway" "this" {
 
   tags = merge(
     {
-      Name = format("CustomerGateway-%s-%s", var.project, each.key)
+      Name            = format("CustomerGateway-%s-%s", var.project, each.key)
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project

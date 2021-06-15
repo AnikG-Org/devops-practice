@@ -4,15 +4,15 @@ resource "aws_security_group" "myec2sg" {
   #vpc_id      = aws_vpc.main.id
   vpc_id = "vpc-002a0df2fc12ee47a"
   tags = {
-    Name = "myec2sg"
+    Name         = "myec2sg"
     created_from = "TF"
   }
   ingress {
-    description      = "ingress from VPC"
-    from_port        = 22
-    to_port          = 22
-    protocol         = "tcp"
-    cidr_blocks      = ["${aws_eip.lb.public_ip}/32","0.0.0.0/0"]
+    description = "ingress from VPC"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["${aws_eip.lb.public_ip}/32", "0.0.0.0/0"]
   }
   egress {
     from_port        = 0
@@ -65,6 +65,6 @@ EOF
 }
 
 resource "aws_iam_instance_profile" "myec2role_profile" {
-  name  = "myec2role_profile"
+  name = "myec2role_profile"
   role = aws_iam_role.myec2role.name
 }

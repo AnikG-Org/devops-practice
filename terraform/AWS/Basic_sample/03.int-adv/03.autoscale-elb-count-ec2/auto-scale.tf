@@ -1,16 +1,16 @@
 resource "aws_launch_template" "application_template" {
-  name_prefix   = "app-instance"
-  description   =   "app template for asg"
-  image_id      = var.myec2ami[var.region]
-  instance_type = "t3.large"
-  key_name = var.instance_key
+  name_prefix                          = "app-instance"
+  description                          = "app template for asg"
+  image_id                             = var.myec2ami[var.region]
+  instance_type                        = "t3.large"
+  key_name                             = var.instance_key
   instance_initiated_shutdown_behavior = "terminate"
   #vpc_security_group_ids = ["${aws_security_group.myec2sg_01.id}"]
-  network_interfaces { 
-      associate_public_ip_address = false 
-      security_groups = ["${aws_security_group.myec2sg_01.id}"]
-      } 
-/*  block_device_mappings {
+  network_interfaces {
+    associate_public_ip_address = false
+    security_groups             = ["${aws_security_group.myec2sg_01.id}"]
+  }
+  /*  block_device_mappings {
     device_name = "/dev/sda1"
     ebs {
       volume_size = 9
@@ -23,7 +23,7 @@ resource "aws_launch_template" "application_template" {
     name = aws_iam_instance_profile.myec2role_profile_01.name
   }
   capacity_reservation_specification { capacity_reservation_preference = "open" }
-  monitoring { enabled = true }  
+  monitoring { enabled = true }
   user_data = filebase64("/asg_userdata.sh")
 }
 
@@ -32,9 +32,9 @@ resource "aws_launch_template" "application_template" {
 resource "aws_autoscaling_group" "application_asg_01" {
   #availability_zones = var.ec2_autoscale_az
   vpc_zone_identifier  = [var.pvt_subnet[0], var.pvt_subnet[1]]
-  desired_capacity   = 1
-  max_size           = 2
-  min_size           = 1
+  desired_capacity     = 1
+  max_size             = 2
+  min_size             = 1
   termination_policies = ["OldestInstance"]
   health_check_type    = "EC2"
   #load_balancers = [aws_lb.application_alb.id]
@@ -45,7 +45,7 @@ resource "aws_autoscaling_group" "application_asg_01" {
     launch_template {
       launch_template_specification {
         launch_template_id = aws_launch_template.application_template.id
-        version = "$Latest"
+        version            = "$Latest"
       }
     }
   }
@@ -87,7 +87,7 @@ resource "aws_autoscaling_lifecycle_hook" "asg_lifecycle_hook" {
   "EC2_INSTANCE_LAUNCHING": "ERROR"
 }
 EOF
-/*
+  /*
   notification_target_arn = "arn:aws:sqs:us-east-1:444455556666:queue1*"
   role_arn                = "arn:aws:iam::123456789012:role/S3Access"
 */

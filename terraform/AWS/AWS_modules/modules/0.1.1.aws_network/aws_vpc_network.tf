@@ -13,7 +13,7 @@ locals {
       HA = "Enabled"
     }
   }
-  
+
 }
 ################################################################################
 #VPC---------------------------------------
@@ -27,7 +27,7 @@ resource "aws_vpc" "default" {
 
   tags = merge(
     {
-      Name = "${var.project}-${var.name}-VPC-NetWork",
+      Name            = "${var.project}-${var.name}-VPC-NetWork",
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project
@@ -45,13 +45,13 @@ resource "aws_route_table" "private" {
   vpc_id = aws_vpc.default.id
   tags = merge(
     {
-      Name = "${var.project}-Private_RT_NetWork-${count.index + 001}",
+      Name            = "${var.project}-Private_RT_NetWork-${count.index + 001}",
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project
       SCM             = var.git_repo
       ServiceProvider = var.ServiceProvider
-      pvt_rt_seq  = count.index + 001
+      pvt_rt_seq      = count.index + 001
     },
     var.tags
   )
@@ -61,7 +61,7 @@ resource "aws_route_table" "public" {
   vpc_id = aws_vpc.default.id
   tags = merge(
     {
-      Name = "${var.project}-Public_RT_NetWork",
+      Name            = "${var.project}-Public_RT_NetWork",
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project
@@ -100,15 +100,15 @@ resource "aws_default_route_table" "default" {
   }
 
   tags = merge(
-    { 
-      Name        = "${var.project}-default-route-table"
-      Environment     = var.environment
-      Created_Via     = "Terraform IAAC"
-      Project         = var.project
-      SCM             = var.git_repo
-      ServiceProvider = var.ServiceProvider
+    {
+      Name              = "${var.project}-default-route-table"
+      Environment       = var.environment
+      Created_Via       = "Terraform IAAC"
+      Project           = var.project
+      SCM               = var.git_repo
+      ServiceProvider   = var.ServiceProvider
       DefaultRouteTable = true
-    },      
+    },
     var.tags,
     var.default_route_table_tags,
   )
@@ -131,9 +131,9 @@ resource "aws_route" "public_internet_gateway" {
   gateway_id             = aws_internet_gateway.default.id
 }
 resource "aws_route" "public_internet_gateway_ipv6" {
-  route_table_id               = aws_route_table.public.id
-  destination_ipv6_cidr_block  = "::/0"
-  gateway_id                   = aws_internet_gateway.default.id
+  route_table_id              = aws_route_table.public.id
+  destination_ipv6_cidr_block = "::/0"
+  gateway_id                  = aws_internet_gateway.default.id
 }
 
 #route_table_association---------------------------------------
@@ -167,7 +167,7 @@ resource "aws_subnet" "private" {
 
   tags = merge(
     {
-      Name = "${var.project}-Private_SubNet_NetWork-${count.index + 1}"
+      Name            = "${var.project}-Private_SubNet_NetWork-${count.index + 1}"
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project
@@ -188,7 +188,7 @@ resource "aws_subnet" "public" {
 
   tags = merge(
     {
-      Name = "${var.project}-Public_SubNet_NetWork-${count.index + 1}"
+      Name            = "${var.project}-Public_SubNet_NetWork-${count.index + 1}"
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project
@@ -205,7 +205,7 @@ resource "aws_internet_gateway" "default" {
 
   tags = merge(
     {
-      Name = "${var.project}-IGW"
+      Name            = "${var.project}-IGW"
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project
@@ -224,12 +224,12 @@ resource "aws_eip" "nat" {
   vpc   = true
   tags = merge(
     {
-      Name = "${var.project}-NGW-EIP-${count.index + 001}",
-      Environment     = var.environment
-      Created_Via     = "Terraform IAAC"
-      Project         = var.project
-      SCM             = var.git_repo
-      ServiceProvider = var.ServiceProvider
+      Name             = "${var.project}-NGW-EIP-${count.index + 001}",
+      Environment      = var.environment
+      Created_Via      = "Terraform IAAC"
+      Project          = var.project
+      SCM              = var.git_repo
+      ServiceProvider  = var.ServiceProvider
       ngw_eip_sequence = count.index + 001
     },
     var.tags
@@ -247,13 +247,13 @@ resource "aws_nat_gateway" "default" {
   tags = merge(
     local.single_nat_gateway[var.single_nat_gateway],
     {
-      Name         = "${var.project}-NGW-${count.index + 001}"
+      Name            = "${var.project}-NGW-${count.index + 001}"
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project
       SCM             = var.git_repo
       ServiceProvider = var.ServiceProvider
-      ngw_sequence = count.index + 001
+      ngw_sequence    = count.index + 001
     },
     var.tags
   )
@@ -262,7 +262,7 @@ resource "aws_nat_gateway" "default" {
 ################################################################################
 # DHCP Options Set
 resource "aws_vpc_dhcp_options" "this" {
-  count = var.enable_custom_dhcp_options ? 1 : 0
+  count                = var.enable_custom_dhcp_options ? 1 : 0
   domain_name          = var.dhcp_options_domain_name
   domain_name_servers  = var.dhcp_options_domain_name_servers
   ntp_servers          = var.dhcp_options_ntp_servers
@@ -271,20 +271,20 @@ resource "aws_vpc_dhcp_options" "this" {
 
   tags = merge(
     {
-      Name = format("custom-dhcp-optionsets-%s", var.project)
+      Name                    = format("custom-dhcp-optionsets-%s", var.project)
       customDHCPOptions_Inuse = format("${var.enable_custom_dhcp_options}-%s", aws_vpc.default.id)
-      Environment     = var.environment
-      Created_Via     = "Terraform IAAC"
-      Project         = var.project
-      SCM             = var.git_repo
-      ServiceProvider = var.ServiceProvider
+      Environment             = var.environment
+      Created_Via             = "Terraform IAAC"
+      Project                 = var.project
+      SCM                     = var.git_repo
+      ServiceProvider         = var.ServiceProvider
     },
     var.dhcp_options_tags,
   )
   depends_on = [aws_vpc.default]
 }
 resource "aws_vpc_dhcp_options_association" "this" {
-  count = var.enable_custom_dhcp_options ? 1 : 0
+  count           = var.enable_custom_dhcp_options ? 1 : 0
   vpc_id          = aws_vpc.default.id
   dhcp_options_id = aws_vpc_dhcp_options.this[0].id
 
@@ -307,7 +307,7 @@ resource "aws_vpc_endpoint" "s3" {
 
   tags = merge(
     {
-      Name = "${var.project}-endpointS3"
+      Name            = "${var.project}-endpointS3"
       Environment     = var.environment
       Created_Via     = "Terraform IAAC"
       Project         = var.project

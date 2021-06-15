@@ -91,7 +91,7 @@ data "aws_ami" "Windows_Server_base_2016_ami" {
 }
 ############# Latest AMI #############
 output "ami_linux" {
-  value = zipmap(["al2_ami", "ubuntu_ami", "redhat_ami", "sles_ami","centos_ami"], [ data.aws_ami.al2_ami.id, data.aws_ami.ubuntu_ami.id, data.aws_ami.redhat_ami.id, data.aws_ami.sles_ami.id, data.aws_ami.centos_ami.id])
+  value = zipmap(["al2_ami", "ubuntu_ami", "redhat_ami", "sles_ami", "centos_ami"], [data.aws_ami.al2_ami.id, data.aws_ami.ubuntu_ami.id, data.aws_ami.redhat_ami.id, data.aws_ami.sles_ami.id, data.aws_ami.centos_ami.id])
 }
 output "ami_windows" {
   value = zipmap(["Windows_Server_base_2016_ami", "Windows_Server_base_2019_ami"], [data.aws_ami.Windows_Server_base_2016_ami.id, data.aws_ami.Windows_Server_base_2019_ami.id])
