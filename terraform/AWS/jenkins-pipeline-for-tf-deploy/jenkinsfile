@@ -31,7 +31,7 @@ pipeline {
                 sh 'echo $TF_API_TOKEN | base64 -d > $HOME/.terraform.d/credentials.tfrc.json'
             }
         }
-        stage('Init_&_validate'){
+        stage('Init_&_Validate'){
             steps {
                 dir("terraform/AWS/AWS_modules/projects/project_demo"){
                     
