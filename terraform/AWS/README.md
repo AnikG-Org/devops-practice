@@ -35,6 +35,13 @@ WorkFlow : GIT , TF, TF cloud(Free tier), TF modules, Project to deploy resource
 Jenkins setup on Docker: https://github.com/AnikG-Org/devops-practice/blob/main/terraform/AWS/jenkins-pipeline-for-tf-deploy/Jenkins%20setup.txt
 Jenkins_PipeLine: https://github.com/AnikG-Org/devops-practice/blob/main/terraform/AWS/jenkins-pipeline-for-tf-deploy/jenkinsfile
 
+
+
+[![LICENSE](https://img.shields.io/badge/LICENSE-Open-source-%E34F26?style=flat-square&logo=amazon-aws&logoColor=orange)](https://github.com/AnikG-Org/devops-practice/blob/main/terraform/LICENSE)
+
+
+
+
 Connect me: 
 
 [![Connect my profile](https://img.shields.io/badge/Anik_Guha-%E34F26?style=flat-square&logo=amazon-aws&logoColor=orange)](https://github.com/AnikG-Org/AnikG-Org/blob/main/README.md)
