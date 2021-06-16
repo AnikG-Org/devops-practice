@@ -31,6 +31,9 @@ Details Upcoming
 
 WorkFlow : GIT , TF, TF cloud(Free tier), TF modules, Project to deploy resource (Provider AWS), CI/CD: Host EC2, Runtime Docker, Jenkkins, JOB: groovy scripted pipeline with business logic, AWS Cloud deployment.
 
+Jenkins setup on Docker: https://github.com/AnikG-Org/devops-practice/blob/main/terraform/AWS/jenkins-pipeline-for-tf-deploy/Jenkins%20setup.txt
+Jenkins_PipeLine: https://github.com/AnikG-Org/devops-practice/blob/main/terraform/AWS/jenkins-pipeline-for-tf-deploy/jenkinsfile
+
 Connect me: 
 
 [![Connect my profile](https://img.shields.io/badge/Anik_Guha-%E34F26?style=flat-square&logo=amazon-aws&logoColor=orange)](https://github.com/AnikG-Org/AnikG-Org/blob/main/README.md)
