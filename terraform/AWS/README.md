@@ -38,6 +38,7 @@ Note: Most of the components has count = 0 / /* <new line> */ . enable it and us
 WorkFlow : GIT , TF, TF cloud(Free tier), TF modules, Project to deploy resource (Provider AWS), CI/CD: Host EC2, Runtime Docker, Jenkkins, JOB: groovy scripted pipeline with business logic, AWS Cloud deployment.
 
 Jenkins setup on Docker: https://github.com/AnikG-Org/devops-practice/blob/main/terraform/AWS/jenkins-pipeline-for-tf-deploy/Jenkins%20setup.txt
+      
 Jenkins_PipeLine: https://github.com/AnikG-Org/devops-practice/blob/main/terraform/AWS/jenkins-pipeline-for-tf-deploy/jenkinsfile
 
 
