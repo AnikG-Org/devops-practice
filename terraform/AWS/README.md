@@ -12,9 +12,7 @@ Maximum module prepared by myself and maximum are tested and applied at Module E
 
 My Terraform Cheat cmd and notes , That might handy for everyone : https://github.com/AnikG-Org/devops-practice/blob/main/terraform/AWS/cmd.sh
 
-Note: Some of modules/referance features taken from open TF registry for handson practice and made those my own based on my requirement.
 
-Anyone can fork and use this modules. I made this TF Open Source. Happy learing .
 
 [![Open Source Love](https://badges.frapsoft.com/os/v2/open-source.svg?v=103)](https://github.com/AnikG-Org)
 
@@ -44,11 +42,16 @@ Jenkins_PipeLine: https://github.com/AnikG-Org/devops-practice/blob/main/terrafo
 
 
 
-[![LICENSE](https://img.shields.io/badge/LICENSE%20Open%20source-Terraform-%235849a6.svg)](https://github.com/AnikG-Org/devops-practice/blob/main/terraform/LICENSE)
 
 
 
 
+
+Note: Some of modules/referance features taken from open TF registry for handson practice and made those my own based on my requirement.
+
+Anyone can fork and use this modules. I made this TF Open Source. Happy learing .      
+[![LICENSE](https://img.shields.io/badge/LICENSE%20Open%20source-Terraform-%235849a6.svg)](https://github.com/AnikG-Org/devops-practice/blob/main/terraform/LICENSE)      
+      
 Connect me: 
 
 [![Connect my profile](https://img.shields.io/badge/Anik_Guha-%E34F26?style=flat-square&logo=amazon-aws&logoColor=orange)](https://github.com/AnikG-Org/AnikG-Org/blob/main/README.md)
