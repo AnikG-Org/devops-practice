@@ -3,7 +3,7 @@ path: devops-practice/terraform/AWS/*
 
 *** terraform Module Version supports  ***
 -----
-<p align="center">
+<p align="left">
 terraform {
   required_version = "~> 0.13"
   required_providers {
