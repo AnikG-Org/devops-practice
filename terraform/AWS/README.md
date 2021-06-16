@@ -63,7 +63,7 @@ Details Upcoming **
 Link: Module EXAMPLE:
       https://github.com/AnikG-Org/devops-practice/tree/main/terraform/AWS/AWS_modules/projects/project_demo
       
-Note: Most of the components has count = 0 / /* <new line> */ . enable it and use it    
+Note: Most of the components has count = 0 / /* <new line> */ or Disabled . enable it and use it    
 
 # Project WorkFlow TF
 
