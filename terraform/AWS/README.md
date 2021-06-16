@@ -10,7 +10,14 @@ Most of common used AWS services / resources including automation service covere
 
 *** terraform workspace select prod ***
 
+## TF CLOUD 
+
+<p align="center">
+  <img src="https://github.com/AnikG-Org/devops-practice/blob/main/terraform/AWS/tf-cloud.JPG" width="414" height="220" />
+</p> 
+
 Basic sentinel-policy for TF cloud:  https://github.com/AnikG-Org/devops-practice/tree/main/terraform/AWS/AWS_modules/sentinel-policy
+
 
 Maximum module prepared by myself and maximum are tested and applied at Module EXAMPLE: "project_demo" .
 
