@@ -24,7 +24,7 @@ Link to AWS TF_Modules files & director list:  https://github.com/AnikG-Org/devo
 
 Most of common used AWS services / resources including automation service covered. : [![Module EXAMPLEs](https://img.shields.io/badge/Module%20EXAMPLEs%20-Terraform-%235849a6.svg)](https://github.com/AnikG-Org/devops-practice/tree/main/terraform/AWS/AWS_modules/projects/project_demo) 
 
-*** terraform workspace select prod ***
+
 
 ## TF CLOUD 
 
@@ -36,6 +36,10 @@ Most of common used AWS services / resources including automation service covere
   <img src="https://github.com/AnikG-Org/devops-practice/blob/main/terraform/AWS/tf-cloud-1.JPG" width="814" height="300" />
 </p> 
 
+*** terraform workspace select prod ***
+    workspaces { 
+      prefix = "project-demo-"
+    }
 
 Basic sentinel-policy for TF cloud:  https://github.com/AnikG-Org/devops-practice/tree/main/terraform/AWS/AWS_modules/sentinel-policy
 
