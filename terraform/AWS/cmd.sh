@@ -171,3 +171,11 @@ main = rule {
   }
 }
 
+#Terraform reserves some additional names that can no longer be used as input variable names for modules. These reserved names are:
+
+count
+depends_on
+for_each
+lifecycle
+providers
+source
