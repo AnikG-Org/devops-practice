@@ -3,8 +3,13 @@ terraform init -upgrade
 terraform plan
 terraform apply -force
 terraform apply -var-file=prod.tfvars #
+terraform apply \
+  -var-file="secret.tfvars" \
+  -var-file="production.tfvars"
 terraform refresh
 terraform plan -refresh=false
+terraform plan  #-out tfplan  --var-file=terraform.auto.tfvars;echo \$? > status #-detailed-exitcode
+terraform plan -destroy
 terraform plan -refresh=false -target=aws_security_group.name    #Setting Refresh along with Target flags
 terraform apply -auto-approve -refresh=false
 terraform show
@@ -37,6 +42,7 @@ export TF_LOG_PATH=/tmp/crash.log #TF_LOG_PATH="tf_log-MMDDYY_hhmmss"
 export TF_LOG=TRACE     #log levels TRACE, DEBUG, INFO, WARN or ERROR
 TF_IN_AUTOMATION = any #or #true #When the environment variable TF_IN_AUTOMATION is set to any non-empty value, Terraform makes some minor adjustments to its output to de-emphasize specific commands to run. The specific changes made will vary over time, but generally-speaking Terraform will consider this variable to indicate that there is some wrapping application that will help the user with the next step.
 
+terraform force-unlock [options] LOCK_ID [DIR]
 
 
 plugin_cache_dir = "$HOME/.terraform.d/plugin-cache"  #Alternatively, the TF_PLUGIN_CACHE_DIR environment variable can be used to enable caching or to override an existing cache directory within a particular shell session
