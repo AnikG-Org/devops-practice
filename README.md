@@ -38,6 +38,11 @@ path: devops-practice/kubernetes/*
 
 path: devops-practice/terraform/*
 
+# Terraform README.md
+
+[![Terraform](https://img.shields.io/badge/IAAC%20with-Terraform-%235849a6.svg)](https://github.com/AnikG-Org/devops-practice/blob/main/terraform/AWS/README.md)
+
+
 <p align="center">
   <img src="https://github.com/AnikG-Org/devops-practice/blob/main/terraform/AWS/Untitled%20Diagram.png" width="814" height="420" />
 </p>
