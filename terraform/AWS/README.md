@@ -8,7 +8,7 @@ Link to AWS TF_Modules files & director list:  https://github.com/AnikG-Org/devo
 
 Basic sentinel-policy for TF cloud:  https://github.com/AnikG-Org/devops-practice/tree/main/terraform/AWS/AWS_modules/sentinel-policy
 
-Maximum module prepared by myself and maximum are tested and applied at "project_demo" . 
+Maximum module prepared by myself and maximum are tested and applied at Module EXAMPLE: "project_demo" . 
 
 Note: Some of modules/referance features taken from open TF registry for handson practice and made those my own based on my requirement.
 
