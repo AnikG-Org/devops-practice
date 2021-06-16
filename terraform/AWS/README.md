@@ -13,7 +13,7 @@ Most of common used AWS services / resources including automation service covere
 ## TF CLOUD 
 
 <p align="center">
-  <img src="https://github.com/AnikG-Org/devops-practice/blob/main/terraform/AWS/tf-cloud.JPG" width="814" height="320" />
+  <img src="https://github.com/AnikG-Org/devops-practice/blob/main/terraform/AWS/tf-cloud.JPG" width="810" height="300" />
 </p> 
 
 Basic sentinel-policy for TF cloud:  https://github.com/AnikG-Org/devops-practice/tree/main/terraform/AWS/AWS_modules/sentinel-policy
