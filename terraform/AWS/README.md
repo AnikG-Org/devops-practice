@@ -6,6 +6,7 @@ Details Upcoming **
 
 Link to AWS TF_Modules files & director list:  https://github.com/AnikG-Org/devops-practice/blob/main/terraform/AWS/TF_Modules_directory_list.txt
 
+Basic sentinel-policy for TF cloud:  https://github.com/AnikG-Org/devops-practice/tree/main/terraform/AWS/AWS_modules/sentinel-policy
 
 Maximum module prepared by myself and maximum are tested and applied at "project_demo" . 
 
