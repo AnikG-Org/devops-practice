@@ -1,9 +1,11 @@
 # Terraform-Module - AWS
 path: devops-practice/terraform/AWS/*
 
+Details Upcoming
+
 # Terraform-Project - project_demo using Terraform-Module - AWS
 
-#UPCOMING
+Details Upcoming
 
 # Project WorkFlow TF
 
