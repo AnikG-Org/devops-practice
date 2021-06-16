@@ -37,7 +37,7 @@ Jenkins_PipeLine: https://github.com/AnikG-Org/devops-practice/blob/main/terrafo
 
 
 
-[![LICENSE](https://img.shields.io/badge/LICENSE-Open-source-%E34F26?style=flat-square&logo=amazon-aws&logoColor=orange)](https://github.com/AnikG-Org/devops-practice/blob/main/terraform/LICENSE)
+[![LICENSE](https://img.shields.io/badge/LICENSE%20Open%20source-%E34F26?style=flat-square&logo=amazon-aws&logoColor=orange)](https://github.com/AnikG-Org/devops-practice/blob/main/terraform/LICENSE)
 
 
 
