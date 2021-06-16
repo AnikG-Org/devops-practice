@@ -24,4 +24,4 @@ Details Upcoming
 
 Connect me: 
 
-[![Connect my profile](https://badges.frapsoft.com/os/v2/Anik-G.svg?v=103)](https://github.com/AnikG-Org/AnikG-Org/blob/main/README.md)
+[![Connect my profile](https://img.shields.io/badge/Anik_Guha-%E34F26?style=flat-square&logo=amazon-aws&logoColor=orange)](https://github.com/AnikG-Org/AnikG-Org/blob/main/README.md)
