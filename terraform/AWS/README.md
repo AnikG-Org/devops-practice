@@ -5,6 +5,7 @@ Details Upcoming **
 
 
 Link to AWS TF_Modules files & director list:  https://github.com/AnikG-Org/devops-practice/blob/main/terraform/AWS/TF_Modules_directory_list.txt
+
 Most of common used AWS services / resources including automation service covered. : [![Module EXAMPLEs](https://img.shields.io/badge/Module%20EXAMPLEs%20-Terraform-%235849a6.svg)](https://github.com/AnikG-Org/devops-practice/tree/main/terraform/AWS/AWS_modules/projects/project_demo) 
 
 Basic sentinel-policy for TF cloud:  https://github.com/AnikG-Org/devops-practice/tree/main/terraform/AWS/AWS_modules/sentinel-policy
@@ -36,7 +37,7 @@ Note: Most of the components has count = 0 / /* <new line> */ . enable it and us
   <img src="https://github.com/AnikG-Org/devops-practice/blob/main/terraform/AWS/Untitled%20Diagram.png" width="814" height="420" />
 </p>
 
-WorkFlow : GIT , TF, TF cloud(Free tier), TF modules, Project to deploy resource (Provider AWS), CI/CD: Host EC2, Runtime Docker, Jenkkins, JOB: groovy scripted pipeline with business logic, AWS Cloud deployment.
+WorkFlow : GIT , TF, TF cloud(Free tier), TF modules, Project to deploy resource (Provider AWS), CI/CD: Host EC2, Runtime Docker, Jenkins, CI CD JOB: groovy scripted pipeline with business logic, AWS Cloud deployment.
 
 Jenkins setup on Docker: https://github.com/AnikG-Org/devops-practice/blob/main/terraform/AWS/jenkins-pipeline-for-tf-deploy/Jenkins%20setup.txt
       
