@@ -1,6 +1,18 @@
 # Terraform-Module - AWS
 path: devops-practice/terraform/AWS/*
 
+*** terraform Module Version supports  ***
+-----
+terraform {
+  required_version = "~> 0.13"
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 3.0,<=3.43.0"
+    }
+  } 
+}
+-----
 Details Upcoming **
 
 
