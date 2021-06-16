@@ -1,0 +1,509 @@
+################################################
+# TF Modules directory_file list(AWS)
+################################################
+
+
+ ~/Documents/Own/Study/devops-practice/terraform/AWS/AWS_modules/modules (main)
+$ ls
+0.0.provider_version  0.0.provider-aws-accesskey  0.1.2.0.tf-remote-state       0.1.2.random    0.1.4.compute  0.1.6.network     0.1.8.storage
+0.0.provider-aws      0.1.1.aws_network           0.1.2.1.naming-prefix-module  0.1.3.security  0.1.5.devops   0.1.7.monitoring  0.1.9.tags   
+
+
+################################################################################################################################################
+
+ ~/Documents/Own/Study/devops-practice/terraform/AWS/AWS_modules/modules (main)
+$ ls -R
+.:
+0.0.provider_version  0.0.provider-aws-accesskey  0.1.2.0.tf-remote-state       0.1.2.random    0.1.4.compute  0.1.6.network     0.1.8.storage
+0.0.provider-aws      0.1.1.aws_network           0.1.2.1.naming-prefix-module  0.1.3.security  0.1.5.devops   0.1.7.monitoring  0.1.9.tags   
+
+./0.0.provider_version:
+version.tf
+
+./0.0.provider-aws:
+0.0.0.aws-provider.tf
+
+./0.0.provider-aws-accesskey:
+0.0.0.aws-provider.tf
+
+./0.1.1.aws_network:
+aws_vpc_flow_log.tf  aws_vpc_flow_log_var.tf  aws_vpc_network.tf  aws_vpc_network_variable.tf  common_value_tag_variable.tf  default-sg.tf  network_output.tf  random_string.tf
+
+./0.1.2.0.tf-remote-state:
+local.tfbackend  remote-state-req-components-enable-if-required  s3-backend.tf
+
+./0.1.2.0.tf-remote-state/remote-state-req-components-enable-if-required:
+common_value_tag_variable.tf  dynamodb-output.tf  dynamo-db-tf-lock-state.tf  random_string.tf  s3-output.tf  s3-remote-state.tf  s3-remote-state-var.tf
+
+./0.1.2.1.naming-prefix-module:
+common_value_tag_variable.tf  name_prefix.tf  output.tf
+
+./0.1.2.random:
+random_output.tf  random_pw.tf  random_string.tf  random_var.tf  random-pet.tf
+
+./0.1.3.security:
+ec2-iam-role  iam-enhanced  iam-instance-admin-role  secrets-manager  sg-count  sg-count-adv  sg-dynamic-ingress  sgrule  ssm-patching
+
+./0.1.3.security/ec2-iam-role:
+common_value_tag_variable.tf  iam.tf
+
+./0.1.3.security/iam-enhanced:
+examples  modules
+
+./0.1.3.security/iam-enhanced/examples:
+iam-account         iam-assumable-roles            iam-assumable-role-with-oidc  iam-group-complete                     iam-group-with-policies  iam-user
+iam-assumable-role  iam-assumable-roles-with-saml  iam-assumable-role-with-saml  iam-group-with-assumable-roles-policy  iam-policy
+
+./0.1.3.security/iam-enhanced/examples/iam-account:
+main.tf  outputs.tf  variables.tf
+
+./0.1.3.security/iam-enhanced/examples/iam-assumable-role:
+main.tf  outputs.tf  variables.tf
+
+./0.1.3.security/iam-enhanced/examples/iam-assumable-roles:
+main.tf  outputs.tf  variables.tf
+
+./0.1.3.security/iam-enhanced/examples/iam-assumable-roles-with-saml:
+main.tf  outputs.tf  saml-metadata.xml  variables.tf
+
+./0.1.3.security/iam-enhanced/examples/iam-assumable-role-with-oidc:
+main.tf  outputs.tf  variables.tf
+
+./0.1.3.security/iam-enhanced/examples/iam-assumable-role-with-saml:
+main.tf  outputs.tf  saml-metadata.xml  variables.tf
+
+./0.1.3.security/iam-enhanced/examples/iam-group-complete:
+main.tf  outputs.tf  variables.tf
+
+./0.1.3.security/iam-enhanced/examples/iam-group-with-assumable-roles-policy:
+main.tf  outputs.tf  variables.tf
+
+./0.1.3.security/iam-enhanced/examples/iam-group-with-policies:
+main.tf  outputs.tf  variables.tf
+
+./0.1.3.security/iam-enhanced/examples/iam-policy:
+main.tf  outputs.tf  variables.tf
+
+./0.1.3.security/iam-enhanced/examples/iam-user:
+main.tf  outputs.tf  variables.tf
+
+./0.1.3.security/iam-enhanced/modules:
+iam-account         iam-assumable-roles            iam-assumable-role-with-oidc  iam-group-with-assumable-roles-policy  iam-policy
+iam-assumable-role  iam-assumable-roles-with-saml  iam-assumable-role-with-saml  iam-group-with-policies                iam-user
+
+./0.1.3.security/iam-enhanced/modules/iam-account:
+common_value_tag_variable.tf  main.tf  outputs.tf  variables.tf
+
+./0.1.3.security/iam-enhanced/modules/iam-assumable-role:
+common_value_tag_variable.tf  main.tf  outputs.tf  variables.tf
+
+./0.1.3.security/iam-enhanced/modules/iam-assumable-roles:
+common_value_tag_variable.tf  main.tf  outputs.tf  variables.tf
+
+./0.1.3.security/iam-enhanced/modules/iam-assumable-roles-with-saml:
+common_value_tag_variable.tf  main.tf  outputs.tf  variables.tf
+
+./0.1.3.security/iam-enhanced/modules/iam-assumable-role-with-oidc:
+common_value_tag_variable.tf  main.tf  outputs.tf  variables.tf
+
+./0.1.3.security/iam-enhanced/modules/iam-assumable-role-with-saml:
+common_value_tag_variable.tf  main.tf  outputs.tf  variables.tf
+
+./0.1.3.security/iam-enhanced/modules/iam-group-with-assumable-roles-policy:
+common_value_tag_variable.tf  main.tf  outputs.tf  variables.tf
+
+./0.1.3.security/iam-enhanced/modules/iam-group-with-policies:
+common_value_tag_variable.tf  main.tf  outputs.tf  policies.tf  variables.tf
+
+./0.1.3.security/iam-enhanced/modules/iam-policy:
+common_value_tag_variable.tf  main.tf  outputs.tf  variables.tf
+
+./0.1.3.security/iam-enhanced/modules/iam-user:
+common_value_tag_variable.tf  main.tf  outputs.tf  variables.tf
+
+./0.1.3.security/iam-instance-admin-role:
+common_value_tag_variable.tf  ec2-admin-iam-role.tf  iam-ec2-admin-outpout.tf  random_string.tf
+
+./0.1.3.security/secrets-manager:
+common_value_tag_variable.tf  examples  outputs.tf  sec-m.tf  sec-m-var.tf
+
+./0.1.3.security/secrets-manager/examples:
+binary  key-value  plaintext  rotation
+
+./0.1.3.security/secrets-manager/examples/binary:
+main.tf
+
+./0.1.3.security/secrets-manager/examples/key-value:
+main.tf
+
+./0.1.3.security/secrets-manager/examples/plaintext:
+main.tf
+
+./0.1.3.security/secrets-manager/examples/rotation:
+main.tf
+
+./0.1.3.security/sg-count:
+common_value_tag_variable.tf  sg-count.tf  sgcount-output.tf  sg-count-var.tf
+
+./0.1.3.security/sg-count-adv:
+common_value_tag_variable.tf  sg-count.tf  sgcount-output.tf  sg-count-var.tf  sgrule.tf  sgrule_output.tf  sgrule_var.tf  sgrules-var.tf
+
+./0.1.3.security/sg-dynamic-ingress:
+common_value_tag_variable.tf  dynamic-sg.tf  dynamic-var.tf  sg_output.tf
+
+./0.1.3.security/sgrule:
+common_value_tag_variable.tf  rules-var.tf  sgrule.tf  sgrule_output.tf  sgrule_var.tf
+
+./0.1.3.security/ssm-patching:
+examples  module
+
+./0.1.3.security/ssm-patching/examples:
+maintenance-windows  patch-baseline
+
+./0.1.3.security/ssm-patching/examples/maintenance-windows:
+maintenance_windows.tf  variables.tf
+
+./0.1.3.security/ssm-patching/examples/patch-baseline:
+common_value_tag_variable.tf  patchbaseline_amazonlinux2.tf  patchbaseline_debian.tf            patchbaseline_windows.tf
+patchbaseline_amazonlinux.tf  patchbaseline_centos.tf        patchbaseline_redhatenterprise.tf  variables.tf
+
+./0.1.3.security/ssm-patching/module:
+maintenance-window  patch-baseline  register_default_patch_baseline  simple-maintenance-windows
+
+./0.1.3.security/ssm-patching/module/maintenance-window:
+common_value_tag_variable.tf  maintenance_windows.tf  outputs.tf  variables.tf
+
+./0.1.3.security/ssm-patching/module/patch-baseline:
+common_value_tag_variable.tf  deregister-patch-baseline-for-patch-group.sh  outputs.tf  patch_baseline.tf  register-patch-baseline-for-patch-group.sh  variables.tf
+
+./0.1.3.security/ssm-patching/module/register_default_patch_baseline:
+default_patch_baseline.tf  register-default-patch-baseline-eu-central-1.py  variables.tf
+
+./0.1.3.security/ssm-patching/module/simple-maintenance-windows:
+common_value_tag_variable.tf  example  ssm-patching-mw.tf  ssm-patching-output.tf  ssm-patching-var.tf
+
+./0.1.3.security/ssm-patching/module/simple-maintenance-windows/example:
+ssm-patch.tf
+
+./0.1.4.compute:
+asg  ec2-count-auto-recovery  ecs  eks  workspace
+
+./0.1.4.compute/asg:
+ami-data-source.tf  asg.tf  asg-var.tf  common_value_tag_variable.tf  common-local.tf  launch_template.tf  lt_variable.tf  output.tf
+
+./0.1.4.compute/ec2-count-auto-recovery:
+0.0.0.aws-provider.tf  ami-data-source.tf  common_value_tag_variable.tf  ec2-count.tf  ec2-count-output.tf  ec2-count-var.tf
+
+./0.1.4.compute/ecs:
+common_value_tag_variable.tf  ecr  ecs-ami.tf  ecs-cluster.tf  ecs-cluster-output.tf  ecs-iam.tf  ecs-service  ecs-task-definition  ecs-var.tf
+
+./0.1.4.compute/ecs/ecr:
+common_value_tag_variable.tf  context.tf  ecr.tf  ecr-output.tf  ecr-var.tf  null-label
+
+./0.1.4.compute/ecs/ecr/null-label:
+examples  main.tf  output.tf  var.tf
+
+./0.1.4.compute/ecs/ecr/null-label/examples:
+autoscalinggroup  complete
+
+./0.1.4.compute/ecs/ecr/null-label/examples/autoscalinggroup:
+autoscalinggroup.auto.tfvars  context.tf  main.tf  outputs.tf
+
+./0.1.4.compute/ecs/ecr/null-label/examples/complete:
+complete.auto.tfvars  label1.tf    label1t2.tf  label3c.tf  label4.tf  label6f.tf  label7.tf   label8dcd.tf  label8l.tf  label8t.tf
+context.tf            label1t1.tf  label2.tf    label3n.tf  label5.tf  label6t.tf  label8d.tf  label8dnd.tf  label8n.tf  label8u.tf
+
+./0.1.4.compute/ecs/ecs-service:
+aws_ecs_service.tf  common_value_tag_variable.tf  ecs-service-output.tf  ecs-service-var.tf  ecs-svc-autoscaling-cloudwatch
+
+./0.1.4.compute/ecs/ecs-service/ecs-svc-autoscaling-cloudwatch:
+common_value_tag_variable.tf  ecs-svc-autoscaling-cloudwatch.tf  output.tf  svc-autoscale-var.tf
+
+./0.1.4.compute/ecs/ecs-task-definition:
+common_value_tag_variable.tf  task-def.tf  task-def-output.tf  task-def-var.tf
+
+./0.1.4.compute/eks:
+aws_auth.tf  data.tf  examples    info-common-value-for-all-module.txt  kubectl.tf  local-tags.tf  node_groups.tf  README.md  variables.tf  workers.tf
+cluster.tf   docs     fargate.tf  irsa.tf                               local.tf    modules        outputs.tf      templates  versions.tf   workers_launch_template.tf
+
+./0.1.4.compute/eks/docs:
+autoscaling.md  enable-docker-bridge-network.md  faq.md  iam-permissions.md  spot-instances.md  upgrades.md
+
+./0.1.4.compute/eks/examples:
+basic         create_false  instance_refresh  launch_templates                           managed_node_groups  secrets_encryption
+bottlerocket  fargate       irsa              launch_templates_with_managed_node_groups  README.md            spot_instances
+
+./0.1.4.compute/eks/examples/basic:
+main.tf  outputs.tf  variables.tf  versions.tf
+
+./0.1.4.compute/eks/examples/bottlerocket:
+data.tf  main.tf  README.md  userdata.toml  variables.tf
+
+./0.1.4.compute/eks/examples/create_false:
+main.tf  variables.tf  versions.tf
+
+./0.1.4.compute/eks/examples/fargate:
+main.tf  outputs.tf  variables.tf  versions.tf
+
+./0.1.4.compute/eks/examples/instance_refresh:
+main.tf  outputs.tf  variables.tf  versions.tf
+
+./0.1.4.compute/eks/examples/irsa:
+cluster-autoscaler-chart-values.yaml  irsa.tf  locals.tf  main.tf  outputs.tf  README.md  variables.tf  versions.tf
+
+./0.1.4.compute/eks/examples/launch_templates:
+main.tf  outputs.tf  pre_userdata.sh  variables.tf  versions.tf
+
+./0.1.4.compute/eks/examples/launch_templates_with_managed_node_groups:
+disk_encryption_policy.tf  launchtemplate.tf  main.tf  templates  variables.tf  versions.tf
+
+./0.1.4.compute/eks/examples/launch_templates_with_managed_node_groups/templates:
+userdata.sh.tpl
+
+./0.1.4.compute/eks/examples/managed_node_groups:
+main.tf  outputs.tf  variables.tf  versions.tf
+
+./0.1.4.compute/eks/examples/secrets_encryption:
+main.tf  outputs.tf  variables.tf  versions.tf
+
+./0.1.4.compute/eks/examples/spot_instances:
+main.tf  outputs.tf  variables.tf  versions.tf
+
+./0.1.4.compute/eks/modules:
+fargate  node_groups
+
+./0.1.4.compute/eks/modules/fargate:
+data.tf  fargate.tf  locals.tf  local-tags.tf  outputs.tf  README.md  variables.tf  versions.tf
+
+./0.1.4.compute/eks/modules/node_groups:
+launch_template.tf  locals.tf  local-tags.tf  node_groups.tf  outputs.tf  README.md  templates  variables.tf  versions.tf
+
+./0.1.4.compute/eks/modules/node_groups/templates:
+userdata.sh.tpl
+
+./0.1.4.compute/eks/templates:
+kubeconfig.tpl  userdata.sh.tpl  userdata_windows.tpl
+
+./0.1.4.compute/workspace:
+common_value_tag_variable.tf  ws.tf  ws-bundle.tf  ws-directory-var-output.tf  ws-output.tf  ws-var.tf
+
+./0.1.5.devops:
+codebuild  codecommit  codedeploy  codepipeline  lambda
+
+./0.1.5.devops/codebuild:
+cb-iam.tf  codebuild.tf  codebuild-var.tf  common_value_tag_variable.tf  output.tf
+
+./0.1.5.devops/codecommit:
+codecommit.tf  codecommit-var.tf  common_value_tag_variable.tf  output.tf
+
+./0.1.5.devops/codedeploy:
+codedeploy.tf  codedeploy-var.tf  common_value_tag_variable.tf  output.tf
+
+./0.1.5.devops/codepipeline:
+codepipeline.tf  codepipeline-var.tf  common_value_tag_variable.tf  cp-iam.tf  output.tf
+
+./0.1.5.devops/lambda:
+common_value_tag_variable.tf  lambda.tf  lambda-iam.tf  lambda-var.tf  output.tf  package.py  package.tf
+
+./0.1.6.network:
+acm  cloudfront  directory-service  eip  elb  route-53-hz-internal  route-53-hz-public  transit-gateway  vpn-gateway  wafv2
+
+./0.1.6.network/acm:
+acm.tf  acm-var.tf  common_value_tag_variable.tf  output.tf
+
+./0.1.6.network/cloudfront:
+cloudfront.tf  cloudfront-var.tf  common_value_tag_variable.tf  output.tf
+
+./0.1.6.network/directory-service:
+common_value_tag_variable.tf  directory-service.tf  directory-service-var.tf  example  output.tf
+
+./0.1.6.network/directory-service/example:
+ad_connector  basic  enable_sso  microsoft_ad
+
+./0.1.6.network/directory-service/example/ad_connector:
+main.tf
+
+./0.1.6.network/directory-service/example/basic:
+main.tf
+
+./0.1.6.network/directory-service/example/enable_sso:
+main.tf
+
+./0.1.6.network/directory-service/example/microsoft_ad:
+main.tf
+
+./0.1.6.network/eip:
+common_value_tag_variable.tf  eip-count.tf
+
+./0.1.6.network/elb:
+alb-nlb.tf  alb-nlb-output.tf  alb-nlb-var.tf  common_value_tag_variable.tf
+
+./0.1.6.network/route-53-hz-internal:
+common_value_tag_variable.tf  output.tf  r53-i.tf
+
+./0.1.6.network/route-53-hz-public:
+common_value_tag_variable.tf  output.tf  r53.tf
+
+./0.1.6.network/transit-gateway:
+common_value_tag_variable.tf  output.tf  tg.tf  tg-var.tf
+
+./0.1.6.network/vpn-gateway:
+client  site
+
+./0.1.6.network/vpn-gateway/client:
+c2s.tf  c2s-var.tf  common_value_tag_variable.tf  output.tf
+
+./0.1.6.network/vpn-gateway/site:
+cgw.tf  common_value_tag_variable.tf  common-var.tf  output.tf  vpg.tf
+
+./0.1.6.network/wafv2:
+common_value_tag_variable.tf  examples  output.tf  waf.tf  waf-var.tf
+
+./0.1.6.network/wafv2/examples:
+core  wafv2-and-or-rules  wafv2-bytematch-rules  wafv2-geo-rules  wafv2-ip-rules  wafv2-logging-configuration
+
+./0.1.6.network/wafv2/examples/core:
+main.tf
+
+./0.1.6.network/wafv2/examples/wafv2-and-or-rules:
+main.tf  outputs.tf  variables.tf
+
+./0.1.6.network/wafv2/examples/wafv2-bytematch-rules:
+main.tf  outputs.tf  variables.tf
+
+./0.1.6.network/wafv2/examples/wafv2-geo-rules:
+main.tf  outputs.tf  variables.tf
+
+./0.1.6.network/wafv2/examples/wafv2-ip-rules:
+main.tf  outputs.tf  variables.tf
+
+./0.1.6.network/wafv2/examples/wafv2-logging-configuration:
+main.tf  outputs.tf
+
+./0.1.7.monitoring:
+aws-budget-alarms-slack  cloudwatch_alarm  metric-alarms-by-multiple-dimensions  ses  sns-topic  sqs
+
+./0.1.7.monitoring/aws-budget-alarms-slack:
+budget-main.tf  budget-var.tf  cloudformation.yml  common_value_tag_variable.tf  output.tf
+
+./0.1.7.monitoring/cloudwatch_alarm:
+common_value_tag_variable.tf  cw.tf  cw-var.tf  output.tf
+
+./0.1.7.monitoring/metric-alarms-by-multiple-dimensions:
+common_value_tag_variable.tf  metric-alarms-by-multiple-dimensions.tf  metric-variables.tf  outputs.tf
+
+./0.1.7.monitoring/ses:
+common_value_tag_variable.tf  output.tf  ses.tf  ses-var.tf
+
+./0.1.7.monitoring/sns-topic:
+common_value_tag_variable.tf  output.tf  sns.tf  sns-var.tf
+
+./0.1.7.monitoring/sqs:
+common_value_tag_variable.tf  sqs.tf  sqs-output.tf  sqs-var.tf
+
+./0.1.8.storage:
+dynamo-db-table  ebs  efs  fsx  rds  rds-aurora-serverless-db  s3
+
+./0.1.8.storage/dynamo-db-table:
+common_value_tag_variable.tf  dynamo-db.tf  dynamodb-output.tf  dynamodb-var.tf  example  random_string.tf
+
+./0.1.8.storage/dynamo-db-table/example:
+dynamo-db.tf
+
+./0.1.8.storage/ebs:
+common_value_tag_variable.tf  ebs-volume.tf  output.tf
+
+./0.1.8.storage/efs:
+common_value_tag_variable.tf  efs.tf  efs-var.tf  example  output.tf
+
+./0.1.8.storage/efs/example:
+efs.tf
+
+./0.1.8.storage/fsx:
+common_value_tag_variable.tf  example  fsx.tf  fsx-var.tf  output.tf
+
+./0.1.8.storage/fsx/example:
+fsx.tf
+
+./0.1.8.storage/rds:
+common_value_tag_variable.tf  examples  mod  outputs.tf  rds.tf  rds-var.tf
+
+./0.1.8.storage/rds/examples:
+complete-mssql  complete-mysql  complete-oracle  complete-postgres  enhanced-monitoring  groups  replica-mysql  replica-postgres  s3-import-mysql
+
+./0.1.8.storage/rds/examples/complete-mssql:
+main.tf  outputs.tf  variables.tf
+
+./0.1.8.storage/rds/examples/complete-mysql:
+main.tf  outputs.tf  variables.tf
+
+./0.1.8.storage/rds/examples/complete-oracle:
+main.tf  outputs.tf  variables.tf
+
+./0.1.8.storage/rds/examples/complete-postgres:
+main.tf  outputs.tf  variables.tf
+
+./0.1.8.storage/rds/examples/enhanced-monitoring:
+main.tf  outputs.tf  variables.tf
+
+./0.1.8.storage/rds/examples/groups:
+main.tf  outputs.tf  variables.tf
+
+./0.1.8.storage/rds/examples/replica-mysql:
+main.tf  outputs.tf  variables.tf
+
+./0.1.8.storage/rds/examples/replica-postgres:
+main.tf  outputs.tf  variables.tf
+
+./0.1.8.storage/rds/examples/s3-import-mysql:
+backup.zip  main.tf  outputs.tf  variables.tf
+
+./0.1.8.storage/rds/mod:
+db_instance  db_option_group  db_parameter_group  db_subnet_group
+
+./0.1.8.storage/rds/mod/db_instance:
+main.tf  outputs.tf  variables.tf
+
+./0.1.8.storage/rds/mod/db_option_group:
+main.tf  outputs.tf  variables.tf
+
+./0.1.8.storage/rds/mod/db_parameter_group:
+main.tf  outputs.tf  variables.tf
+
+./0.1.8.storage/rds/mod/db_subnet_group:
+main.tf  outputs.tf  variables.tf
+
+./0.1.8.storage/rds-aurora-serverless-db:
+common_value_tag_variable.tf  examples  outputs.tf  rds-aurora-serverless.tf  rds-aurora-serverless-var.tf
+
+./0.1.8.storage/rds-aurora-serverless-db/examples:
+autoscaling  custom_instance_settings  mysql  postgresql  s3_import  serverless
+
+./0.1.8.storage/rds-aurora-serverless-db/examples/autoscaling:
+main.tf  outputs.tf  variables.tf
+
+./0.1.8.storage/rds-aurora-serverless-db/examples/custom_instance_settings:
+main.tf  outputs.tf  variables.tf
+
+./0.1.8.storage/rds-aurora-serverless-db/examples/mysql:
+main.tf  outputs.tf  variables.tf
+
+./0.1.8.storage/rds-aurora-serverless-db/examples/postgresql:
+main.tf  outputs.tf  variables.tf
+
+./0.1.8.storage/rds-aurora-serverless-db/examples/s3_import:
+backup.zip  main.tf  outputs.tf  variables.tf
+
+./0.1.8.storage/rds-aurora-serverless-db/examples/serverless:
+main.tf  outputs.tf  variables.tf
+
+./0.1.8.storage/s3:
+common_value_tag_variable.tf  output.tf  random_string.tf  s3.tf  s3-var.tf
+
+./0.1.9.tags:
+example  output.tf  tags.tf  tagsvar.tf
+
+./0.1.9.tags/example:
+tags.tf
+
+################################################################################################################################################
