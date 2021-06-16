@@ -41,6 +41,8 @@ path: devops-practice/terraform/*
 # Terraform README.md
 
 \/ Press the badge [path: devops-practice/terraform/AWS/*]
+</p>
+
 [![Terraform](https://img.shields.io/badge/README.MD%20IAAC%20with-Terraform-%235849a6.svg)](https://github.com/AnikG-Org/devops-practice/blob/main/terraform/AWS/README.md)
 
 
