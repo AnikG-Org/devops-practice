@@ -54,7 +54,7 @@ WorkFlow : GIT , TF, TF cloud(Free tier), TF modules, Project to deploy resource
 
 •	Used Terraform-Module - AWS: https://github.com/AnikG-Org/devops-practice/tree/main/terraform/AWS/AWS_modules/modules
 
-•	Deployed "project_demo" resources using TF modules: https://github.com/AnikG-Org/devops-practice/tree/main/terraform/AWS/AWS_modules/projects/project_demo  
+•	Deployed "project_demo" resources using TF modules: https://github.com/AnikG-Org/devops-practice/tree/main/terraform/AWS/AWS_modules/projects/project_demo  [![Module EXAMPLEs](https://img.shields.io/badge/Module%20EXAMPLEs%20-Terraform-%235849a6.svg)](https://github.com/AnikG-Org/devops-practice/tree/main/terraform/AWS/AWS_modules/projects/project_demo) 
 
 
 •	Jenkins setup on Docker: https://github.com/AnikG-Org/devops-practice/blob/main/terraform/AWS/jenkins-pipeline-for-tf-deploy/Jenkins%20setup.txt
