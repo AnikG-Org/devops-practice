@@ -1,5 +1,5 @@
 # Terraform-Module - AWS
-path: devops-practice/terraform/AWS/*
+path: devops-practice/terraform/AWS/AWS_modules/modules/*
 
 *** terraform AWS Module Version support  ***
 -----
@@ -76,6 +76,11 @@ WorkFlow : GIT , TF, TF cloud(Free tier), TF modules, Project to deploy resource
 Jenkins setup on Docker: https://github.com/AnikG-Org/devops-practice/blob/main/terraform/AWS/jenkins-pipeline-for-tf-deploy/Jenkins%20setup.txt
       
 Jenkins_PipeLine: https://github.com/AnikG-Org/devops-practice/blob/main/terraform/AWS/jenkins-pipeline-for-tf-deploy/jenkinsfile
+
+Used Terraform-Module - AWS: https://github.com/AnikG-Org/devops-practice/tree/main/terraform/AWS/AWS_modules/modules
+
+Deployed "project_demo" resources using TF modules: https://github.com/AnikG-Org/devops-practice/tree/main/terraform/AWS/AWS_modules/projects/project_demo
+  
       
 <p align="center">
   <img src="https://github.com/AnikG-Org/devops-practice/blob/main/terraform/AWS/jenkins-pipeline-for-tf-deploy/IMG_20210616_214150.jpg" width="814" height="820" />
