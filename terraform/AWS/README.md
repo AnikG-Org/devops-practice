@@ -30,7 +30,7 @@ Most of common used AWS services / resources including automation service covere
 
 •	My Terraform Cheat cmds and notes , That might handy for everyone : https://github.com/AnikG-Org/devops-practice/blob/main/terraform/AWS/cmd.sh
 
-Maximum module prepared by myself and maximum are tested and applied at Module EXAMPLE: "project_demo" . [![Open Source Love](https://badges.frapsoft.com/os/v2/open-source.svg?v=103)](https://github.com/AnikG-Org)
+**Maximum module prepared by myself and maximum are tested and applied at Module EXAMPLE: "project_demo" . [![Open Source Love](https://badges.frapsoft.com/os/v2/open-source.svg?v=103)](https://github.com/AnikG-Org)
 
 
 
@@ -49,7 +49,7 @@ Note: Most of the components has count = 0 / /* <new line> */ or Disabled . enab
   <img src="https://github.com/AnikG-Org/devops-practice/blob/main/terraform/AWS/Untitled%20Diagram.png" width="814" height="420" />
 </p>
 
-WorkFlow : GIT , TF, TF cloud(Free tier), TF modules, Project to deploy resource (Provider AWS), CI/CD: Host EC2, Runtime Docker, Jenkins, CI CD JOB: groovy scripted pipeline with business logic, AWS Cloud deployment.
+**WorkFlow** : GIT , TF, TF cloud(Free tier), TF modules, Project to deploy resource (Provider AWS), CI/CD: Host EC2, Runtime Docker, Jenkins, CI CD JOB: groovy scripted pipeline with business logic, AWS Cloud deployment.
 
 
 •	Used Terraform-Module - AWS: https://github.com/AnikG-Org/devops-practice/tree/main/terraform/AWS/AWS_modules/modules
@@ -87,7 +87,7 @@ WorkFlow : GIT , TF, TF cloud(Free tier), TF modules, Project to deploy resource
 
 # Terraform sample basic independent code:
 
-link to go: https://github.com/AnikG-Org/devops-practice/tree/main/terraform/AWS/Basic_sample
+•	link to go: https://github.com/AnikG-Org/devops-practice/tree/main/terraform/AWS/Basic_sample
 
 ---------------------------------------------------------------------------------------------------------------------------
 
