@@ -8,4 +8,4 @@ These serve a few purposes:
 
 ## IAM Permissions
 
-You can see the minimum IAM Permissions required [here](https://github.com/terraform-aws-modules/terraform-aws-eks/blob/master/docs/iam-permissions.md).
+You can see the minimum IAM Permissions required [here](https://github.com/AnikG-Org/devops-practice/blob/main/terraform/AWS/AWS_modules/modules/0.1.4.compute/eks/docs/iam-permissions.md).
