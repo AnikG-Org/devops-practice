@@ -49,7 +49,7 @@ Note: Most of the components has count = 0 / /* <new line> */ or Disabled . enab
   <img src="https://github.com/AnikG-Org/devops-practice/blob/main/terraform/AWS/Untitled%20Diagram.png" width="814" height="420" />
 </p>
 
-**WorkFlow** : GIT , TF, TF cloud(Free tier), TF modules, Project to deploy resource (Provider AWS), CI/CD: Jenkins(Runtime Docker,Host EC2), CI-CD JOB: groovy scripted pipeline with business logic, AWS Cloud deployment.
+**WorkFlow** : GIT , TF, TF cloud(Free tier), TF modules, Project to deploy resource (Provider AWS), CI/CD: Jenkins(Runtime Docker,Jenkins Hosting: EC2),EC2-IAM-ROLE for AWS-Service-API, CI-CD JOB: groovy scripted pipeline with business logic, AWS Cloud deployment.
 
 
 •	Used Terraform-Module - AWS: https://github.com/AnikG-Org/devops-practice/tree/main/terraform/AWS/AWS_modules/modules
