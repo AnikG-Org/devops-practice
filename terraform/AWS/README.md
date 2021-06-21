@@ -33,9 +33,7 @@ Maximum module prepared by myself and maximum are tested and applied at Module E
 
 [![Open Source Love](https://badges.frapsoft.com/os/v2/open-source.svg?v=103)](https://github.com/AnikG-Org)
 
-# Terraform sample basic independent code:
 
-link to go: https://github.com/AnikG-Org/devops-practice/tree/main/terraform/AWS/Basic_sample
 
 # Terraform-Project - "project_demo" using "Terraform-Module' - AWS
 
@@ -88,7 +86,9 @@ WorkFlow : GIT , TF, TF cloud(Free tier), TF modules, Project to deploy resource
 •	Basic sentinel-policy for TF cloud:  https://github.com/AnikG-Org/devops-practice/tree/main/terraform/AWS/AWS_modules/sentinel-policy
 
 
+# Terraform sample basic independent code:
 
+link to go: https://github.com/AnikG-Org/devops-practice/tree/main/terraform/AWS/Basic_sample
 
 ---------------------------------------------------------------------------------------------------------------------------
 
