@@ -1,7 +1,7 @@
 # Terraform-Module - AWS
 path: devops-practice/terraform/AWS/*
 
-*** terraform AWS Module Version supports  ***
+*** terraform AWS Module Version support  ***
 -----
 <p align="left">
 terraform {
