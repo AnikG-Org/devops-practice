@@ -10,7 +10,7 @@ resource "null_resource" "register_default_patch_baseline" {
 
   provisioner "local-exec" {
     command = <<EOT
-      ${path.module}/register-default-patch-baseline-eu-central-1.py register ${self.triggers.baseline_id} ${self.triggers.operating_system}
+      ${path.module}/register-default-pb-eu-central-1.py register ${self.triggers.baseline_id} ${self.triggers.operating_system}
 EOT
   }
 
