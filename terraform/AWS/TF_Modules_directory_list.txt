@@ -177,7 +177,7 @@ common_value_tag_variable.tf  maintenance_windows.tf  outputs.tf  variables.tf
 common_value_tag_variable.tf  deregister-patch-baseline-for-patch-group.sh  outputs.tf  patch_baseline.tf  register-patch-baseline-for-patch-group.sh  variables.tf
 
 ./0.1.3.security/ssm-patching/module/register_default_patch_baseline:
-default_patch_baseline.tf  register-default-patch-baseline-eu-central-1.py  variables.tf
+default_patch_baseline.tf  register-default-pb-eu-central-1.py  variables.tf
 
 ./0.1.3.security/ssm-patching/module/simple-maintenance-windows:
 common_value_tag_variable.tf  example  ssm-patching-mw.tf  ssm-patching-output.tf  ssm-patching-var.tf
