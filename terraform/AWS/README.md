@@ -93,6 +93,8 @@ Follow the Link >>  https://github.com/AnikG-Org/devops-practice/blob/main/terra
     }
 
 •	Basic sentinel-policy for TF cloud:  https://github.com/AnikG-Org/devops-practice/tree/main/terraform/AWS/AWS_modules/sentinel-policy
+  
+•	gitignore file for TF:  https://github.com/AnikG-Org/devops-practice/blob/main/terraform/AWS/AWS_modules/projects/project_demo/.gitignore  
 
 
 # Terraform sample basic independent code:
