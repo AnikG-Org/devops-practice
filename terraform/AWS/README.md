@@ -41,7 +41,14 @@ Details Upcoming **
 Link: Module EXAMPLE:
       https://github.com/AnikG-Org/devops-practice/tree/main/terraform/AWS/AWS_modules/projects/project_demo
       
-Note: Most of the components has count = 0 / /* <new line> */ or Disabled . enable it and use it    
+Note: Most of the components has count = 0 / /* <new line> */ or Disabled . enable it and use it  
+  
+  
+# Detailed Overview on AWS Module and - "project_demo" usage' - AWS TF
+ 
+<p align="center">
+  <img src="https://github.com/AnikG-Org/devops-practice/blob/main/terraform/AWS/tf-module-use-case-doc-v1.pdf" width="814" height="420" />
+</p>  
 
 # Project WorkFlow TF CI-CD  AWS deployment
 
