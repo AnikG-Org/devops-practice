@@ -1,6 +1,8 @@
 # Terraform-Module for AWS
 path: devops-practice/terraform/AWS/AWS_modules/modules/*
 
+[![Terraform](https://img.shields.io/badge/Terraform-%235849a6.svg)](https://registry.terraform.io/)
+
 *** terraform AWS Module Version support  ***
 -----
 <p align="left">
@@ -17,9 +19,11 @@ terraform {
 -----
 
 
-Details Upcoming **
+
 
 # Terraform-Module - AWS
+
+[![Detailed Terraform use case here](https://img.shields.io/badge/IAAC%20with-Terraform-%235849a6.svg)](https://github.com/AnikG-Org/devops-practice/blob/main/terraform/AWS/tf-module-use-case-doc-v1.pdf)
 
 •	Link to AWS TF_Modules files & directory list:  https://github.com/AnikG-Org/devops-practice/blob/main/terraform/AWS/TF_Modules_directory_list.txt
 
@@ -36,7 +40,6 @@ Most of common used AWS services / resources including automation service covere
 
 # Terraform-Project - "project_demo" using "Terraform-Module' - AWS
 
-Details Upcoming **
 
 Link: Module EXAMPLE:
       https://github.com/AnikG-Org/devops-practice/tree/main/terraform/AWS/AWS_modules/projects/project_demo
