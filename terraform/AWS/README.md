@@ -47,7 +47,7 @@ Note: Most of the components has count = 0 / /* <new line> */ or Disabled . enab
 # Detailed Overview on AWS Module and - "project_demo" usage' - AWS TF
  
 <p align="center">
-  <img src="https://github.com/AnikG-Org/devops-practice/blob/main/terraform/AWS/tf-module-use-case-doc-v1.pdf" width="814" height="420" />
+  < https://github.com/AnikG-Org/devops-practice/blob/main/terraform/AWS/tf-module-use-case-doc-v1.pdf   />
 </p>  
 
 # Project WorkFlow TF CI-CD  AWS deployment
