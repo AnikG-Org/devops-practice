@@ -70,9 +70,15 @@ Follow the Link >>  https://github.com/AnikG-Org/devops-practice/blob/main/terra
 •	Jenkins setup on Docker: https://github.com/AnikG-Org/devops-practice/blob/main/terraform/AWS/jenkins-pipeline-for-tf-deploy/Jenkins%20setup.txt
 
 •	Jenkins_PipeLine: https://github.com/AnikG-Org/devops-practice/blob/main/terraform/AWS/jenkins-pipeline-for-tf-deploy/jenkinsfile
+ 
 
+# Detailed Info on **WorkFlow** TF CI-CD  AWS deployment
+ 
+<p align="center">
+Follow the Link >>  https://github.com/AnikG-Org/devops-practice/blob/main/terraform/AWS/CI-CD%20project%20to%20deploy%20Infrastructure%20at%20AWS%20using%20Terraform%20.pdf
+</p>  
   
-      
+  
 <p align="center">
   <img src="https://github.com/AnikG-Org/devops-practice/blob/main/terraform/AWS/jenkins-pipeline-for-tf-deploy/IMG_20210616_214150.jpg" width="814" height="820" />
 </p>      
