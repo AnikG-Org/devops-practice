@@ -34,7 +34,7 @@ path: devops-practice/kubernetes/*
 </p>
 
 
-# Terraform-Module(Provider AWS) with practice (Upcoming)
+# Terraform-Module(Provider AWS) with Use case & practice & CI CD
 
 path: devops-practice/terraform/*
 
