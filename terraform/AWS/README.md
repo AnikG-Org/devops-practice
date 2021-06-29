@@ -100,6 +100,9 @@ Follow the Link >>  https://github.com/AnikG-Org/devops-practice/blob/main/terra
       prefix = "project-demo-"
     }
 
+  
+•	How to Publish your Private Module Registry for a provider: https://github.com/AnikG-Org/devops-practice/blob/main/terraform/AWS/How%20to%20Publish%20your%20Private%20Module%20Registry%20for%20provider%20services.pdf
+  
 •	Basic sentinel-policy for TF cloud:  https://github.com/AnikG-Org/devops-practice/tree/main/terraform/AWS/AWS_modules/sentinel-policy
   
 •	gitignore file for TF:  https://github.com/AnikG-Org/devops-practice/blob/main/terraform/AWS/AWS_modules/projects/project_demo/.gitignore  
