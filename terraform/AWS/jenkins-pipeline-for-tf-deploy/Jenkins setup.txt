@@ -27,7 +27,7 @@ http://127.0.0.1:8080
 # Add Terraform
 # Name: terraform 
 # Install automatically
-# Version - latest for linux (amd64)
+# Version - latest for linux (amd64)  (TF- 0.13 used)
 # Click Save
 
 
