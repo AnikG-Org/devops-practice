@@ -16,6 +16,8 @@ terraform {
   } 
 }
 </p> 
+
+Link to terraform releases: https://releases.hashicorp.com/terraform/
 -----
 
 
