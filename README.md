@@ -60,6 +60,6 @@ path: devops-practice/terraform/*
 
 path: devops-practice/ansible/*
 
-LAMP STACK application Deployment Project using *Ansible*: https://github.com/AnikG-Org/devops-practice/tree/main/ansible/ansible-ecom-lamp-stack
+**LAMP STACK application Deployment Project using *Ansible-playbook**: https://github.com/AnikG-Org/devops-practice/tree/main/ansible/ansible-ecom-lamp-stack
 
 -@nik
