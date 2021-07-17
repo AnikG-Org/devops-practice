@@ -100,6 +100,13 @@
       command: rsync -avu --delete "/tmp/dump/Bash/lamp-stack-app-ecommerce/" "/var/www/html"
       changed_when: False
 
+    # - name: copy web contents to /var/www/html
+    #   copy:
+    #     src: /tmp/dump/Bash/lamp-stack-app-ecommerce
+    #     dest: /var/www/html
+    #     mode: "0755"
+    #     remote_src: yes      
+
     - name: Restore database ignoring errors
       mysql_db:
         name: my_db
