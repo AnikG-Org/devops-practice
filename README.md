@@ -1,6 +1,10 @@
 # devops-practice
 Practice
 
+# Bash-Linux- >> LAMP Stack Project
+
+Link> https://github.com/AnikG-Org/devops-practice/tree/main/Bash/lamp-stack-app-ecommerce
+
 # Docker-jenkins-practice
 
 1. Docker / Docker compose/ Jenkins - Groovy pipeline
@@ -56,6 +60,6 @@ path: devops-practice/terraform/*
 
 path: devops-practice/ansible/*
 
-
+LAMP STACK application Deployment Project using *Ansible*: https://github.com/AnikG-Org/devops-practice/tree/main/ansible/ansible-ecom-lamp-stack
 
 -@nik
