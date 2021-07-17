@@ -132,8 +132,8 @@
       command: sudo sed -i 's/index.html/index.php/g' /etc/httpd/conf/httpd.conf 
       changed_when: False
 
-    # - name: Update index.php file to connect to the right database server
-    #   command: sudo sed -i 's/172.20.1.101/localhost/g' /var/www/html/index.php 
+    # - name: Update index.php file to connect to the right database server IP
+    #   command: sudo sed -i 's/localhost/localhost/g' /var/www/html/index.php 
   
     - name: test connection
       command: curl http://localhost
