@@ -1,0 +1,136 @@
+---
+ - hosts: all, !localhost
+   name: "Install LAMP Stack packages"
+   become: yes
+   tasks:
+    - name: Upgrade all packages, excluding kernel & foo related packages
+      yum:
+        name: '*'
+        state: latest
+        exclude: kernel*,foo*
+
+    - name: "Install a list of packages with a list variable"
+      vars: 
+        packages: 
+          - firewalld
+          - mariadb-server
+          - git
+          - epel-release
+          - python-pip
+        
+      yum: 
+        name: "{{ packages }}"
+        state: present
+
+    - name: "Start service firewalld, if not started"
+      ansible.builtin.service: 
+        name: firewalld
+        state: started
+      
+    - name: "Enable service firewalld"
+      ansible.builtin.service: 
+        enabled: true
+        name: firewalld
+      
+
+    - name: "Start service mariadb , if not started"
+      ansible.builtin.service: 
+        name: mariadb 
+        state: started
+      
+    - name: "Enable service mariadb"
+      ansible.builtin.service: 
+        enabled: true
+        name: mariadb 
+
+    - name: Add ports to firewalld
+      firewalld:
+        port: "{{ item }}"
+        zone: public
+        permanent: yes
+        state: enabled
+  
+      loop:
+        - 3306/tcp
+        - 80/tcp    
+
+    - name: reload service firewalld
+      systemd:
+        name: firewalld
+        state: reloaded
+
+    - name: pip install the latest version of pymysql for mysql database
+      pip:
+        name: pymysql
+        state: latest
+
+    - name: Create a new database with name 'ecomdb'
+      mysql_db:
+        name: ecomdb
+        state: present
+
+    - name: Create database user and password with all database privileges
+      mysql_user:
+        name: ecomuser
+        password: ecompassword
+        priv: '*.*:ALL'
+        state: present 
+
+    - name: Reload privilege tables
+      command: 'mysql -ne "{{ item }}"'
+      with_items:
+          - FLUSH PRIVILEGES
+      changed_when: False
+
+    - name: Create dump directory if it does not exist
+      file:
+        path: /tmp/dump
+        state: directory
+
+    - name: GIT clone web repo
+      git:
+        repo: https://github.com/AnikG-Org/devops-practice.git
+        dest: /tmp/dump
+        force: yes
+
+    - name: copy web contents to /var/www/html
+      copy:
+        src: /tmp/dump/devops-practice/Bash/lamp-stack-app-ecommerce/*
+        dest: /var/www/html
+
+    - name: Restore database ignoring errors
+      mysql_db:
+        name: my_db
+        state: import
+        target: /var/www/html/assets/db-load-script.sql
+
+
+    - name: "Install a list of web service packages"
+      vars: 
+        web_packages: 
+          - httpd
+          - php
+          - php-mysql
+
+      when: ansible_facts['os_family'] == "RedHat"
+      yum: name={{ web_packages }} state=latest
+
+
+    - name: "Start service httpd , if not started"
+      ansible.builtin.service: 
+        name: httpd 
+        state: started
+      
+    - name: "Enable service httpd"
+      ansible.builtin.service: 
+        enabled: true
+        name: httpd
+
+    - name: Change DirectoryIndex index.html to DirectoryIndex index.php to make the php page the default page
+      command: sudo sed -i 's/index.html/index.php/g' /etc/httpd/conf/httpd.conf 
+
+    - name: Update index.php file to connect to the right database server
+      command: sudo sed -i 's/172.20.1.101/localhost/g' /var/www/html/index.php 
+  
+    - name: test connection
+      command: curl http://localhost
