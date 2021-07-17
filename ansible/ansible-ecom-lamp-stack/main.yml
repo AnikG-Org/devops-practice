@@ -1,6 +1,9 @@
 ---
  - hosts: all, !localhost
    name: "Install LAMP Stack packages"
+  #  debugger: on_failed
+  #  gather_facts: no
+
    become: yes
    tasks:
     - name: Upgrade all packages, excluding kernel & foo related packages
@@ -94,10 +97,9 @@
         force: yes
 
     - name: copy web contents to /var/www/html
-      copy:
-        src: /tmp/dump/devops-practice/Bash/lamp-stack-app-ecommerce/*
-        dest: /var/www/html
-
+      command: rsync -avu --delete "/tmp/dump/Bash/lamp-stack-app-ecommerce/" "/var/www/html"
+      changed_when: False
+      
     - name: Restore database ignoring errors
       mysql_db:
         name: my_db
@@ -129,8 +131,8 @@
     - name: Change DirectoryIndex index.html to DirectoryIndex index.php to make the php page the default page
       command: sudo sed -i 's/index.html/index.php/g' /etc/httpd/conf/httpd.conf 
 
-    - name: Update index.php file to connect to the right database server
-      command: sudo sed -i 's/172.20.1.101/localhost/g' /var/www/html/index.php 
+    # - name: Update index.php file to connect to the right database server
+    #   command: sudo sed -i 's/172.20.1.101/localhost/g' /var/www/html/index.php 
   
     - name: test connection
       command: curl http://localhost

@@ -8,20 +8,20 @@
         <title>Anik's E-Commerce</title>
 
         <!-- Favicon -->
-        <link rel="icon" href="Bash/lamp-stack-app-ecommerce/img/favicon.png" type="Bash/lamp-stack-app-ecommerce/image/png" />
+        <link rel="icon" href="img/favicon.png" type="image/png" />
         <!-- Bootstrap CSS -->
-        <link href="Bash/lamp-stack-app-ecommerce/css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/bootstrap.min.css" rel="stylesheet">
         <!-- Icon CSS-->
-        <link rel="stylesheet" href="Bash/lamp-stack-app-ecommerce/vendors/font-awesome/css/font-awesome.min.css">
-        <link rel="stylesheet" href="Bash/lamp-stack-app-ecommerce/vendors/linearicons/linearicons-1.0.0.css">
+        <link rel="stylesheet" href="vendors/font-awesome/css/font-awesome.min.css">
+        <link rel="stylesheet" href="vendors/linearicons/linearicons-1.0.0.css">
         <!-- Animations CSS-->
-        <link rel="stylesheet" href="Bash/lamp-stack-app-ecommerce/vendors/wow-js/animate.css">
+        <link rel="stylesheet" href="vendors/wow-js/animate.css">
         <!-- owl_carousel-->
-        <link rel="stylesheet" href="Bash/lamp-stack-app-ecommerce/vendors/owl_carousel/owl.carousel.css">
+        <link rel="stylesheet" href="vendors/owl_carousel/owl.carousel.css">
 
         <!-- Theme style CSS -->
-        <link href="Bash/lamp-stack-app-ecommerce/css/style.css" rel="stylesheet">
-<!--        <link href="Bash/lamp-stack-app-ecommerce/css/responsive.css" rel="stylesheet">  -->
+        <link href="css/style.css" rel="stylesheet">
+<!--        <link href="css/responsive.css" rel="stylesheet">  -->
 
         <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -55,8 +55,8 @@
                             <span class="icon-bar"></span>
                             </button>
                             <a class="navbar-brand" href="index.php">
-                                <img src="Bash/lamp-stack-app-ecommerce/img/logo.png" alt="">
-                                <img src="Bash/lamp-stack-app-ecommerce/img/logo-2.png" alt="">
+                                <img src="img/logo.png" alt="">
+                                <img src="img/logo-2.png" alt="">
                             </a>
                         </div>
                     </div>
@@ -104,14 +104,14 @@
             <div class="row it_works">
               <?php
 
-                        $link = mysqli_connect('localhost', 'ecomuser', 'ecompassword', 'ecomdb');
+                        $link = mysqli_connect('172.20.1.101', 'ecomuser', 'ecompassword', 'ecomdb');
 
                         if ($link) {
                         $res = mysqli_query($link, "select * from products;");
                         while ($row = mysqli_fetch_assoc($res)) { ?>
 
                 <div class="col-md-3 col-sm-6 business_content">
-                    <?php echo '<img src="Bash/lamp-stack-app-ecommerce/img/' . $row['ImageUrl'] . '" alt="">' ?>
+                    <?php echo '<img src="img/' . $row['ImageUrl'] . '" alt="">' ?>
                     <div class="media">
                         <div class="media-left">
 
@@ -160,19 +160,19 @@
         </footer>
 
         <!-- jQuery -->
-        <script src="Bash/lamp-stack-app-ecommerce/js/jquery-1.12.4.min.js"></script>
+        <script src="js/jquery-1.12.4.min.js"></script>
         <!-- Bootstrap -->
-        <script src="Bash/lamp-stack-app-ecommerce//bootstrap.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
         <!-- Wow js -->
-        <script src="Bash/lamp-stack-app-ecommerce/vendors/wow-js/wow.min.js"></script>
+        <script src="vendors/wow-js/wow.min.js"></script>
         <!-- Wow js -->
-        <script src="Bash/lamp-stack-app-ecommerce/vendors/Counter-Up/waypoints.min.js"></script>
-        <script src="Bash/lamp-stack-app-ecommerce/vendors/Counter-Up/jquery.counterup.min.js"></script>
+        <script src="vendors/Counter-Up/waypoints.min.js"></script>
+        <script src="vendors/Counter-Up/jquery.counterup.min.js"></script>
         <!-- Stellar js -->
-        <script src="Bash/lamp-stack-app-ecommerce/vendors/stellar/jquery.stellar.js"></script>
+        <script src="vendors/stellar/jquery.stellar.js"></script>
         <!-- owl_carousel js -->
-        <script src="Bash/lamp-stack-app-ecommerce/vendors/owl_carousel/owl.carousel.min.js"></script>
+        <script src="vendors/owl_carousel/owl.carousel.min.js"></script>
         <!-- Theme js -->
-        <script src="Bash/lamp-stack-app-ecommerce/js/theme.js"></script>
+        <script src="js/theme.js"></script>
     </body>
 </html>
