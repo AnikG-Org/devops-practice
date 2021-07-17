@@ -141,6 +141,7 @@
 
     - name: Update index.php file to connect to the right database server IP
       command: sudo sed -i 's/172.20.1.101/localhost/g' /var/www/html/index.php 
+      changed_when: False
   
     - name: test connection
       command: curl http://localhost
