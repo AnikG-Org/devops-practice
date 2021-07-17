@@ -154,7 +154,7 @@
 
 
                 <div class="copy_right_area">
-                    <h4 class="copy_right">© Copyright 2019 Anik's Ecommerce | All Rights Reserved</h4>
+                    <h4 class="copy_right">© Copyright 2021 Anik's Ecommerce | All Rights Reserved</h4>
                 </div>
             </div>
         </footer>
