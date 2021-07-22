@@ -18,7 +18,7 @@ resource "aws_s3_bucket" "remote_state" {
   count         = var.create_remote_state_s3 ? 1 : 0
   bucket        = "${var.project}-${var.bucket_name}-${local.random_string}"
   acl           = "private"
-  provider      = aws.s3_aws_region
+#   provider      = aws.s3_aws_region
   force_destroy = var.force_destroy
 
   tags = merge(
