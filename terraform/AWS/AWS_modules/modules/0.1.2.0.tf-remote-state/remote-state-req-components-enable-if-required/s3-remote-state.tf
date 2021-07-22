@@ -243,7 +243,7 @@ resource "aws_s3_bucket" "remote_state" {
 ####################### aws_s3_bucket_public_access_block #######################
 
 resource "aws_s3_bucket_public_access_block" "s3" {
-  provider = aws.s3_aws_region
+#   provider = aws.s3_aws_region
   count    = var.enable_bucket_public_access_blocking ? 1 : 0
   # S3 bucket-level Public Access Block configuration # default = true
   # Chain resources (s3_bucket -> s3_bucket_policy -> s3_bucket_public_access_block)
