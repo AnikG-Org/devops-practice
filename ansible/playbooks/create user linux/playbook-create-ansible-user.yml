@@ -1,0 +1,70 @@
+---
+- name: Create Ansible User
+  hosts: all
+  become: true
+  vars:
+    new_user_name: ansible
+    #user_password: XXXXXXXXXXXXX
+  tasks:
+    - name: create ansible user
+      user:
+        uid: 1099
+        name: "{{ new_user_name }}"
+        #password: "{{ user_password | password_hash('sha512') }}"
+        comment: Ansible Deploy User
+        createhome: yes
+        shell: /bin/bash
+        groups:
+          - wheel
+        update_password: always
+        append: yes
+        state: present
+      register: user_created
+
+    - name: User created
+      debug: msg="Password for user [{{ new_user_name }}] is [{{ user_password }}]"
+      when: user_created.changed
+
+    - name: Create /home/ansible/.ssh
+      file:
+        path: /home/ansible/.ssh
+        state: directory
+        mode: 0755
+
+    - name: Create semaphore SSH public key
+      shell:
+        cmd: |
+          cat << EOF > /home/ansible/.ssh/id_rsa.pub
+          ssh-rsa Axxxx @host
+          EOF
+    - name: Copy semaphore_key.pub to authorized_keys
+      copy:
+        src: /home/ansible/.ssh/semaphore_key.pub
+        dest: /home/ansible/.ssh/authorized_keys
+        remote_src: yes
+
+    - name: Change ownership for /home/ansible/.ssh
+      file:
+        path: /home/ansible/.ssh
+        owner: ansible
+        group: ansible
+        #recurse: yes
+
+    - name: Change permission for /home/ansible/.ssh
+      file:
+        path: /home/ansible/.ssh
+        mode: 0700
+
+    - name: Change permission for /home/ansible/.ssh/authorized_keys
+      file:
+        path: /home/ansible/.ssh/authorized_keys
+        mode: 0640
+
+
+    - name: copy user under sudoers
+      template:
+       src: templates/ansible
+       dest: "/etc/sudoers.d/{{user}}"
+       owner: root
+       group: root
+       mode: 0440

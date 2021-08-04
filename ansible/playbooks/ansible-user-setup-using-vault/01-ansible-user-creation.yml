@@ -1,0 +1,36 @@
+---
+  - name: Ensure group "ansible" exists
+    group:
+      name: ansible
+      state: present
+  
+  - name: Add ansible user
+    user:
+      name: ansible
+      groups:
+      - ansible
+      - wheel
+      password: "{{ secrets[ansible_password_key] | password_hash('sha512') }}"
+  
+  - name: Create .ssh directory
+    file:
+      path: /home/ansible/.ssh
+      state: directory
+
+  - name: No password sudoers
+    shell: |
+      echo -e 'Defaults:ansible !requiretty\nansible ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/ansible || exit 1;
+      touch /home/ansible/.ssh/authorized_keys
+    register: pwd_setting_sudoers
+
+  - name: No password setting
+    shell: |
+      echo "{{ secrets[vault_public_key] }}" > /home/ansible/.ssh/authorized_keys;
+      chown -R ansible:ansible /home/ansible/.ssh/;
+      chmod 700 /home/ansible/.ssh;
+      chmod 640 /home/ansible/.ssh/authorized_keys 
+    register: pwd_setting
+
+  - name: No password setting
+    debug: var={{item}}
+    with_items: pwd_setting.stdout_lines

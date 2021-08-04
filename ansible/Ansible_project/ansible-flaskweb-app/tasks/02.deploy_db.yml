@@ -1,0 +1,47 @@
+---
+
+    - debug:
+        msg: "02.deploy_db.yml started"
+
+    - name: "Install all required MySQL DB"
+      apt: 
+        name: "{{ mysql_modules }}"
+        state: present
+      tags: [ mysql ]
+
+    - name: "Start service mysql, if not started"
+      ansible.builtin.service: 
+        name: mysql
+        state: started
+      
+    - name: Enable service mysql
+      ansible.builtin.service: 
+        enabled: true
+        name: mysql  
+
+    - name: Create a new App database
+      mysql_db: name="{{ mysql_db }}" state=present
+
+    - name: Create database user and password with all database privileges
+      mysql_user:
+        name: "{{ mysql_user }}"
+        password: "{{ mysql_password }}"
+        priv: '*.*:ALL'
+        state: present
+
+    - name: Reload privilege tables
+      command: 'mysql -ne "{{ item }}"'
+      with_items:
+          - FLUSH PRIVILEGES
+      changed_when: False
+
+    - name: Copy db files to target host
+      copy:
+        src: script.sql
+        dest: /tmp/script.sql 
+
+    - name: Restore database
+      mysql_db:
+        name: "{{ mysql_db }}"
+        state: import
+        target: /tmp/script.sql

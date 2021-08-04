@@ -1,0 +1,45 @@
+---
+- name: Install Software
+  hosts: all, !localhost
+  vars:
+    packages:
+        - name: nginx
+          required: False
+        - name: httpd
+          required: True
+        - name: mysql
+          required: True
+
+  tasks:
+  - name: Install '{{ item.name }}' on Debian Hosts    
+    apt:
+      name: '{{ item.name }}'
+      state: present
+
+    when: item.required == True and ansible_facts['os_family'] == "Debian"
+    loop: '{{ packages }}'  
+
+  - name: Install '{{ item.name }}' on RedHat Hosts    
+    apt:
+      name: '{{ item.name }}'
+      state: present
+
+    when:
+      - ansible_facts['os_family'] == "RedHat"
+      - item.required == True 
+      
+    loop: '{{ packages }}'
+
+- name: Check status of httpd if down
+  hosts: all, !localhost
+
+  tasks:
+  - command: service httpd status
+    register: result
+
+  - mail:
+      to: email@domain.com
+      subject: Service Down Alert
+      body: httpd service down
+
+      when: result.stdout.find('down') != -1

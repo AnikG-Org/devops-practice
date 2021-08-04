@@ -1,0 +1,8 @@
+[all]
+IP
+
+[master]
+IP
+
+[local]
+localhost

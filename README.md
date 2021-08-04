@@ -56,10 +56,15 @@ path: devops-practice/terraform/*
 
 
 
-# Ansible (Upcoming)
+# Ansible
 
 path: devops-practice/ansible/*
 
-**LAMP STACK application Deployment Project using *Ansible-playbook**: https://github.com/AnikG-Org/devops-practice/tree/main/ansible/ansible-ecom-lamp-stack
+
+
+**LAMP STACK application Deployment Project using *Ansible-playbook**: https://github.com/AnikG-Org/devops-practice/tree/main/ansible/Ansible_project/ansible-ecom-lamp-stack
+
+**Python Flask web_app application with mysql db Deployment Project using *Ansible-playbook**: https://github.com/AnikG-Org/devops-practice/tree/main/ansible/Ansible_project/ansible-flaskweb-app
+
 
 -@nik

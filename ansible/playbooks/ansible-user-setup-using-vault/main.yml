@@ -1,0 +1,10 @@
+---
+- name: Ansible user setup
+  hosts: all
+  become: yes
+  become_user: root
+  vars:
+    ansible_become_password: "{{ ansible_password }}"
+  tasks:
+    - include: 00-vault.yml
+    - include: 01-ansible-user-creation.yml

@@ -1,0 +1,52 @@
+-
+  name: service httpd 
+  hosts: all, !localhost
+  tasks:
+    - name: Install a list of packages with a list variable
+      yum:
+        name: "{{ packages }}"
+        state: present
+      when: ansible_facts['os_family'] == "RedHat"  
+      vars:
+        packages:
+        - httpd
+        - httpd-tools
+    - name: Install a list of packages with a list variable
+      apt:
+        name: "{{ packages }}"
+        state: present
+      when: ansible_facts['os_family'] == "Debian"  
+      vars:
+        packages:
+        - httpd
+        - httpd-tools        
+
+    # - name: Install the nginx rpm from a remote repo
+    #   yum:
+    #     name: http://nginx.org/packages/centos/6/noarch/RPMS/nginx-release-centos-6-0.el6.ngx.noarch.rpm
+    #     state: present
+
+    - name: Start service httpd, if not started
+      ansible.builtin.service:
+        name: httpd
+        state: started
+
+    - name: Stop service httpd, if started
+      ansible.builtin.service:
+        name: httpd
+        state: stopped
+
+    - name: Restart service httpd, in all cases
+      ansible.builtin.service:
+        name: httpd
+        state: restarted
+
+    - name: Reload service httpd, in all cases
+      ansible.builtin.service:
+        name: httpd
+        state: reloaded
+
+    - name: Enable service httpd, and not touch the state
+      ansible.builtin.service:
+        name: httpd
+        enabled: yes

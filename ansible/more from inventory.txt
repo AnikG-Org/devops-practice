@@ -1,0 +1,35 @@
+
+web  ansible_host=server1.company.com ansible_connection=ssh   ansible_user=root
+db   ansible_host=server2.company.com ansible_connection=winrm ansible_user=admin
+mail ansible_host=server3.company.com ansible_connection=ssh   ansible_ssh_pass=P@ssword
+web2 ansible_host=server4.company.com ansible_connection=winrm ansible_password=P@ssword
+
+localhost ansible_connection=localhost
+
+
+[web_servers]
+web1
+web2
+web3
+
+[db_servers]
+db1
+
+[all_servers:children]
+web_servers
+db_servers
+
+Inventory Parameters:
+• ansible_connection – ssh/winrm/localhost
+• ansible_port – 22/5986
+• ansible_user – root/administrator
+• ansible_ssh_pass - Password
+Note: For linux use ansible_ssh_pass and for windows use ansible_password
+
+
+
+# Ansible has host key checking enabled by default. disable it?  vi /etc/ansible/ansible.cfg or ~/.ansible.cfg  > host_key_checking = False
+
+
+
+

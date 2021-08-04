@@ -1,0 +1,13 @@
+ansible-target ansible_host=IP ansible_user=ansible ansible_ssh_pass=ansible
+
+#ansible ansible-target -m ping -i demo-inventory.txt
+
+#ansible-target | SUCCESS => {
+#    "ansible_facts": {
+#        "discovered_interpreter_python": "/usr/bin/python"
+#    },
+#    "changed": false,
+#    "ping": "pong"
+#}
+
+## Ansible has host key checking enabled by default. disable it?  vi /etc/ansible/ansible.cfg or ~/.ansible.cfg  > host_key_checking = False

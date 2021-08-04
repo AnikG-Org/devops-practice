@@ -1,0 +1,10 @@
+---
+
+    - debug:
+        msg: "01.deploy_python_packages.yml started"
+
+    - name: "Install all required Python and its dependencies"
+      apt: 
+        name: "{{ py_modules }}"
+        state: latest
+      tags: [ Python ]  

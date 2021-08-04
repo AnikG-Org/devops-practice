@@ -1,0 +1,4 @@
+---
+vault_secret_path: devops-core/devops-tools/ansible
+ansible_password_key: password
+vault_public_key: public_key

@@ -1,0 +1,3 @@
+- name: Read ansible secrets from vault
+  set_fact:
+    secrets: "{{ lookup('hashi_vault',  'secret={{ vault_secret_path }} token={{ vault_token }} url={{ vault_uri }} namespace={{ vault_namespace }} validate_certs=False')}}" 

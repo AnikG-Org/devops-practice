@@ -1,0 +1,22 @@
+---
+ - hosts: all, !localhost
+   name: "Setup flask web application"
+   gather_facts: true
+   become: yes
+  #  vars_files:
+  #   - vars/default.yml
+
+   tasks:
+    - name: apt update
+      command: apt-get update
+      changed_when: False
+   
+    - name: Upgrade all packages, excluding kernel & foo related packages
+      apt:
+        name: '*'
+        state: latest
+        #exclude: kernel*,foo*
+
+    - include: tasks/01.deploy_python_packages.yml  
+    - include: tasks/02.deploy_db.yml
+    - include: tasks/03.deploy_web.yml

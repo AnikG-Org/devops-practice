@@ -1,0 +1,74 @@
+Syntax: ansible-playbook <playbook file name>
+ansible-playbook playbook.yml -i inventory.txt
+ansible-playbook --help
+ansible ansible-target -m ping -i <inventory file name>
+
+ansible <hosts> -a <command>
+ansible all -a "/sbin/reboot"
+ansible <hosts> -m <module>
+ansible <host> -m ping
+
+ansible-inventory --graph
+
+ansible-doc <module_name>
+
+#Create SSH keygen from ansible controler
+
+ssh-keygen -t rsa
+cd .ssh/
+ll -a
+cat id_rsa.pub
+
+#>> Login target nodes>>
+
+cd .ssh/ & ll -a
+vi authorized_keys # enter & paste content of id_rsa.pub(created on ansible controler node) & save
+#ansible config file
+/etc/ansible/ansible.cfg
+forks=5 #default number of execution ansible hosts can run
+#default> roles_path = /etc/ansible/roles or ./roles {ansible playbook current directory}
+
+#### Ansible vault 
+ansible-vault encrypt inventory.txt
+ansible-vault view/create inventory.txt
+ansible-playbook playbook.yml -i inventory.txt -ask-vault-pass
+or
+ansible-playbook playbook.yml -i inventory.txt -vault-password-file ~./vault_pass.txt
+ansible-playbook playbook.yml -i inventory.txt -vault-password-file ~./vault_pass.py
+####
+ansible-galaxy list
+ansible-config dump | grep ROLE
+ansible-galaxy search <rolename>
+ansible-galaxy install geerlingguy.mysql
+ansible-galaxy install geerlingguy.mysql –p ./roles
+
+ansible-galaxy init <rolename>
+##############
+-
+name: Install and Configure MySQL
+hosts: db-and-webserver
+roles:
+- geerlingguy.mysql
+##############
+pip install "pywinrm>0.2.2" #install winrm on ansible controler machine
+#setup winrm on windows machine RUN >> ./ConfigureRemotingForAnsible.ps1  #https://docs.ansible.com/ansible/latest/user_guide/windows_setup.html#winrm-setup
+
+
+-----------------------
+
+ansible-playbook playbook-1.yml -i inventory.txt -kK 
+
+SSH password: 
+BECOME password[defaults to SSH password]: 
+
+-k, --ask-pass: ask for connection password
+-K, --ask-become-pass: ask for privilege escalation password
+
+########### loops
+
+ansible_ssh_pass: "{{ lookup('ini', 'password section=web_server file=credentials.ini') }}"
+ansible_ssh_pass: "{{ lookup('csvfile', 'web_server file=credentials.csv delimiter=,') }}"
+
+
+##########
+export ANSIBLE_FILTER_PLUGINS=/filter_plugins; 

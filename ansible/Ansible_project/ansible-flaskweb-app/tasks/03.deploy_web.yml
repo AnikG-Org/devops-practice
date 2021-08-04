@@ -1,0 +1,20 @@
+---
+    - debug:
+        msg: "02.deploy_web.yml started"
+
+    - name: pip install the latest version of pymysql for mysql database
+      pip:
+        name: "{{ pip_modules }}"
+        state: latest
+      tags: [ flask ]
+
+    - name: Copy App files
+      copy:
+        src: app.py
+        dest: /opt/app.py  
+        
+    - name: Start Flask Web Server
+      shell: FLASK_APP=/opt/app.py nohup flask run --host=0.0.0.0 &
+
+    - name: test connection
+      command: curl http://localhost:5000

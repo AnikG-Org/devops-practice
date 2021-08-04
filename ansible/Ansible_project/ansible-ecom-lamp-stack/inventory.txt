@@ -1,0 +1,8 @@
+ansible-target ansible_host=IP ansible_user=ansible ansible_ssh_pass=ansible
+localhost ansible_connection=localhost
+
+[target]
+ansible-target
+
+[localhost]
+localhost

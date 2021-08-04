@@ -1,0 +1,33 @@
+-
+    name: 'Execute a command to create a file'
+    hosts: localhost
+    tasks:
+        -
+            name: 'Execute a command to create a file'
+            command: 'touch /tmp/test.txt'
+
+-
+  name: checking connectivity for hosts
+  hosts: all, !localhost
+  tasks:
+    -  name: checking Ping connectivity for hosts
+       ansible.builtin.ping:
+
+    -   name: 'Execute a date command'
+        command: date  
+
+    -   name: 'Execute a command to display hosts file'
+        command: 'cat /etc/hosts' 
+
+    -  name: Copy file
+       ansible.builtin.copy:
+         src: /tmp/test.txt
+         dest: /tmp/test.txt
+
+-
+    name: 'Restart all servers at once'
+    hosts: all, !localhost
+    tasks:
+        -
+            name: 'Restart all servers at once'
+            command: '/sbin/shutdown -r'

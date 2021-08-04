@@ -1,0 +1,12 @@
+#https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-and-upgrading-ansible-with-pip
+#https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-ansible-on-rhel-centos-or-fedora
+#Installing Ansible on AL2
+
+
+sudo amazon-linux-extras install ansible2 -y
+ansible --version
+
+#Ansible HostNAME
+
+#vi /etc/hosts
+#vi /etc/hostname

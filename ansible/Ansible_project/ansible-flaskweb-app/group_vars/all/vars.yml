@@ -1,0 +1,15 @@
+---
+#System Settings
+py_modules: [ 'python-is-python3', 'python3-setuptools', 'python-dev-is-python3', 'build-essential', 'python3-pip', 'python3-mysqldb']
+mysql_modules: ['mysql-server', 'mysql-client']
+pip_modules: ['flask', 'flask-mysql']
+
+#MySQL Settings
+mysql_db: "app_db"
+mysql_user: "db_user"
+mysql_password: "Passw0rd"
+
+#HTTP Settings
+# http_host: "your_domain"
+# http_conf: "your_domain.conf"
+# http_port: "80"
