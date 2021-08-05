@@ -16,16 +16,16 @@ $ (venv) pip3 install ansible
 
 If you are using SSH keys on this machine (recommended), make sure you modify your local (where ansible is running) ssh config. An example ssh config (~/.ssh/config) is as follows:
 ```bash
-Host 172.17.0.1
+Host {ip}
   User ubuntu
   IdentityFile /home/{{}}.pem
   IdentitiesOnly yes
 ```
 
-* The Linux user that can be used by Ansible to access the host. Default is 'ubuntu' (to support AWS), however feel free to use any other user. Make sure to update the 'system_user' variable inside defaults/main.yml accordingly.
+* The Linux user that can be used by Ansible to access the host. Default is 'ubuntu' (to support AWS), however feel free to use any other user. Make sure to update the 'system_user' variable inside group_vars/all/vars.ymll accordingly.
 
 ## How does it work?
-I am a firm believer of the KISS philosophy. As such I made this project as a single Ansible playbook, three roles (each containing their own tasks), templates for Docker and Nginx, and a set of default variables (defaults/main.html):
+As such I made this project as a single Ansible playbook, three roles (each containing their own tasks), templates for Docker and Nginx, and a set of default variables (group_vars/all/vars.yml):
 ```bash
 ├── ansible.cfg
 ├── group-vars/all/
