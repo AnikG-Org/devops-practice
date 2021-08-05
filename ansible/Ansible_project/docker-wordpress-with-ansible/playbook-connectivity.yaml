@@ -1,0 +1,7 @@
+
+-
+  name: checking connectivity for hosts
+  hosts: all, !localhost
+  tasks:
+    -  name: checking Ping connectivity for hosts
+       ansible.builtin.ping:
