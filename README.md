@@ -60,11 +60,15 @@ path: devops-practice/terraform/*
 
 path: devops-practice/ansible/*
 
+<p align="center">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/2/24/Ansible_logo.svg" width="414" height="150" />
+</p>
 
 
 **LAMP STACK application Deployment Project using *Ansible-playbook**: https://github.com/AnikG-Org/devops-practice/tree/main/ansible/Ansible_project/ansible-ecom-lamp-stack
 
 **Python Flask web_app application with mysql db Deployment Project using *Ansible-playbook**: https://github.com/AnikG-Org/devops-practice/tree/main/ansible/Ansible_project/ansible-flaskweb-app
 
+**Wordpress web_app application with Maria db Deployment as a microservice (Docker) with "docker-compose" using *Ansible-playbook**: https://github.com/AnikG-Org/devops-practice/tree/main/ansible/Ansible_project/docker-wordpress-with-ansible
 
 -@nik
