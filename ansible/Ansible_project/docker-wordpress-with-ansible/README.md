@@ -1,7 +1,7 @@
 # Docker-Ansible-Wordpress
 
 This project deploys & runs a containerized WordPress (PHP7 FPM, Nginx, MySQL) using Ansible + Docker. This project has been tested on AWS as well - in fact, the default
-user is 'root'. Feel free to modify the 'system_user' variable as required.
+user is 'root' (target OS *ubuntu*). Feel free to modify the 'system_user' variable as required.
 
 ## Prerequisites
 
@@ -10,6 +10,12 @@ user is 'root'. Feel free to modify the 'system_user' variable as required.
 $ python3 -m virtualenv venv
 $ source venv/bin/activate
 $ (venv) pip3 install ansible
+
+or 
+
+$ sudo yum update -y
+$ yum install git -y
+$ sudo amazon-linux-extras install ansible2 -y
 ```
 
 * A Linux machine on which you want to deploy the Docker containers. This could be the same machine described in the previous step, or any another host running Linux (could also be on the cloud), as long as it is accessible by Ansible. 
@@ -46,7 +52,7 @@ As such I made this project as a single Ansible playbook, three roles (each cont
 │       └── templates
 │           ├── docker-compose.j2
 │           └── wordpress-nginx.j2
-└── wordpress-docker-with-var-prompt.yml // wordpress-docker.yml   & playbook-connectivity.yaml
+└── wordpress-docker-with-var-prompt.yml & wordpress-docker.yml   & playbook-connectivity.yaml
 ```
 
 The workflow of this project is simple and is made up of two phases. 
@@ -123,5 +129,5 @@ In this case your WordPress database name will be: "wordpress".
 If you want to run this playbook in non interactive mode (which is enabled by default) using parametrers, you can do so by:
 
 ```
-ansible-playbook wordpress-docker-with-var-prompt.yml -i hosts --extra-vars "domain=custom.domain2.com wp_version=4.7.5 wp_db_name=wpdb wp_db_tb_pre=wp_ wp_db_host=mysql wp_db_psw=change-P3"
+ansible-playbook wordpress-docker-with-var-prompt.yml -i hosts --extra-vars "domain=custom.domain2.com wp_version=4.7.5 wp_db_name=wpdb wp_db_tb_pre=wp_ wp_db_host=mysql wp_db_psw=passwd-P3"
 ```
