@@ -1,7 +1,7 @@
 # Docker-Ansible-Wordpress
 
 This project deploys & runs a containerized WordPress (PHP7 FPM, Nginx, MySQL) using Ansible + Docker. This project has been tested on AWS as well - in fact, the default
-user is 'ubuntu'. Feel free to modify the 'system_user' variable as required.
+user is 'root'. Feel free to modify the 'system_user' variable as required.
 
 ## Prerequisites
 
