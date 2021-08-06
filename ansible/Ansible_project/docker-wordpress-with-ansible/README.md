@@ -20,12 +20,16 @@ $ sudo amazon-linux-extras install ansible2 -y
 
 * A Linux machine on which you want to deploy the Docker containers. This could be the same machine described in the previous step, or any another host running Linux (could also be on the cloud), as long as it is accessible by Ansible. 
 
-If you are using SSH keys on this machine (recommended), make sure you modify your local (where ansible is running) ssh config. An example ssh config (~/.ssh/config) is as follows:
+If you are using SSH keys on this machine (recommended), make sure you generate ssh-keygen from ansible-controler. :
 ```bash
-Host {ip}
-  User root/ubuntu
-  IdentityFile /home/{{}}.pem
-  IdentitiesOnly yes
+ssh-keygen -t rsa
+ls -al ~/.ssh
+cat ~/.ssh/id_rsa.pub
+
+#place it to target machine 
+
+cat ~/.ssh/id_rsa.pub [from ansible controler ] & vi target /home/{user}/.ssh/authorized_keys [paste pub file]
+or login with user & vi ~/.ssh/authorized_keys [paste pub file]
 ```
 
 * The Linux user that can be used by Ansible to access the host. Default is 'ubuntu' (to support AWS), however feel free to use any other user. Make sure to update the 'system_user' variable inside group_vars/all/vars.ymll accordingly.
