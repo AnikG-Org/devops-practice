@@ -17,7 +17,7 @@ $ (venv) pip3 install ansible
 If you are using SSH keys on this machine (recommended), make sure you modify your local (where ansible is running) ssh config. An example ssh config (~/.ssh/config) is as follows:
 ```bash
 Host {ip}
-  User ubuntu
+  User root/ubuntu
   IdentityFile /home/{{}}.pem
   IdentitiesOnly yes
 ```
@@ -46,7 +46,7 @@ As such I made this project as a single Ansible playbook, three roles (each cont
 │       └── templates
 │           ├── docker-compose.j2
 │           └── wordpress-nginx.j2
-└── wordpress-docker.yml
+└── wordpress-docker.yml & playbook-connectivity.yaml
 ```
 
 The workflow of this project is simple and is made up of two phases. 
@@ -99,7 +99,7 @@ Both the Nginx configuration and the docker-compose file are built from a Jinja 
 
 ```
 [wordpress]
-172.17.0.5
+x.x.x.x
 ```
 
 **3. Run wordpress-docker playbook, using hosts inventory file, i.e:**
