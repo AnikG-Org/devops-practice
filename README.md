@@ -43,7 +43,7 @@ path: devops-practice/kubernetes/*
 path: devops-practice/terraform/*
 
 <p align="center">
-  <img src="https://www.datocms-assets.com/2885/1542060063-terraformshare-imglogo-w-stack-graphic1200x630.png" width="414" height="150" />
+  <img src="https://www.datocms-assets.com/2885/1542060063-terraformshare-imglogo-w-stack-graphic1200x630.png" width="414" height="180" />
 </p>
 
 
