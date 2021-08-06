@@ -2,7 +2,7 @@
 system_user: root #ubuntu
 compose_project_dir: /home/{{ system_user }}/compose-wordpress
 
-wp_domain: localhost
+domain: localhost
 wp_version: 4.7.5
 wp_db_name: wordpress
 wp_db_tb_pre: wp_
