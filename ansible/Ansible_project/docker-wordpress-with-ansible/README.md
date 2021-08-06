@@ -93,6 +93,7 @@ Both the Nginx configuration and the docker-compose file are built from a Jinja 
 **1. Get source code for docker-ansible-wordpress, i.e:**
 
 ```
+https://github.com/AnikG-Org/devops-practice/blob/main/ansible/Ansible_project/docker-wordpress-with-ansible
 ```
 
 **2. Update docker-ansible-wordpress/hosts inventory file with your AWS instance Public IP, i.e:**
