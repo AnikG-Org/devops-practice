@@ -1,5 +1,5 @@
 
-wordpress ansible_host=IP ansible_user=root 
+wordpress ansible_host=IP 
 localhost ansible_connection=localhost
 
 [wp]
