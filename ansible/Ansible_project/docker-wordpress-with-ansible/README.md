@@ -40,13 +40,13 @@ As such I made this project as a single Ansible playbook, three roles (each cont
 │   ├── python
 │   │   └── tasks
 │   │       └── main.yml
-│   └── wordpress-docker
+│   └── wordpress-docker-with-var-prompt
 │       ├── tasks
 │       │   └── main.yml
 │       └── templates
 │           ├── docker-compose.j2
 │           └── wordpress-nginx.j2
-└── wordpress-docker.yml & playbook-connectivity.yaml
+└── wordpress-docker-with-var-prompt.yml // wordpress-docker.yml   & playbook-connectivity.yaml
 ```
 
 The workflow of this project is simple and is made up of two phases. 
@@ -68,7 +68,7 @@ This Ansible role will perform all necessary tasks to setup and run Docker and D
 * Install packages needed for AUFS storage drivers.
 * Add user to Docker group.
 
-**wordpress-docker**
+**wordpress-docker-with-var-prompt**
 
 This is where the magic truly happens. This Ansible playbook will Deploy & run Docker Compose project for WordPress instance. Which consists of 3 separate containers running:
 * WordPress (PHP7 FPM)
@@ -103,7 +103,7 @@ https://github.com/AnikG-Org/devops-practice/blob/main/ansible/Ansible_project/d
 x.x.x.x
 ```
 
-**3. Run wordpress-docker playbook, using hosts inventory file, i.e:**
+**3. Run wordpress-docker-with-var-prompt playbook, using hosts inventory file, i.e:**
 
 ```
 ansible-playbook -i hosts wordpress-docker.yml
@@ -123,5 +123,5 @@ In this case your WordPress database name will be: "wordpress".
 If you want to run this playbook in non interactive mode (which is enabled by default) using parametrers, you can do so by:
 
 ```
-ansible-playbook wordpress-docker.yml -i hosts --extra-vars "domain=custom.domain2.com wp_version=4.7.5 wp_db_name=wpdb wp_db_tb_pre=wp_ wp_db_host=mysql wp_db_psw=change-P3"
+ansible-playbook wordpress-docker-with-var-prompt.yml -i hosts --extra-vars "domain=custom.domain2.com wp_version=4.7.5 wp_db_name=wpdb wp_db_tb_pre=wp_ wp_db_host=mysql wp_db_psw=change-P3"
 ```
