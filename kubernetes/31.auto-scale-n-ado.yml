@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pipeline-auth
+data:
+  personalAccessToken: 
+#  organizationURL: 
+---
+apiVersion: keda.sh/v1alpha1
+kind: TriggerAuthentication
+metadata:
+  name: pipeline-trigger-auth
+spec:
+  secretTargetRef:
+    - parameter: personalAccessToken
+      name: pipeline-auth
+      key: personalAccessToken
+    - parameter: organizationURL
+      name: pipeline-auth
+      key: organizationURL
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: azure-pipelines-scaledobject
+spec:
+  scaleTargetRef:
+    name: azdevops-deployment  #select target
+#    app: azdevops-agent
+  minReplicaCount: 1
+  maxReplicaCount: 5
+  triggers:
+  - type: azure-pipelines
+    metadata:
+      poolID: "xxx"
+      organizationURLFromEnv: AZP_URL
+#     personalAccessTokenFromEnv: "AZP_TOKEN"
+      targetPipelinesQueueLength: "1"
+    authenticationRef:
+     name: pipeline-trigger-auth
