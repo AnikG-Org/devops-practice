@@ -1,0 +1,244 @@
+
+name: $(buildDefinitionName)_$(Build.BuildId)_$(SourceBranchName)$(rev:.r)_$(Date:yyyy.MM.dd)
+trigger:
+- main
+  # batch: true
+  # branches:
+  #   include:
+  #     - master
+pool:
+  name: 'ADF-Agent-1'
+
+stages:
+  - stage: Build_code 
+    jobs:
+      - job: 'Git_Build'
+        # pool:
+        #   vmImage: 'windows-2019'
+        steps:
+        - task: CopyFiles@2
+          displayName: 'Copyfile to $(build.artifactStagingdirectory)'
+          inputs:
+            SourceFolder: Terraform
+            TargetFolder: '$(build.artifactStagingdirectory)'
+        - task: PublishBuildArtifacts@1
+          displayName: 'Publish Artifact: drop'
+          inputs:
+            PathtoPublish: '$(build.artifactStagingdirectory)'
+            artifactName: drop            
+            publishlocation: 'Azure Pipelines'
+            condition: succeededOrFailed()
+  - stage: Storageaccount_deployment
+    jobs:
+      - job: Buildapply
+        displayName: 'Storageaccount_deployment'
+        # pool:
+        #   vmImage: 'windows-2019' 
+        steps:
+        - task: CopyFiles@2
+          displayName: 'Copyfile to $(build.artifactStagingdirectory)'
+          inputs:
+            SourceFolder: Terraform
+            TargetFolder: '$(build.artifactStagingdirectory)'
+        - task: PublishBuildArtifacts@1
+          displayName: 'Publish Artifact: drop'
+          inputs:
+            PathtoPublish: '$(build.artifactStagingdirectory)'
+            artifactName: drop   
+        - task: DownloadBuildArtifacts@0
+          displayName: 'Download Build Artifacts'
+          inputs:
+            buidltype: 'current'
+            downloadType: 'single'
+            artifactName: 'drop'
+            downloadpath: '$(system.defaultWorkingdirectory)'
+        - task: AzurePowerShell@5
+          inputs:
+            azureSubscription: $(SPNID)
+            scriptType: filePath
+            scriptPath: $(system.defaultWorkingdirectory)/drop/infra/storageaccount.ps1
+            scriptArguments:
+               -bu $(bu) `
+               -component $(component) `
+               -env $(env) `
+               -org $(org) `
+               -region $(region)
+              # -StorageAccountName '($org$bu$component$env$ran)+01' `
+              # -region $(region)
+              # -ResourceGroupName 'rg-$org-$bu-$env-01'
+              # -containerName '$(component)'
+            azurePowerShellVersion: latestVersion
+            pwsh: true
+        - bash: |
+            echo "##vso[task.setvariable variable=StorageAccountName;isOutput=true;]$(StorageAccountName)"
+            echo "##vso[task.setvariable variable=ResourceGroupName;isOutput=true;]$(ResourceGroupName)"
+            echo "##vso[task.setvariable variable=containerName;isOutput=true;]$(containerName)"
+          name: setvar
+          displayName: Set Output Variables
+  - stage: Terraform_deployment
+    dependsOn: Storageaccount_deployment
+    variables:
+      StorageAccountName: $[ stagedependencies.Storageaccount_deployment.Buildapply.outputs['setvar.StorageAccountName'] ] 
+      ResourceGroupName: $[ stagedependencies.Storageaccount_deployment.Buildapply.outputs['setvar.ResourceGroupName'] ]
+      containerName: $[ stagedependencies.Storageaccount_deployment.Buildapply.outputs['setvar.containerName'] ]
+    jobs:
+      - job: 'Infrastructure_deployment'
+        displayName: 'Terraform deployment'
+        # pool:
+        #   vmImage: 'windows-2019' 
+        steps:
+        - task: CopyFiles@2
+          displayName: 'Copyfile to $(build.artifactStagingdirectory)'
+          inputs:
+            SourceFolder: Terraform
+            TargetFolder: '$(build.artifactStagingdirectory)'
+        - task: PublishBuildArtifacts@1
+          displayName: 'Publish Artifact: drop'
+          inputs:
+            PathtoPublish: '$(build.artifactStagingdirectory)'
+            artifactName: drop   
+        - task: DownloadBuildArtifacts@0
+          displayName: 'Download Build Artifacts'
+          inputs:
+            buidltype: 'current'
+            downloadType: 'single'
+            artifactName: 'drop'
+            downloadpath: '$(system.defaultWorkingdirectory)'
+        # - task: TerraformInstaller@0
+        #   displayName: Install Terraform 0.13.0
+        #   inputs:
+        #     terraformVersion: 0.13.0
+        - task: TerraformTaskV1@0
+          displayName: 'Terraform : azurerm'
+          enabled: False
+          inputs:
+            workingDirectory: Terraform/aks
+            commandOptions: -var-file=$(system.defaultWorkingdirectory)/drop/Terraform/aks/env/$(env)/$(env).tfvars
+            backendServiceArm: $(SPNID)
+            backendAzureRmResourceGroupName: $(ResourceGroupName)
+            backendAzureRmStorageAccountName: $(StorageAccountName)
+            backendAzureRmContainerName: $(containerName)
+            backendAzureRmKey: $(component)/aks-terraform.tfstate
+        - task: TerraformTaskV1@0
+          displayName: 'Terraform : init'
+          inputs:
+            workingDirectory: $(system.defaultWorkingdirectory)/Terraform/aks
+            backendServiceArm: $(SPNID)
+            backendAzureRmResourceGroupName: $(ResourceGroupName)
+            backendAzureRmStorageAccountName: $(StorageAccountName)
+            backendAzureRmContainerName: $(containerName)
+            backendAzureRmKey: $(component)/aks-terraform.tfstate
+        - task: TerraformTaskV1@0
+          displayName: 'validate'
+          inputs:
+            provider: 'azurerm'
+            command: 'validate'
+        - task: replacetokens@3
+          inputs:
+            rootDirectory: '$(system.defaultWorkingdirectory)/Terraform/aks/'
+            targetFiles: '**/*.tfvars'
+            encoding: 'auto'
+            writeBOM: true
+            actionOnMissing: 'continue'
+            keepToken: false
+            tokenPrefix: '__'
+            tokenSuffix: '__'
+            useLegacyPattern: false
+            enableTransforms: false
+            enableTelemetry: true
+          displayName: Update Source Code Variables        
+        - task: TerraformTaskV1@0
+          displayName: 'Terraform : plan'
+          inputs:
+            command: plan
+            workingDirectory: $(system.defaultWorkingdirectory)/Terraform/aks
+            commandOptions: '-input=false -var-file=env/$(env)/$(env).tfvars'
+            environmentServiceNameAzureRM: $(SPNID)
+            backendServiceArm: $(SPNID)
+            backendAzureRmResourceGroupName: $(ResourceGroupName)
+            backendAzureRmStorageAccountName: $(StorageAccountName)
+            backendAzureRmContainerName: $(containerName)
+            backendAzureRmKey: $(component)/aks-terraform.tfstate
+
+        - task: TerraformTaskV1@0
+          displayName: 'Terraform : apply'
+          condition: eq(variables['tf_apply'],true)
+          inputs:
+            command: apply
+            workingDirectory: $(system.defaultWorkingdirectory)/Terraform/aks
+            commandOptions: '-input=false -auto-approve -var-file=env/$(env)/$(env).tfvars'
+            environmentServiceNameAzureRM: $(SPNID)
+            backendServiceArm: $(SPNID)
+            backendAzureRmResourceGroupName: $(ResourceGroupName)
+            backendAzureRmStorageAccountName: $(StorageAccountName)
+            backendAzureRmContainerName: $(containerName)
+            backendAzureRmKey: $(component)/aks-terraform.tfstate
+  - stage: Terraform_destroy
+    dependsOn: Storageaccount_deployment
+    variables:
+      StorageAccountName: $[ stagedependencies.Storageaccount_deployment.Buildapply.outputs['setvar.StorageAccountName'] ] 
+      ResourceGroupName: $[ stagedependencies.Storageaccount_deployment.Buildapply.outputs['setvar.ResourceGroupName'] ]
+      containerName: $[ stagedependencies.Storageaccount_deployment.Buildapply.outputs['setvar.containerName'] ]
+    jobs:
+      - job: 'Terraform_destroy'
+        condition: eq(variables['tf_destroy'],true)
+        displayName: 'Terraform_destroy'
+        # pool:
+        #   vmImage: 'windows-2019' 
+        steps:
+        # - download: current
+        #   artifact: drop
+        - task: CopyFiles@2
+          displayName: 'Copyfile to $(build.artifactStagingdirectory)'
+          inputs:
+            SourceFolder: Terraform
+            TargetFolder: '$(build.artifactStagingdirectory)'
+        - task: PublishBuildArtifacts@1
+          displayName: 'Publish Artifact: drop'
+          inputs:
+            PathtoPublish: '$(build.artifactStagingdirectory)'
+            artifactName: drop   
+        - task: DownloadBuildArtifacts@0
+          displayName: 'Download Build Artifacts'
+          inputs:
+            buidltype: 'current'
+            downloadType: 'single'
+            artifactName: 'drop'
+            downloadpath: '$(system.defaultWorkingdirectory)'
+        - task: TerraformInstaller@0
+          displayName: Install Terraform 0.13.0
+          inputs:
+            terraformVersion: 0.13.0
+        - task: TerraformTaskV1@0
+          displayName: 'Terraform : azurerm'
+          enabled: true
+          inputs:
+            workingDirectory: Terraform/aks
+            commandOptions: -var-file=$(system.defaultWorkingdirectory)/drop/Terraform/aks/env/$(env)/$(env).tfvars
+            backendServiceArm: $(SPNID)
+            backendAzureRmResourceGroupName: $(ResourceGroupName)
+            backendAzureRmStorageAccountName: $(StorageAccountName)
+            backendAzureRmContainerName: $(containerName)
+            backendAzureRmKey: $(component)/aks-terraform.tfstate
+        - task: TerraformTaskV1@0
+          displayName: 'Terraform : init'
+          inputs:
+            workingDirectory: Terraform/aks
+            backendServiceArm: $(SPNID) #eef23870-cda3-4e2c-8486-1c773c683d81
+            backendAzureRmResourceGroupName: $(ResourceGroupName)
+            backendAzureRmStorageAccountName: $(StorageAccountName)
+            backendAzureRmContainerName: $(containerName)
+            backendAzureRmKey: $(component)/aks-terraform.tfstate
+        - task: TerraformTaskV1@0
+          displayName: 'Terraform validate'
+          inputs:
+            provider: 'azurerm'
+            command: 'validate'
+        - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV1@0
+          displayName: 'Terraform destroy'
+          inputs:
+            command: destroy
+            workingDirectory: Terraform/aks
+            commandOptions: -var-file="$(system.defaultWorkingdirectory)/Terraform/aks/env/$(env)/$(env).tfvars"
+            environmentServiceNameAzureRM: $(SPNID)
+

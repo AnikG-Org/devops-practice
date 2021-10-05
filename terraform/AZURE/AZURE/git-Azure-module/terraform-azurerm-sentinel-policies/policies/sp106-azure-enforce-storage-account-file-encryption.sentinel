@@ -1,0 +1,43 @@
+import "tfplan"
+
+get_resources = func(type) {
+    if length(tfplan.module_paths else []) > 0 { 
+        return get_resources_all_modules(type)
+    } else { 
+        return get_resources_root_only(type)
+    }
+}
+
+get_resources_root_only = func(type) {
+    resources = []
+    named_and_counted_resources = tfplan.resources[type] else {}
+    for named_and_counted_resources as _, instances {
+        for instances as _, body {
+            append(resources, body)
+        }
+    }
+    return resources
+}
+
+get_resources_all_modules = func(type) {
+    resources = []
+    for tfplan.module_paths as path {
+        named_and_counted_resources = tfplan.module(path).resources[type] else {}
+        for named_and_counted_resources as _, instances {
+            for instances as _, body {
+                append(resources, body)
+            }
+        }
+    }
+    return resources
+}
+
+file_encryption_enabled = rule {
+    all get_resources("azurerm_storage_account") as r{
+         r.applied.enable_file_encryption is true
+    }
+}
+
+main = rule {
+    (file_encryption_enabled) else true
+}

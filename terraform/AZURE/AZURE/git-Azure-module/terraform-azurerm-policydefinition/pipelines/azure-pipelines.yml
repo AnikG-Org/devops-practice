@@ -1,0 +1,17 @@
+resources:
+  repositories:
+    - repository: templates
+      type: githubenterprise
+      name: pwc-tfe-modules/tfe-module-cicd-pipelines
+      endpoint: tfe-github-modules
+jobs:
+- template: common.yml@templates  # Template reference
+  parameters:
+    vmImage: 'ubuntu 16.04'
+
+#disable the CI on direct changes
+# trigger on PR from master branch and do not trigger on template changes.
+pr:
+  branches:
+    include:
+    - master

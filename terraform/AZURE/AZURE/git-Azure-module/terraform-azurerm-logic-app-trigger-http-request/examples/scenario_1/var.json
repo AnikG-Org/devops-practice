@@ -1,0 +1,8 @@
+{
+    "type": "Get",              
+     "properties": {              
+          "Message": {                
+            "type": "string"               
+          }
+      }   
+  }

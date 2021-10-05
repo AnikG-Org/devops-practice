@@ -1,0 +1,56 @@
+# Repo: pwc-tfe-modules/common
+# File: common.yml
+parameters:
+  vmImage: 'ubuntu 16.04'
+
+jobs:
+- job: Build
+  pool:
+    vmImage: ${{ parameters.vmImage }}
+  steps:
+  # This step replaces the terraform version v0.11.13 only if this is not master branch
+  - script: "cd /usr/local/bin\n\nsudo rm terraform\n\nsudo wget -q https://releases.hashicorp.com/terraform/0.11.13/terraform_0.11.13_linux_amd64.zip\n\nsudo unzip terraform_0.11.13_linux_amd64.zip\n\nsudo rm -f terraform_0.11.13_linux_amd64.zip\n\n# Run tests to determine that the software installed as expected\necho \"Testing to make sure that script performed as expected, and basic scenarios work\"\nif ! command -v terraform; then\n    echo \"Terraform was not installed or found on PATH\"\n    exit 1\nfi\n\nterraform version\n"
+    condition: and(succeeded(), eq(variables['System.PullRequest.TargetBranch'], 'hcl1'))
+  - task: CopyFiles@2
+    displayName: Prepare
+    inputs:
+      Contents: |
+       *.tf*
+      TargetFolder: '$(build.artifactstagingdirectory)/terraform'   
+  # This step adds provider block with azurerm 1.44.0
+  - script: "cd $BUILD_ARTIFACTSTAGINGDIRECTORY/terraform\n{\necho ' provider \"azurerm\" {'\n echo 'version = \"=1.44.0\"'\n echo '}'\n}>providers.tf \n ls"
+
+  - powershell: |
+     Write-Host "**********************************************" 
+     Write-Host "Terraform Validation Starting...................." 
+     Write-Host "**********************************************" 
+     $workingDir = "$(build.artifactstagingdirectory)/terraform/"
+     Write-Host "**********************************************" 
+     Write-Host "Working Directory Path: $workingDir" 
+     Write-Host "**********************************************" 
+
+     Push-Location -Path $workingDir
+
+     # List the files being verified
+     Write-Host "**********************************************" 
+     Get-ChildItem -Name
+     Write-Host "**********************************************" 
+     terraform version
+     terraform init
+     # Used to validate the syntax of the terraform files
+     # v0.11.xx
+     # terraform validate -check-variables=false
+     # v0.12.xx
+     Write-Host $env:BUILD_SOURCEBRANCH
+     Write-Host $env:BUILD_SOURCEBRANCH -like "*master"
+     Write-Host $env:SYSTEM_PULLREQUEST_TARGETBRANCH
+     Write-Host $env:SYSTEM_PULLREQUEST_TARGETBRANCH -like "*master"
+     if ($env:SYSTEM_PULLREQUEST_TARGETBRANCH -like "*master") { terraform validate . } else { terraform validate -check-variables=false }
+     
+     Write-Host "**********************************************" 
+     Write-Host "Validation completed.............................." 
+     Write-Host "**********************************************" 
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact: release'
+    inputs:
+      ArtifactName: release

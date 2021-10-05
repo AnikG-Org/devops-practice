@@ -1,0 +1,24 @@
+resources:
+  repositories:
+    - repository: templates
+      type: githubenterprise
+      name: git-platform/devops-common
+      endpoint: Github (Digital Platform)
+
+## Trigger CI only when commit is made to master
+trigger:
+  branches:
+    include:
+    - master
+
+
+## Trigger PR automation only when PR is raised against master
+pr:
+  branches:
+    include:
+    - master
+
+jobs:
+- template: pipelines/build-jobs.yml@templates #
+  parameters:
+    terraformValidate: false

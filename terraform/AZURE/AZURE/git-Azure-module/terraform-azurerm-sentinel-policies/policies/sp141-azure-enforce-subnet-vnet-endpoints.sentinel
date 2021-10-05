@@ -1,0 +1,55 @@
+import "tfplan"
+
+get_resources = func(type) {
+    if length(tfplan.module_paths else []) > 0 { 
+        return get_resources_all_modules(type)
+    } else { 
+        return get_resources_root_only(type)
+    }
+}
+
+get_resources_root_only = func(type) {
+    resources = []
+    named_and_counted_resources = tfplan.resources[type] else {}
+    for named_and_counted_resources as _, instances {
+        for instances as _, body {
+            append(resources, body)
+        }
+    }
+    return resources
+}
+
+get_resources_all_modules = func(type) {
+    resources = []
+    for tfplan.module_paths as path {
+        named_and_counted_resources = tfplan.module(path).resources[type] else {}
+        for named_and_counted_resources as _, instances {
+            for instances as _, body {
+                append(resources, body)
+            }
+        }
+    }
+    return resources
+}
+
+endpoints = [
+    "Microsoft.AzureActiveDirectory",
+    "Microsoft.AzureCosmosDB",
+    "Microsoft.EventHub",
+    "Microsoft.KeyVault", 
+    "Microsoft.ServiceBus", 
+    "Microsoft.Sql",
+    "Microsoft.Storage",
+]
+
+vnet_endpoints = rule {
+    all get_resources("azurerm_subnet") as r{
+        all endpoints as e{
+            r.applied.service_endpoints contains e
+        }
+    }
+}
+
+main = rule {
+    (vnet_endpoints) else true
+}

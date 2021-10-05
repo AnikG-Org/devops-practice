@@ -1,0 +1,10 @@
+## Terraform exclusions
+.terraform/
+*.tfstate
+*.tfstate.backup
+*lock*
+### Allow for local testing file that never ends up in git
+local.tf
+terraform.tfvars
+
+.DS_Store

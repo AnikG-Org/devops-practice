@@ -1,0 +1,63 @@
+import "tfplan"
+
+get_resources = func(type) {
+    if length(tfplan.module_paths else []) > 0 { 
+        return get_resources_all_modules(type)
+    } else { 
+        return get_resources_root_only(type)
+    }
+}
+
+get_resources_root_only = func(type) {
+    resources = []
+    named_and_counted_resources = tfplan.resources[type] else {}
+    for named_and_counted_resources as _, instances {
+        for instances as _, body {
+            append(resources, body)
+        }
+    }
+    return resources
+}
+
+get_resources_all_modules = func(type) {
+    resources = []
+    for tfplan.module_paths as path {
+        named_and_counted_resources = tfplan.module(path).resources[type] else {}
+        for named_and_counted_resources as _, instances {
+            for instances as _, body {
+                append(resources, body)
+            }
+        }
+    }
+    return resources
+}
+
+approved_publishers = [
+    "PwC",
+]
+
+approved_galleries = [
+    "/subscriptions/c72daa19-9a38-4155-b2c6-9121045a0fdc/resourceGroups/PZI-GXUS-S-RGP-IMGP-D001/providers/Microsoft.Compute/galleries/PwCSIG_West_Dev/images/",
+    "/subscriptions/2477531f-6332-49ab-bda7-2a5612a03e35/resourceGroups/PZI-GXSE-S-RGP-IMGP-D001/providers/Microsoft.Compute/galleries/PwCSIG_East_Dev/images/",
+    "/subscriptions/9209f19c-0425-4a3d-85ce-8988a4a0a6f6/resourceGroups/PZI-GXEU-S-RGP-IMGP-D001/providers/Microsoft.Compute/galleries/PwCSIG_Central_Dev/images/",
+]
+
+publisher = rule {
+    all get_resources("azurerm_virtual_machine") as r {
+        any approved_publishers as p{
+            r.applied.storage_image_reference.publisher is p
+        }
+    }
+}
+
+galleries = rule {
+    all get_resources("azurerm_virtual_machine") as r {
+        any approved_galleries as g {
+            r.applied.storage_image_reference.id matches ("^" + g)
+        }
+    }
+}
+
+main = rule {
+    (galleries) else true
+}
