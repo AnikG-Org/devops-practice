@@ -1,0 +1,104 @@
+trigger:
+- master 
+
+pool: Platform-DEV-Build-Agents
+
+resources:
+  repositories:
+  - repository: kaniko-build
+    type: githubenterprise
+    endpoint: 'Github Service -  Lab'
+    name: 'ai-driven-products/pipeline-templates'
+    ref: kaniko-build-template
+
+variables:
+  - group: azdo-base-image
+  - name: image-tag
+    value: $(Build.BuildId)
+  - name: azp-token
+    value: $(AZP_TOKEN)
+  - name: commitHash
+    value: $(commitHash)
+
+stages:
+- stage: Checkout
+  jobs:
+  - job: checkout
+    steps:
+    - checkout: self
+    - checkout: kaniko-build
+
+- stage: Build_Image_agent_deployment
+  dependsOn: checkout
+  jobs:
+  - job: imagesecrets_kanikoBuild_deployment_Kedascaling 
+    displayName: creating imagesecrets & deployment
+    steps:
+    - task: Kubernetes@1
+      inputs:
+        connectionType: 'Kubernetes Service Connection'
+        kubernetesServiceEndpoint: 'DEV AKS Cluster'
+        namespace: 'kaniko'
+        command: 'login'
+
+    - task: tsuyoshiushio.shell-exec.shellexec.shellexec@0
+      displayName: 'Create a secret to login in Jfrog if not present'
+      inputs:
+        code: |
+          kubectl get secrets artifactwestregcred -n $(NAMESPACE) --no-headers -o custom-columns=":metadata.name"
+          if [ $? -eq 0 ]; then
+             echo "Resource found"
+          else
+             echo "creating imagesecrets"
+             kubectl create secret docker-registry artifactwestregcred --docker-server=$(JFROG_SERVER) --docker-username=$(JFROG_USER) --docker-password=$(AILAB_JFROG_PASSWORD) --docker-email=$(JFROG_EMAIL) -n $(NAMESPACE)
+          fi
+    - script: |
+        echo $sourceVersion
+        commitHash=${sourceVersion:0:7}
+        echo $commitHash
+        echo "##vso[task.setvariable variable=commitHash]$commitHash"
+      env: { sourceVersion: $(Build.SourceVersion) }
+      displayName: Git Hash 7-digit
+
+    - template: kaniko-build-templates/docker-build-template.yml@kaniko-build
+      parameters:
+        repo_name: 'git-driven-products/AzureADOAgentCreation-with-k8s' #specify repo where dockerfile is located in 'Github_Orgnisation/repository_name'
+        branch_name: 'master'                   #specify what branch of above repo to look into
+        dockerfile: './linux-agents/agent-capabilities/Dockerfile'                #Dockerfile location in above repo
+        dockerfile_arguments: '"--build-arg=JFROG_PASSWORD=$(AILAB_JFROG_PASSWORD)", "--build-arg=JFROG_USER=$(JFROG_USER)"'
+        build_id: '$(Build.BuildId)'            #takes build id of current build
+        destination_secret_name: 'artifactwestregcred'
+        build_destination: '$(JFROG_SERVER)/azdo-agent/azdo-agent:$(commitHash)-$(Build.BuildId)' #Jfrog location to store builds, note that builds are place under kaniko/kaniko-build folder(can change it, prefer repo name) and tagged with current BuidId
+
+    - task: qetza.replacetokens.replacetokens-task.replacetokens@3
+      displayName: Replace tokens in **/*
+      inputs:
+        rootDirectory: $(Pipeline.Workspace)/s/linux-agents/deployments
+        targetFiles: '**/*.yaml'
+        keepToken: true
+        tokenPrefix: __
+        tokenSuffix: __         
+
+    - task: tsuyoshiushio.shell-exec.shellexec.shellexec@0
+      displayName: 'Create an agent deployment in kubernetes cluster'
+      inputs:
+        code: |
+          kubectl apply -f ./linux-agents/deployments/agent-deployment.yaml 
+
+    - task: tsuyoshiushio.shell-exec.shellexec.shellexec@0
+      displayName: 'Install Keda if not installed'
+      inputs:
+        code: |
+          kubectl get all -n keda --no-headers -o custom-columns=":metadata.name"
+          if [ $? -eq 0 ]; then
+             echo "Resource found"
+          else
+             echo "Installing Keda"
+             kubectl apply -f https://github.com/kedacore/keda/releases/download/v2.4.0/keda-2.4.0.yaml
+          fi
+          
+    - task: tsuyoshiushio.shell-exec.shellexec.shellexec@0
+      displayName: 'implement autoscaling for the agents in the cluster'
+      inputs:
+        code: |
+          kubectl apply -f ./linux-agents/deployments/scaling.yaml

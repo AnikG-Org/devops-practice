@@ -1,0 +1,14 @@
+veracode-api-signing
+xmltodict
+ipython
+nbconvert
+dill
+pyyaml
+requests
+nipyapi
+kubernetes==11.0.0
+azure-storage-blob==0.37.0
+yq
+pycryptodome
+minio
+certifi
