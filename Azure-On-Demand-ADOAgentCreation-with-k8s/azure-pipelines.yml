@@ -102,3 +102,9 @@ stages:
       inputs:
         code: |
           kubectl apply -f ./linux-agents/deployments/scaling.yaml
+          
+- task: tsuyoshiushio.shell-exec.shellexec.shellexec@0
+      displayName: 'cleanup offline agent'
+      inputs:
+        code: |
+          python3 ./agents_delete.py
