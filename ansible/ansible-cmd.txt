@@ -1,5 +1,7 @@
 Syntax: ansible-playbook <playbook file name>
 ansible-playbook playbook.yml -i inventory.txt
+ansible-playbook <playbook> --check --diff
+ansible-playbook <playbook> --syntax-check
 ansible-playbook --help
 ansible ansible-target -m ping -i <inventory file name>
 
