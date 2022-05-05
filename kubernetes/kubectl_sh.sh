@@ -59,7 +59,7 @@ kubectl set image deployment nginx nginx=nginx:1.18
 kubectl port-forward deployment/<name> <port-no>
 
 #check access
-kubectl auth can-i <cmd> --as <user_name> #eg.cmd=create pods
+kubectl auth can-i <cmd> #flags eg. --as <user_name> --namespace <ns_name> #eg.cmd=create pods
 
 kubeadm list token
 #taint node/pod     kubectl taint nodes <nodename> key=value:taint-effect       || taint-effect ><type>> NoSchedule | PreferNoSchedule | NoExecte
