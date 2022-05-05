@@ -58,6 +58,9 @@ kubectl set image deployment nginx nginx=nginx:1.18
 
 kubectl port-forward deployment/<name> <port-no>
 
+#check access
+kubectl auth can-i <cmd>    #eg.cmd=create pods
+
 kubeadm list token
 #taint node/pod     kubectl taint nodes <nodename> key=value:taint-effect       || taint-effect ><type>> NoSchedule | PreferNoSchedule | NoExecte
 #example:    | NoSchedule: NoSchedule anything | PreferNoSchedule: Prefer NoSchedule but no gurenty | NoExecte: new pods will not schedule & existing 1 evicted if not tolerant taint
