@@ -25,13 +25,13 @@ spec:
         - containerPort: 80
 
       livenessProbe:            #liveness http probe    #liveness probe= healthy/sick
-      httpGet:
-        path: /index.html
-        port: 80
-      initialDelaySeconds: 15
-      timeoutSeconds: 2
-      periodSeconds: 5
-      failureThreshold: 1
+        httpGet:
+          path: /index.html
+          port: 80
+        initialDelaySeconds: 15
+        timeoutSeconds: 2
+        periodSeconds: 5
+        failureThreshold: 1
 
 #Many applications running for long periods of time eventually transition to broken states, and cannot recover except by being restarted. Kubernetes provides liveness probes to detect and remedy such situations.
 #Readiness probes are configured similarly to liveness probes. The only difference is that you use the 'readinessProbe' field instead of the 'livenessProbe' field.
