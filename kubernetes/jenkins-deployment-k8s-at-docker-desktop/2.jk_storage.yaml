@@ -1,0 +1,60 @@
+#Jenkins Storage
+
+--- #local storage
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: local-storage  
+  labels:
+    name: local-storage                   
+  managedFields:
+  - apiVersion: storage.k8s.io/v1
+provisioner: kubernetes.io/no-provisioner
+reclaimPolicy: Retain
+volumeBindingMode: WaitForFirstConsumer
+
+--- #Storage PV
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: local-jenkins-pv
+  labels:
+    type: local
+spec:
+  storageClassName: local-storage
+  volumeMode: Filesystem
+  local:
+    path: /mnt
+    #type: DirectoryOrCreate
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - docker-desktop
+  persistentVolumeReclaimPolicy: Delete
+# Specify the relevant PersistentVolumeClaim in the claimRef field of the PV so that other PVCs can not bind to it
+  claimRef:
+    name: local-jenkins-pvc
+    namespace: devops
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+
+--- #PV claim
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: local-jenkins-pvc
+  namespace: devops
+spec:
+  storageClassName: local-storage
+  resources:
+    requests:
+      storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+---

@@ -1,0 +1,60 @@
+--- #Creating NS
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: devops
+--- #Creating SA @ NS
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: devops-admin
+  namespace: devops
+--- # Creating ClusterRole for SA @ NS
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: devops-admin
+rules:
+  - apiGroups: [""]
+    resources: ["*"]
+    verbs: ["*"]
+--- # Creating ClusterRoleBinding with CR & SA @ NS
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: devops-admin
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: devops-admin
+subjects:
+- kind: ServiceAccount
+  name: devops-admin
+  namespace: devops
+--- 
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: devops-admin
+rules:
+- apiGroups: [""]
+  resources: ["*"]
+  verbs: ["*"]
+
+--- 
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: devops-admin
+  namespace: devops
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: devops-admin
+subjects:
+- kind: ServiceAccount
+  name: devops-admin
+  namespace: devops
+--- 

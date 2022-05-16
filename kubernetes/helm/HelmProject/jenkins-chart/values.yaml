@@ -1,0 +1,84 @@
+# Default values for jenkins-chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+maintainer: Anik
+Env: General
+deployment:
+  name: jenkins
+  app: jenkins-controler
+  namespace:
+    create: true   #if create = false then default entry will take  = Default
+    name: devops
+  
+Storage:
+  storageClassName: local-storage
+  StorageClass_reclaimPolicy: Retain
+  pv_reclaimPolicy: Retain
+  pvName: local-jenkins
+  pvlocalPath: /mnt
+  # pvcName: local-jenkins-pvc
+  nodeSelectorkey: kubernetes.io/hostname
+  nodeSelectoroperator: In
+  nodeSelectorvalues: docker-desktop
+  storage: 1Gi
+  accessModes: ReadWriteOnce
+  volumeMountName: localhost-data-volume-for-jenkins
+
+replicaCount: 1
+
+image:
+  repository: jenkins/jenkins
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: lts-jdk11
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true    #if create = false then default entry will take  = Default
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: "devops-admin"
+
+podAnnotations: {}
+
+#podSecurityContext: {}
+  # fsGroup: 2000
+
+# securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  name: jenkins-svc
+  serviceType: NodePort
+  nodePort: 30080
+ 
+
+
+
+
+
+resources: 
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  limits:
+    cpu: "3"
+    memory: 2Gi
+  requests:
+    cpu: 50m
+    memory: 256Mi
+
+
+

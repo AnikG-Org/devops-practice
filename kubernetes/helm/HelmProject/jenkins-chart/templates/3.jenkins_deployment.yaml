@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.deployment.name }}
+  namespace: {{ .Values.deployment.namespace.name }}
+  labels:
+    {{- include "jenkins-chart.labels" . | nindent 4 }}
+    app: {{ .Values.deployment.app }}
+    chartname: {{ include "jenkins-chart.fullname" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.deployment.app }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app: {{ .Values.deployment.app }}
+        {{- include "jenkins-chart.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      restartPolicy: Always
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 1000
+      serviceAccountName: {{ include "jenkins-chart.serviceAccountName" . }}
+      containers:
+      - image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default "lts" }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        name: {{ .Values.deployment.app }}
+        resources:
+          {{- toYaml .Values.resources | nindent 12 }}
+        ports:
+        - name: http-port
+          containerPort: 8080
+        - name: jnlp-port
+          containerPort: 50000
+        readinessProbe:
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 60
+        volumeMounts:
+        - mountPath: /var/jenkins_home
+          name: {{ .Values.Storage.volumeMountName }}
+
+      volumes:                          
+      - name: {{ .Values.Storage.volumeMountName }}
+        persistentVolumeClaim: 
+          claimName: "{{ .Values.Storage.pvName }}-pvc"

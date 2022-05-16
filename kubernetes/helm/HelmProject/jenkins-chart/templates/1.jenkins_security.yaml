@@ -1,0 +1,77 @@
+--- 
+
+{{- if .Values.deployment.namespace.create -}}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ include "jenkins-chart.namespace" . }}
+{{- end }}
+--- 
+
+{{- if .Values.serviceAccount.create -}}
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "jenkins-chart.serviceAccountName" . }}
+  namespace: {{ include "jenkins-chart.namespace" . }}
+  labels:
+    {{- include "jenkins-chart.labels" . | nindent 4 }}
+  {{- with .Values.serviceAccount.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- end }}
+
+--- 
+
+{{- if .Values.serviceAccount.create -}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "jenkins-chart.serviceAccountName" . }}
+rules:
+- apiGroups: [""]
+  resources: ["*"]
+  verbs: ["*"]
+
+--- 
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "jenkins-chart.serviceAccountName" . }}
+  namespace: {{ include "jenkins-chart.namespace" . }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ include "jenkins-chart.serviceAccountName" . }}
+subjects:
+- kind: ServiceAccount
+  name: {{ include "jenkins-chart.serviceAccountName" . }}
+  namespace: {{ include "jenkins-chart.namespace" . }}
+--- 
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "jenkins-chart.serviceAccountName" . }}
+rules:
+  - apiGroups: [""]
+    resources: ["*"]
+    verbs: ["*"]
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "jenkins-chart.serviceAccountName" . }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "jenkins-chart.serviceAccountName" . }}
+subjects:
+- kind: ServiceAccount
+  name: {{ include "jenkins-chart.serviceAccountName" . }}
+  namespace: {{ include "jenkins-chart.namespace" . }}
+---
+{{- end }}

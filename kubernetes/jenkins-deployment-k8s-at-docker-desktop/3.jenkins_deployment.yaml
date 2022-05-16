@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins
+  namespace: devops
+  labels:
+    app: jenkins-controler-deploy
+    app.kubernetes.io/maintainers-name: Anik
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jenkins-controler
+  template:
+    metadata:
+      labels:
+        app: jenkins-controler
+    spec:
+      restartPolicy: Always
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 1000
+      serviceAccountName: devops-admin
+      containers:
+      - image: jenkins/jenkins:lts-jdk11
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: general
+        name: jenkins-controler
+        resources:
+          limits:
+            cpu: "3"
+            memory: 2Gi
+          requests:
+            cpu: "0.5"
+            memory: 512Mi
+        ports:
+        - name: http-port
+          containerPort: 8080
+        - name: jnlp-port
+          containerPort: 50000
+        readinessProbe:
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 60
+        volumeMounts:
+        - mountPath: /var/jenkins_home
+          name: localhost-data-volume-for-jenkins
+
+      volumes:                          
+      - name: localhost-data-volume-for-jenkins
+        persistentVolumeClaim: 
+          claimName: local-jenkins-pvc
+
+

@@ -1,0 +1,60 @@
+#Jenkins Storage
+--- #local storage
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: {{ .Values.Storage.storageClassName }}  
+  labels:
+    name: {{ .Values.Storage.storageClassName }}      
+    {{- include "jenkins-chart.labels" . | nindent 4 }}             
+  managedFields:
+  - apiVersion: storage.k8s.io/v1
+provisioner: kubernetes.io/no-provisioner
+reclaimPolicy: {{ .Values.Storage.StorageClass_reclaimPolicy }} 
+volumeBindingMode: WaitForFirstConsumer
+
+--- #Storage PV
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: "{{ .Values.Storage.pvName }}-pv"
+  labels:
+    type: {{ .Values.Storage.storageClassName }}
+    {{- include "jenkins-chart.labels" . | nindent 4 }}
+spec:
+  storageClassName: {{ .Values.Storage.storageClassName }}
+  volumeMode: Filesystem
+  local:
+    path: {{ .Values.Storage.pvlocalPath }}
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: {{ .Values.Storage.nodeSelectorkey }}
+          operator: {{ .Values.Storage.nodeSelectoroperator }} 
+          values:
+          - {{ .Values.Storage.nodeSelectorvalues }}
+  persistentVolumeReclaimPolicy: {{ .Values.Storage.pv_reclaimPolicy }} 
+  # Specify the relevant PersistentVolumeClaim in the claimRef field of the PV so that other PVCs can not bind to it
+  claimRef:
+    name: "{{ .Values.Storage.pvName }}-pvc"
+    namespace: {{ include "jenkins-chart.namespace" . }}
+  capacity:
+    storage: {{ .Values.Storage.storage }}
+  accessModes:
+    - {{ .Values.Storage.accessModes }}
+
+--- #PV claim
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: "{{ .Values.Storage.pvName }}-pvc"
+  namespace: {{ include "jenkins-chart.namespace" . }}
+spec:
+  storageClassName: {{ .Values.Storage.storageClassName }}
+  resources:
+    requests:
+      storage: {{ .Values.Storage.storage }}
+  accessModes:
+    - {{ .Values.Storage.accessModes }}
+---
