@@ -19,10 +19,10 @@
   9. PersistentVolumeClaim
   10. Deployment
   11. Service
-4. Helm Chart setup & deployment for Jenkins project : 
+4. Helm Chart setup according to application & deployment for Jenkins project : 
 
 ***Link to Project Implementation***
-Press the Button[helm-Kubernetes] Below  
+Press the Button [**helm-Kubernetes**] Below  
 
 < [![Link to Project Implementation](https://img.shields.io/badge/helm-Kubernetes-326CE5?style=flat-square&logo=Kubernetes&logoColor=ffffff)](https://github.com/AnikG-Org/devops-practice/blob/main/kubernetes/helm/helm-project.pdf) />
 -----
