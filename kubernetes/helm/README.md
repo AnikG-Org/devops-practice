@@ -14,7 +14,9 @@
 1. Docker desktop as a platform with single k8s cluster
 2. Jenkins as an application for deployment as a microservice to kubernetes cluster.
 3. kubectl & kubernetes manifist files (YAML) & multiple k8s services used.
-  k8s services:
+  
+
+k8s services:
   1. Namespace
   2. ServiceAccount
   3. ClusterRole
@@ -26,6 +28,8 @@
   9. PersistentVolumeClaim
   10. Deployment
   11. Service
+
+
 4. Helm Chart setup according to application & deployment for Jenkins project : 
 
 ***Link to Project Implementation***
