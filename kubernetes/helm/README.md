@@ -4,7 +4,7 @@
   <img src="https://helm.sh/img/helm.svg" width="414" height="150" />
 </p>
 <p align="center">
-  <img src="https://kubernetes.io/images/kubernetes-horizontal-color.png" width="414" height="150" />
+  <img src="https://kubernetes.io/images/kubernetes-horizontal-color.png" width="400" height="120" />
 </p>
 
 *** Helm Project: jenkins-chart  ***
