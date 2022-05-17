@@ -77,7 +77,7 @@ spec:
 
 ## Workflow
 
-Credit: https://www.reddit.com/user/__brennerm/
+
 
 ![](https://i.redd.it/cqud3rjkss361.png)
 
