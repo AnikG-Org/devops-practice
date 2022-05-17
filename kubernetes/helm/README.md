@@ -1,5 +1,12 @@
 # Helm Chart
 
+<p align="center">
+  <img src="https://helm.sh/img/helm.svg" width="414" height="150" />
+</p>
+<p align="center">
+  <img src="https://kubernetes.io/images/kubernetes-horizontal-color.png" width="414" height="150" />
+</p>
+
 *** Helm Project: jenkins-chart  ***
   Deploying jenkins at at k8s which is hosted on local machine - Docker desktop.
 
