@@ -804,6 +804,7 @@ args: ["$(MESSAGE)"]
 # Helm functions and examples
 
 Helm functions list:  https://helm.sh/docs/chart_template_guide/function_list/
+ 
 Some cheat sheet links: https://lzone.de/cheat-sheet/Helm%20Templates 
 
 
