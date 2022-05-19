@@ -13,6 +13,7 @@ kubectl create/replace/delete -f <file.yml>     /  kubectl create -f <file.yml>-
 kubectl apply -f <file.yml>     /   kubectl apply -f <file.yml> --namespaces=<name> / kubectl apply -f /path/<config-files-folder>
 kubectl apply -k ./ #k = kustomization file ./ all files in dir
 k get all                      #kubectl=k
+kubectl get/describe jobs/cronjobs
 kubectl get componentstatuses
 kubectl get/describe secrets/deamonsets
 kubectl get pods/replicaset(rs)/rc/deployments(deploy)/namespace(ns)/svc(services)   /  kubectl get pods/rs/rc/deployments/svc -n <name> | wc -l #for word count
