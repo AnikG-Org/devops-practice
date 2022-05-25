@@ -57,5 +57,3 @@ spec:
       - name: localhost-data-volume-for-jenkins
         persistentVolumeClaim: 
           claimName: local-jenkins-pvc
-
-
