@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Values.deployment.name }}
-  namespace: {{ .Values.deployment.namespace.name }}
+  namespace: {{ include "jenkins-chart.namespace" . }}
   labels:
     {{- include "jenkins-chart.labels" . | nindent 4 }}
     app: {{ .Values.deployment.app }}
