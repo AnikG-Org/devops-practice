@@ -8,7 +8,7 @@
 </p>
 
 *** Helm Project: jenkins-chart  ***
-  Deploying jenkins at at k8s which is hosted on local machine - Docker desktop.
+  Deploying jenkins at k8s which is hosted on local machine - Docker desktop.
 
 *** Techonogy used : *** 
 1. Docker desktop as a platform with single k8s cluster
