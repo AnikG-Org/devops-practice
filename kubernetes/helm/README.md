@@ -13,7 +13,7 @@
 *** Techonogy used : *** 
 1. Docker desktop as a platform with single k8s cluster
 2. Jenkins as an application for deployment as a microservice to kubernetes cluster.
-3. kubectl & kubernetes manifist files (YAML) & multiple k8s services used.
+3. kubectl & kubernetes manifest files (YAML) & multiple k8s services used.
   
 
 k8s services:
