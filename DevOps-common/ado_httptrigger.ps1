@@ -34,8 +34,8 @@ function CreateJsonBody
 
 $json = CreateJsonBody
 
-$uri = "$($collectionurl)/$($projectName)/_apis/Release/releases?api-version=6.0"
-$result = Invoke-RestMethod -Uri $uri -Method Post -Body $json -ContentType "application/json" -Headers @{Authorization=("Basic {0}" -f $base64AuthInfo)}
+$url = "$($collectionurl)/$($projectName)/_apis/Release/releases?api-version=6.0"
+$result = Invoke-RestMethod -Uri $url -Method Post -Body $json -ContentType "application/json" -Headers @{Authorization=("Basic {0}" -f $base64AuthInfo)}
 
 $ReleaseID = $result.id
 
