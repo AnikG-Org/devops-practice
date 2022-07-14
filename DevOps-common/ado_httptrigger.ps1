@@ -3,7 +3,7 @@ Param(
    [string]$projectName = "{project}",
    [string]$user = "",
    [string]$token = "PATtoken",
-   [string]$releasedDefinitionId = "1" #release pipeline DefinitionId
+   [string]$releasedDefinitionId = "1", #release pipeline DefinitionId
    [int]   $stage_no = 1  #stages Eg= 1,2,3......x
 
 )
@@ -54,4 +54,4 @@ Invoke-RestMethod -Uri $EnvUrl -Headers @{Authorization = ("Basic {0}" -f $base6
 
 #Output
 Write-Host $releaseNo $result.status
-Write-Host "Triggered successfully at $time Stage_ReleaseID = $ReleaseID & Stage: $stage_no &  Stahe_$EnvironmentId: $StageEnvironmentId" 
+Write-Host "Triggered successfully at $time Stage_ReleaseID = $ReleaseID & Stage: $stage_no &  Stahe_EnvironmentId: $StageEnvironmentId" 
