@@ -31,6 +31,7 @@ kubectl get/describe <kind: value> #kind Ingress
 kubectl config set-context --current --namespace=<name>         # permanently save the <name> namespace as default for all subsequent kubectl commands in that context.
 kubectl autoscale deployment foo --min = 2 --max = 10
 kubectl -n kube-system get ep kube-dns                  #ep = endpoints #coredns 
+kubectl get/describe hpa <my-hpa> --watch
 
 #example: pods=my-pod
 kubectl logs -f pod <name> container <name>       # stream pod logs (stdout)
