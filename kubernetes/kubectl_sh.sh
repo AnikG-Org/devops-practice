@@ -130,3 +130,7 @@ kubectl get nodes -o=jsonpath='{range.items[*]}{.metadata.name} {"\t"} {.status.
 kubectl get nodes -o=custom-columns=<custom_name1>:<query>,<custom_name2>:<query>             #eg.<custom_name1>=NODE, <custom_name2>=CPU
 kubectl get nodes --short-by= query #eg. query= .status.capacity.cpu
 ---
+#pdb
+kubectl get poddisruptionbudgets / kubectl get pdb
+kubectl describe pdb <zk-pdb>
+kubectl get pdb <zk-pdb> -o yaml
