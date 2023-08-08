@@ -1,0 +1,28 @@
+---
+#Example PDB Using minAvailable
+
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+name: zk-pdb
+namespace: my-namespace
+spec:
+minAvailable: 2
+selector:
+matchLabels:
+app: zookeeper
+---
+#Example PDB Using maxUnavailable
+
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+name: zk-pdb
+namespace: my-namespace
+spec:
+minAvailable: 2
+maxUnavailable: 1
+selector:
+matchLabels:
+app: zookeeper
+-----------------------
