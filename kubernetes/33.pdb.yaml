@@ -25,4 +25,3 @@ maxUnavailable: 1
 selector:
 matchLabels:
 app: zookeeper
------------------------
