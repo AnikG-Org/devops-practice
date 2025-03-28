@@ -47,7 +47,7 @@ spec:
     vpcIdRef:
       name: crossplane-network
     cidrBlock: 10.0.0.0/24
-    availabilityZone: ap-south-1b
+    availabilityZone: ap-south-1a
     mapPublicIPOnLaunch: true
     region: ap-south-1
     tags:
@@ -55,6 +55,27 @@ spec:
         value: crossplane
       - key: Name
         value: crossplane-public-subnet
+  providerConfigRef:
+    name: crossplane-aws
+---
+apiVersion: ec2.aws.crossplane.io/v1beta1
+kind: Subnet
+metadata:
+  namespace: default
+  name: public-subnet-2
+spec:
+  forProvider:
+    vpcIdRef:
+      name: crossplane-network
+    cidrBlock: 10.0.3.0/24
+    availabilityZone: ap-south-1c
+    mapPublicIPOnLaunch: true
+    region: ap-south-1
+    tags:
+      - key: project
+        value: crossplane
+      - key: Name
+        value: crossplane-public-subnet-2
   providerConfigRef:
     name: crossplane-aws
 ---
@@ -148,6 +169,8 @@ spec:
     associations:
       - subnetIdRef:
           name: public-subnet
+      - subnetIdRef:
+          name: public-subnet-2
     routes:
       - destinationCidrBlock: 0.0.0.0/0
         gatewayIdRef:
