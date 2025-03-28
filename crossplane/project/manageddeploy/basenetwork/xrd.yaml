@@ -24,6 +24,11 @@ spec:
                   type: string
                 enableDnsSupport:
                   type: boolean
+                providerConfigRef:
+                  type: object
+                  properties:
+                    name:
+                      type: string
                 tags:
                   type: array
                   items:
