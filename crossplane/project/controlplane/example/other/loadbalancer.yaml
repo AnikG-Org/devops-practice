@@ -1,0 +1,94 @@
+apiVersion: elbv2.aws.crossplane.io/v1alpha1
+kind: LoadBalancer
+metadata:
+  namespace: default
+  name: crossplane-lb
+spec:
+  forProvider:
+    region: ap-south-1
+    loadBalancerType: application
+    name: crossplane-lb
+    subnetRefs:
+      - name: private-subnet-2
+      - name: private-subnet
+    securityGroupRefs:
+      - name: web-lb-sg
+    tags:
+      - key: Name
+        value: crossplane-app
+      - key: project
+        value: crossplane
+  providerConfigRef:
+    name: crossplane-aws
+---
+apiVersion: elbv2.aws.crossplane.io/v1alpha1
+kind: TargetGroup
+metadata:
+  namespace: default
+  name: web-tg
+  labels:
+    name: crossplane-web-tg
+spec:
+  forProvider:
+    region: ap-south-1
+    name: crossplane-web-tg
+    port: 80
+    protocol: HTTP
+    targetType: instance
+
+    vpcIdRef:
+      name: crossplane-network
+    tags:
+      - key: Name
+        value: crossplane-web-tg
+      - key: environment
+        value: demo
+      - key: project
+        value: crossplane
+  providerConfigRef:
+    name: crossplane-aws
+---
+apiVersion: elbv2.aws.crossplane.io/v1alpha1
+kind: Listener
+metadata:
+  namespace: default
+  name: web-listener
+spec:
+  forProvider:
+    region: ap-south-1
+    loadBalancerArnRef:
+      name: crossplane-lb
+    port: 80
+    protocol: HTTP
+    defaultActions:
+      - actionType: forward
+        forwardConfig:
+          targetGroups:
+            - targetGroupArnRef:
+                name: web-tg
+          targetGroupStickinessConfig:
+            enabled: true
+    tags:
+      - key: Name
+        value: crossplane-web-listener
+      - key: environment
+        value: demo
+      - key: project
+        value: crossplane
+  providerConfigRef:
+    name: crossplane-aws
+
+---
+apiVersion: elbv2.aws.upbound.io/v1beta1
+kind: LBTargetGroupAttachment
+metadata:
+  name: lbtgattachment
+  namespace: default
+spec:
+  forProvider:
+    port: 80
+    region: ap-south-1
+    targetGroupArn: arn:aws:elasticloadbalancing:ap-south-1:309272221538:targetgroup/crossplane-web-tg/685af0a630144869
+    targetId: i-0de8704bfa75d6bf2
+  providerConfigRef:
+    name: crossplane-aws

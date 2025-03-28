@@ -1,0 +1,302 @@
+apiVersion: ec2.aws.crossplane.io/v1beta1
+kind: VPC
+metadata:
+  namespace: default
+  name: crossplane-network
+spec:
+  forProvider:
+    cidrBlock: 10.0.0.0/16
+    enableDnsSupport: true
+    #enableDnsHostnames: true
+    instanceTenancy: default
+    region: ap-south-1
+    tags:
+      - key: project
+        value: crossplane
+      - key: Name
+        value: crossplane-network
+  providerConfigRef:
+    name: crossplane-aws
+---
+apiVersion: ec2.aws.crossplane.io/v1beta1
+kind: InternetGateway
+metadata:
+  namespace: default
+  name: crossplane-igw
+spec:
+  forProvider:
+    vpcIdRef:
+      name: crossplane-network
+    region: ap-south-1
+    tags:
+      - key: project
+        value: crossplane
+      - key: Name
+        value: crossplane-igw
+  providerConfigRef:
+    name: crossplane-aws
+---
+apiVersion: ec2.aws.crossplane.io/v1beta1
+kind: Subnet
+metadata:
+  namespace: default
+  name: public-subnet
+spec:
+  forProvider:
+    vpcIdRef:
+      name: crossplane-network
+    cidrBlock: 10.0.0.0/24
+    availabilityZone: ap-south-1a
+    mapPublicIPOnLaunch: true
+    region: ap-south-1
+    tags:
+      - key: project
+        value: crossplane
+      - key: Name
+        value: crossplane-public-subnet
+  providerConfigRef:
+    name: crossplane-aws
+---
+apiVersion: ec2.aws.crossplane.io/v1beta1
+kind: Subnet
+metadata:
+  namespace: default
+  name: public-subnet-2
+spec:
+  forProvider:
+    vpcIdRef:
+      name: crossplane-network
+    cidrBlock: 10.0.3.0/24
+    availabilityZone: ap-south-1c
+    mapPublicIPOnLaunch: true
+    region: ap-south-1
+    tags:
+      - key: project
+        value: crossplane
+      - key: Name
+        value: crossplane-public-subnet-2
+  providerConfigRef:
+    name: crossplane-aws
+---
+apiVersion: ec2.aws.crossplane.io/v1beta1
+kind: Subnet
+metadata:
+  namespace: default
+  name: private-subnet
+spec:
+  forProvider:
+    vpcIdRef:
+      name: crossplane-network
+    cidrBlock: 10.0.1.0/24
+    availabilityZone: ap-south-1a
+    region: ap-south-1
+    tags:
+      - key: project
+        value: crossplane
+      - key: Name
+        value: crossplane-private-subnet
+  providerConfigRef:
+    name: crossplane-aws
+---
+apiVersion: ec2.aws.crossplane.io/v1beta1
+kind: Subnet
+metadata:
+  namespace: default
+  name: private-subnet-2
+spec:
+  forProvider:
+    vpcIdRef:
+      name: crossplane-network
+    cidrBlock: 10.0.2.0/24
+    availabilityZone: ap-south-1c
+    region: ap-south-1
+    tags:
+      - key: project
+        value: crossplane
+      - key: Name
+        value: crossplane-private-subnet-2
+  providerConfigRef:
+    name: crossplane-aws
+---
+apiVersion: ec2.aws.crossplane.io/v1beta1
+kind: Address
+metadata:
+  name: crossplane-eip
+  namespace: default
+spec:
+  forProvider:
+    region: ap-south-1
+    domain: "vpc"
+    tags:
+      - key: Name
+        value: crossplane-eip
+      - key: project
+        value: crossplane
+  providerConfigRef:
+    name: crossplane-aws
+---
+apiVersion: ec2.aws.crossplane.io/v1beta1
+kind: NATGateway
+metadata:
+  namespace: default
+  name: nat-gateway
+spec:
+  forProvider:
+    connectivityType: public
+    subnetIdRef:
+      name: public-subnet
+    allocationIdRef:
+      name: crossplane-eip
+    region: ap-south-1
+    tags:
+      - key: project
+        value: crossplane
+      - key: Name
+        value: crossplane-ngw
+  providerConfigRef:
+    name: crossplane-aws
+---
+apiVersion: ec2.aws.crossplane.io/v1beta1
+kind: RouteTable
+metadata:
+  namespace: default
+  name: public-route-table
+spec:
+  forProvider:
+    vpcIdRef:
+      name: crossplane-network
+    associations:
+      - subnetIdRef:
+          name: public-subnet
+      - subnetIdRef:
+          name: public-subnet-2
+    routes:
+      - destinationCidrBlock: 0.0.0.0/0
+        gatewayIdRef:
+          name: crossplane-igw
+    region: ap-south-1
+    tags:
+      - key: project
+        value: crossplane
+      - key: Name
+        value: crossplane-public-route-table
+  providerConfigRef:
+    name: crossplane-aws
+---
+apiVersion: ec2.aws.crossplane.io/v1beta1
+kind: RouteTable
+metadata:
+  namespace: default
+  name: private-route-table
+spec:
+  forProvider:
+    vpcIdRef:
+      name: crossplane-network
+    associations:
+      - subnetIdRef:
+          name: private-subnet
+      - subnetIdRef:
+          name: private-subnet-2
+    routes:
+      - destinationCidrBlock: 0.0.0.0/0
+        natGatewayIdRef:
+          name: nat-gateway
+    region: ap-south-1
+    tags:
+      - key: project
+        value: crossplane
+      - key: Name
+        value: crossplane-private-route-table
+  providerConfigRef:
+    name: crossplane-aws
+---
+apiVersion: ec2.aws.crossplane.io/v1beta1
+kind: SecurityGroup
+metadata:
+  name: web-lb-sg
+  namespace: default
+spec:
+  forProvider:
+    region: ap-south-1
+    groupName: web-lb-sg
+    description: Allow HTTP and HTTPS access
+    vpcIdRef:
+      name: crossplane-network
+    ingress:
+      - fromPort: 80
+        toPort: 80
+        ipProtocol: tcp
+        ipRanges:
+          - cidrIp: 0.0.0.0/0
+      - fromPort: 443
+        toPort: 443
+        ipProtocol: tcp
+        ipRanges:
+          - cidrIp: 0.0.0.0/0
+    tags:
+      - key: Name
+        value: web-lb-sg
+      - key: project
+        value: crossplane
+  providerConfigRef:
+    name: crossplane-aws
+---
+apiVersion: ec2.aws.crossplane.io/v1beta1
+kind: SecurityGroup
+metadata:
+  name: web-sg
+  namespace: default
+spec:
+  forProvider:
+    region: ap-south-1
+    groupName: web-sg
+    description: Allow HTTP and HTTPS access
+    vpcIdRef:
+      name: crossplane-network
+    ingress:
+      - fromPort: 80
+        toPort: 80
+        ipProtocol: tcp
+        userIdGroupPairs:
+          - groupIdRef:
+              name: web-lb-sg
+      - fromPort: 80
+        toPort: 80
+        ipProtocol: tcp
+        ipRanges:
+          - cidrIp: 0.0.0.0/0
+    tags:
+      - key: Name
+        value: web-sg
+      - key: project
+        value: crossplane
+  providerConfigRef:
+    name: crossplane-aws
+---
+apiVersion: ec2.aws.crossplane.io/v1beta1
+kind: SecurityGroup
+metadata:
+  name: ekscluster-sg
+  namespace: default
+spec:
+  forProvider:
+    region: ap-south-1
+    vpcIdRef:
+      name: crossplane-network
+    groupName: ekscluster-sg
+    description: Cluster communication with worker nodes
+    # ignoreIngress: true
+    # ignoreEgress: true
+    ingress:
+      - fromPort: 80
+        toPort: 80
+        ipProtocol: tcp
+        ipRanges:
+          - cidrIp: 10.0.0.0/8
+    tags:
+      - key: Name
+        value: ekscluster-sg
+      - key: project
+        value: crossplane
+  providerConfigRef:
+    name: crossplane-aws

@@ -1,0 +1,132 @@
+---
+apiVersion: iam.aws.crossplane.io/v1beta1
+kind: Role
+metadata:
+  name: iamroleforeks
+  namespace: default
+  labels:
+    addToInstanceProfile: "true"
+spec:
+  forProvider:
+    assumeRolePolicyDocument: |
+      {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Effect": "Allow",
+                "Principal": {
+                    "Service": [
+                        "ec2.amazonaws.com",
+                        "eks.amazonaws.com",
+                        "eks-fargate-pods.amazonaws.com",
+                        "lambda.amazonaws.com",
+                        "secretsmanager.amazonaws.com",
+                        "replication.ecr.amazonaws.com",
+                        "s3.amazonaws.com"
+                    ]
+                },
+                "Action": [
+                    "sts:AssumeRole"
+                ]
+            }
+        ]
+      }
+    tags:
+      - key: Name
+        value: iamroleforeks
+      - key: project
+        value: crossplane
+  providerConfigRef:
+    name: crossplane-aws
+---
+apiVersion: iam.aws.crossplane.io/v1beta1
+kind: Policy
+metadata:
+  name: eks-custom-policy
+  namespace: default
+spec:
+  forProvider:
+    name: eks-custom-policy
+    document: |
+      {
+        "Version": "2012-10-17",
+        "Statement": [
+          {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+              "acm:ExportCertificate",
+              "acm:GetAccountConfiguration",
+              "secretsmanager:DescribeSecret",
+              "secretsmanager:ListSecretVersionIds",
+              "secretsmanager:BatchGetSecretValue",
+              "acm:ListTagsForCertificate",
+              "secretsmanager:GetRandomPassword",
+              "secretsmanager:GetResourcePolicy",
+              "secretsmanager:GetSecretValue",
+              "acm:DescribeCertificate",
+              "acm:GetCertificate",
+              "acm:ListCertificates",
+              "eks:*",
+              "secretsmanager:ListSecrets"
+            ],
+            "Resource": "*"
+          }
+        ]
+      }
+    tags:
+      - key: environment
+        value: demo
+      - key: project
+        value: crossplane
+  providerConfigRef:
+    name: crossplane-aws
+---
+apiVersion: iam.aws.crossplane.io/v1beta1
+kind: RolePolicyAttachment
+metadata:
+  name: s3readaccessattachment
+spec:
+  forProvider:
+    policyArn: arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
+    roleNameRef:
+      name: iamroleforeks
+  providerConfigRef:
+    name: crossplane-aws
+---
+apiVersion: iam.aws.crossplane.io/v1beta1
+kind: RolePolicyAttachment
+metadata:
+  name: customeksaccessattachment
+spec:
+  forProvider:
+    policyArnRef:
+      name: eks-custom-policy
+    roleNameRef:
+      name: iamroleforeks
+  providerConfigRef:
+    name: crossplane-aws
+---
+apiVersion: iam.aws.crossplane.io/v1beta1
+kind: RolePolicyAttachment
+metadata:
+  name: ecraccessattachment
+spec:
+  forProvider:
+    policyArn: arn:aws:iam::aws:policy/EC2InstanceProfileForImageBuilderECRContainerBuilds
+    roleNameRef:
+      name: iamroleforeks
+  providerConfigRef:
+    name: crossplane-aws
+---
+apiVersion: iam.aws.crossplane.io/v1beta1
+kind: RolePolicyAttachment
+metadata:
+  name: ec2accessattachment
+spec:
+  forProvider:
+    policyArn: arn:aws:iam::aws:policy/AmazonEC2FullAccess
+    roleNameRef:
+      name: iamroleforeks
+  providerConfigRef:
+    name: crossplane-aws

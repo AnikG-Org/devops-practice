@@ -1,0 +1,90 @@
+apiVersion: ec2.aws.crossplane.io/v1beta1
+kind: SecurityGroup
+metadata:
+  name: web-lb-sg
+  namespace: default
+spec:
+  forProvider:
+    region: ap-south-1
+    groupName: web-lb-sg
+    description: Allow HTTP and HTTPS access
+    vpcIdRef:
+      name: crossplane-network
+    ingress:
+      - fromPort: 80
+        toPort: 80
+        ipProtocol: tcp
+        ipRanges:
+          - cidrIp: 0.0.0.0/0
+      - fromPort: 443
+        toPort: 443
+        ipProtocol: tcp
+        ipRanges:
+          - cidrIp: 0.0.0.0/0
+    tags:
+      - key: Name
+        value: web-lb-sg
+      - key: project
+        value: crossplane
+  providerConfigRef:
+    name: crossplane-aws
+---
+apiVersion: ec2.aws.crossplane.io/v1beta1
+kind: SecurityGroup
+metadata:
+  name: web-sg
+  namespace: default
+spec:
+  forProvider:
+    region: ap-south-1
+    groupName: web-sg
+    description: Allow HTTP and HTTPS access
+    vpcIdRef:
+      name: crossplane-network
+    ingress:
+      - fromPort: 80
+        toPort: 80
+        ipProtocol: tcp
+        userIdGroupPairs:
+          - groupIdRef:
+              name: web-lb-sg
+      - fromPort: 80
+        toPort: 80
+        ipProtocol: tcp
+        ipRanges:
+          - cidrIp: 0.0.0.0/0
+    tags:
+      - key: Name
+        value: web-sg
+      - key: project
+        value: crossplane
+  providerConfigRef:
+    name: crossplane-aws
+---
+apiVersion: ec2.aws.crossplane.io/v1beta1
+kind: SecurityGroup
+metadata:
+  name: ekscluster-sg
+  namespace: default
+spec:
+  forProvider:
+    region: ap-south-1
+    vpcIdRef:
+      name: crossplane-network
+    groupName: ekscluster-sg
+    description: Cluster communication with worker nodes
+    # ignoreIngress: true
+    # ignoreEgress: true
+    ingress:
+      - fromPort: 80
+        toPort: 80
+        ipProtocol: tcp
+        ipRanges:
+          - cidrIp: 10.0.0.0/8
+    tags:
+      - key: Name
+        value: ekscluster-sg
+      - key: project
+        value: crossplane
+  providerConfigRef:
+    name: crossplane-aws

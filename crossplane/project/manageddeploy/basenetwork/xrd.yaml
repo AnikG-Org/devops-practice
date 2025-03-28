@@ -1,0 +1,65 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: CompositeResourceDefinition
+metadata:
+  name: xnetworks.aws.example.com
+spec:
+  group: aws.example.com
+  names:
+    kind: XNetwork
+    plural: xnetworks
+  versions:
+    - name: v1alpha1
+      served: true
+      referenceable: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                region:
+                  type: string
+                cidrBlock:
+                  type: string
+                enableDnsSupport:
+                  type: boolean
+                tags:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      key:
+                        type: string
+                      value:
+                        type: string
+                internetGateway:
+                  type: object
+                  properties:
+                    enabled:
+                      type: boolean
+                  required:
+                    - enabled
+                subnets:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      cidrBlock:
+                        type: string
+                      availabilityZone:
+                        type: string
+                natGateway:
+                  type: object
+                  properties:
+                    enabled:
+                      type: boolean
+                  required:
+                    - enabled
+                enableSecurityGroups:
+                  type: boolean
+              required:
+                - region
+                - cidrBlock
+                - enableDnsSupport
+                - tags

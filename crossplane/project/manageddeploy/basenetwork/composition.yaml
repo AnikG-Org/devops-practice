@@ -1,0 +1,238 @@
+apiVersion: apiextensions.crossplane.io/v1
+kind: Composition
+metadata:
+  name: xnetwork.aws.example.com
+spec:
+  compositeTypeRef:
+    apiVersion: aws.example.com/v1alpha1
+    kind: XNetwork
+  resources:
+    # 🏗️ VPC
+    - name: vpc
+      base:
+        apiVersion: ec2.aws.crossplane.io/v1beta1
+        kind: VPC
+        metadata:
+          name: crossplane-network
+        spec:
+          forProvider:
+            cidrBlock: "10.0.0.0/16"
+            enableDnsSupport: true
+            instanceTenancy: default
+            region: ap-south-1
+            tags: []
+          providerConfigRef:
+            name: default
+      patches:
+        - fromFieldPath: spec.region
+          toFieldPath: spec.forProvider.region
+        - fromFieldPath: spec.cidrBlock
+          toFieldPath: spec.forProvider.cidrBlock
+        - fromFieldPath: spec.enableDnsSupport
+          toFieldPath: spec.forProvider.enableDnsSupport
+        - fromFieldPath: spec.tags
+          toFieldPath: spec.forProvider.tags
+        - fromFieldPath: spec.providerConfigRef.name
+          toFieldPath: spec.providerConfigRef.name
+
+    # 🌐 Internet Gateway
+    - name: internet-gateway
+      base:
+        apiVersion: ec2.aws.crossplane.io/v1beta1
+        kind: InternetGateway
+        metadata:
+          name: crossplane-igw
+        spec:
+          forProvider:
+            region: ap-south-1
+            vpcIdRef:
+              name: crossplane-network
+            tags: []
+          providerConfigRef:
+            name: default
+      patches:
+        - fromFieldPath: spec.region
+          toFieldPath: spec.forProvider.region
+        - fromFieldPath: spec.tags
+          toFieldPath: spec.forProvider.tags
+        - fromFieldPath: spec.internetGateway.name
+          toFieldPath: metadata.name
+        - fromFieldPath: spec.providerConfigRef.name
+          toFieldPath: spec.providerConfigRef.name
+      condition:
+        key: spec.internetGateway.enabled
+        value: true
+
+    # 🏗️ Subnets (Dynamically Created)
+    - name: subnets
+      base:
+        apiVersion: ec2.aws.crossplane.io/v1beta1
+        kind: Subnet
+        metadata:
+          name: dynamic-subnet
+        spec:
+          forProvider:
+            region: ap-south-1
+            vpcIdRef:
+              name: crossplane-network
+            cidrBlock: "10.0.0.0/24"
+            availabilityZone: ap-south-1a
+            tags: []
+          providerConfigRef:
+            name: default
+      patches:
+        - fromFieldPath: spec.region
+          toFieldPath: spec.forProvider.region
+        - fromFieldPath: spec.subnets[*].cidrBlock
+          toFieldPath: spec.forProvider.cidrBlock
+        - fromFieldPath: spec.subnets[*].availabilityZone
+          toFieldPath: spec.forProvider.availabilityZone
+        - fromFieldPath: spec.tags
+          toFieldPath: spec.forProvider.tags
+        - fromFieldPath: spec.providerConfigRef.name
+          toFieldPath: spec.providerConfigRef.name
+
+    # 🛣️ Public Route Table
+    - name: public-route-table
+      base:
+        apiVersion: ec2.aws.crossplane.io/v1beta1
+        kind: RouteTable
+        metadata:
+          name: public-route-table
+        spec:
+          forProvider:
+            region: ap-south-1
+            vpcIdRef:
+              name: crossplane-network
+            routes:
+              - destinationCidrBlock: 0.0.0.0/0
+                gatewayIdRef:
+                  name: crossplane-igw
+            tags: []
+          providerConfigRef:
+            name: default
+      patches:
+        - fromFieldPath: spec.region
+          toFieldPath: spec.forProvider.region
+        - fromFieldPath: spec.tags
+          toFieldPath: spec.forProvider.tags
+        - fromFieldPath: spec.providerConfigRef.name
+          toFieldPath: spec.providerConfigRef.name
+
+    # 🏗️ Address (Elastic IP)
+    - name: eip
+      base:
+        apiVersion: ec2.aws.crossplane.io/v1beta1
+        kind: Address
+        metadata:
+          name: crossplane-eip
+        spec:
+          forProvider:
+            region: ap-south-1
+            domain: "vpc"
+            tags: []
+          providerConfigRef:
+            name: default
+      patches:
+        - fromFieldPath: spec.region
+          toFieldPath: spec.forProvider.region
+        - fromFieldPath: spec.tags
+          toFieldPath: spec.forProvider.tags
+        - fromFieldPath: spec.providerConfigRef.name
+          toFieldPath: spec.providerConfigRef.name
+      condition:
+        key: spec.natGateway.enabled
+        value: true
+
+    # 🌍 NAT Gateway & Private Route Table (Conditional)
+    - name: nat-gateway
+      base:
+        apiVersion: ec2.aws.crossplane.io/v1beta1
+        kind: NATGateway
+        metadata:
+          name: nat-gateway
+        spec:
+          forProvider:
+            connectivityType: public
+            subnetIdRef:
+              name: public-subnet
+            allocationIdRef:
+              name: crossplane-eip
+            region: ap-south-1
+            tags: []
+          providerConfigRef:
+            name: default
+      patches:
+        - fromFieldPath: spec.region
+          toFieldPath: spec.forProvider.region
+        - fromFieldPath: spec.tags
+          toFieldPath: spec.forProvider.tags
+        - fromFieldPath: spec.natGateway.name
+          toFieldPath: metadata.name
+        - fromFieldPath: spec.providerConfigRef.name
+          toFieldPath: spec.providerConfigRef.name
+      condition:
+        key: spec.natGateway.enabled
+        value: true
+
+    - name: private-route-table
+      base:
+        apiVersion: ec2.aws.crossplane.io/v1beta1
+        kind: RouteTable
+        metadata:
+          name: private-route-table
+        spec:
+          forProvider:
+            region: ap-south-1
+            vpcIdRef:
+              name: crossplane-network
+            routes:
+              - destinationCidrBlock: 0.0.0.0/0
+                natGatewayIdRef:
+                  name: nat-gateway
+            tags: []
+          providerConfigRef:
+            name: default
+      patches:
+        - fromFieldPath: spec.region
+          toFieldPath: spec.forProvider.region
+        - fromFieldPath: spec.tags
+          toFieldPath: spec.forProvider.tags
+        - fromFieldPath: spec.providerConfigRef.name
+          toFieldPath: spec.providerConfigRef.name
+
+    # 🔒 Security Group (Conditional)
+    - name: security-group
+      base:
+        apiVersion: ec2.aws.crossplane.io/v1beta1
+        kind: SecurityGroup
+        metadata:
+          name: web-lb-sg
+        spec:
+          forProvider:
+            region: ap-south-1
+            vpcIdRef:
+              name: crossplane-network
+            groupName: web-lb-sg
+            description: Allow HTTP and HTTPS access
+            ingress:
+              - fromPort: 80
+                toPort: 80
+                ipProtocol: tcp
+                ipRanges:
+                  - cidrIp: 0.0.0.0/0
+            tags: []
+          providerConfigRef:
+            name: default
+      patches:
+        - fromFieldPath: spec.region
+          toFieldPath: spec.forProvider.region
+        - fromFieldPath: spec.tags
+          toFieldPath: spec.forProvider.tags
+        - fromFieldPath: spec.providerConfigRef.name
+          toFieldPath: spec.providerConfigRef.name
+      readinessChecks:
+        - type: None  # Security groups are optional
+      condition:
+        key: spec.enableSecurityGroups
+        value: true  # Create only if enableSecurityGroups is true
