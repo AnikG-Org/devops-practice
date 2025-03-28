@@ -1,0 +1,48 @@
+apiVersion: autoscaling.aws.crossplane.io/v1beta1
+kind: AutoScalingGroup
+metadata:
+  name: crossplane-asg
+  namespace: default
+spec:
+  forProvider:
+    region: ap-south-1
+    availabilityZones:
+    - ap-south-1b
+    - ap-south-1c
+    maxSize: 1
+    minSize: 0
+    desiredCapacity: 1
+    launchTemplate:
+      launchTemplateName: lt-crossplane
+    tags:
+    - key: Name
+      value: crossplane-asg
+    vpcZoneIdentifier: "private-subnet,private-subnet-2"
+    targetGroupARNRefs:
+      - name: web-tg 
+  providerConfigRef:
+    name: crossplane-aws
+---
+apiVersion: ec2.aws.crossplane.io/v1alpha1
+kind: LaunchTemplate
+metadata:
+  namespace: default
+  name: lt-crossplane
+spec:
+  forProvider:
+    launchTemplateName: lt-crossplane
+    launchTemplateData:
+      iamInstancePcrofile:
+      - name: ec2-role
+    imageId: ami-05c179eced2eb9b5b
+    instanceType: t2.micro
+    # keyName: kube
+    region: ap-south-1
+    tagSpecifications:
+      - resourceType: instance
+        tags:
+        - key: Name
+          value: crossplane-app
+    userData: IyEvYmluL2Jhc2gNCnN1ZG8geXVtIHVwZGF0ZSAteQ0Kc3VkbyB5dW0gaW5zdGFsbCAteSBuZ2lueA0Kc3VkbyBzeXN0ZW1jdGwgc3RhcnQgbmdpbngNCnN1ZG8gc3lzdGVtY3RsIGVuYWJsZSBuZ2lueA0KZWNobyAnSGVsbG8sIEV2ZXJ5b25lIGZyb20gQVdTQ29tbXVuaXR5REFZLDIwMjUhJyB8IHN1ZG8gdGVlIC91c3Ivc2hhcmUvbmdpbngvaHRtbC9pbmRleC5odG1sCg==
+  providerConfigRef:
+    name: crossplane-aws

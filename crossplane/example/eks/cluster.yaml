@@ -1,0 +1,58 @@
+---
+apiVersion: eks.aws.crossplane.io/v1beta1
+kind: Cluster
+metadata:
+  name: crossplane-ekscluster-dev
+  namespace: default
+spec:
+  forProvider:
+    region: ap-south-1
+    roleArnRef:
+      name: iamroleforeks
+    resourcesVpcConfig:
+      endpointPrivateAccess: true
+      endpointPublicAccess: true
+      subnetIdRefs:
+        - name: private-subnet
+        - name: private-subnet-2
+      securityGroupIdRefs:
+        - name: ekscluster-sg
+    version: "1.32"
+    tags:
+      Name: crossplane-ekscluster-dev
+      project: crossplane
+  writeConnectionSecretToRef:
+    name: cluster-conn
+    namespace: default
+  providerConfigRef:
+    name: crossplane-aws
+---
+apiVersion: eks.aws.crossplane.io/v1alpha1
+kind: NodeGroup
+metadata:
+  name: eks-node-group
+  namespace: default
+spec:
+  forProvider:
+    region: ap-south-1
+    clusterNameRef:
+      name: crossplane-ekscluster-dev
+    subnetRefs:
+      - name: private-subnet
+      - name: private-subnet-2
+    nodeRoleRef:
+      name: iamroleforeks
+    scalingConfig:
+      desiredSize: 1
+      maxSize: 1
+      minSize: 0
+    instanceTypes:
+      - t3a.medium
+    updateConfig:
+      maxUnavailablePercentage: 50
+      force: true
+    tags:
+      Name: eks-node-group-crossplane
+      project: crossplane
+  providerConfigRef:
+    name: crossplane-aws
