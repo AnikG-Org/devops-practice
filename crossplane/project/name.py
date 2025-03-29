@@ -1,9 +1,9 @@
-from flask import Flask, render_template, request
+from flask import Flask, send_file, request
 import os
 app = Flask(__name__)
 @app.route('/')
 def index():
-    return render_template('name.html')
+    return send_file('name.html')
 @app.route('/howdy', methods=['POST'])
 def howdy():
     name = request.form['name']
