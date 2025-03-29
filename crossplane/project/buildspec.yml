@@ -1,0 +1,30 @@
+version: 0.2
+
+env:
+  variables:
+    AWS_REGION: "ap-south-1"  # Change this to your AWS region
+    ECR_REPO_NAME: "crossplane-ecr"  # Change this to your ECR repository name
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $(aws sts get-caller-identity --query "Account" --output text).dkr.ecr.$AWS_REGION.amazonaws.com
+      - REPO_URI=$(aws ecr describe-repositories --repository-names $ECR_REPO_NAME --query 'repositories[0].repositoryUri' --output text)
+      - echo Cloning the repository...
+      - git clone --depth 1 https://github.com/AnikG-Org/devops-practice.git
+      - cd devops-practice/crossplane/project
+
+  build:
+    commands:
+      - echo Building the Docker image...
+      - docker build -t $REPO_URI:latest .
+
+  post_build:
+    commands:
+      - echo Pushing the Docker image to ECR...
+      - docker push $REPO_URI:latest
+      - echo Build and push completed successfully.
+
+artifacts:
+  files: "**/*"
