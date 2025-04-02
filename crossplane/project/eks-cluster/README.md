@@ -309,7 +309,7 @@ crossplane xpkg build --package-root=. --examples-root="./examples" --ignore="cr
 #############################################################################################################
 
 anik@Anik-DevOps:~$ cd eks-cluster/
-anik@Anik-DevOps:~/eks-cluster$ crossplane xpkg build --package-root=. --examples-root="./examples" --ignore="crossplane-provider/install/*,crossplane-provider/provider/*" --verbose
+anik@Anik-DevOps:~/eks-cluster$ crossplane xpkg build --package-root=. --examples-root="./examples" --ignore="crossplane-provider/install/*,crossplane-provider/provider/*,build*" --verbose
 2025-04-01T09:08:27Z    INFO    xpkg saved      {"output": "/home/anik/eks-cluster/crossplane-eks-cluster-fa60142b580b.xpkg"}
 anik@Anik-DevOps:~/eks-cluster$
 

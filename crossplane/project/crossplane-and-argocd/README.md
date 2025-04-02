@@ -740,7 +740,6 @@ Type:  kubernetes.io/dockerconfigjson
 Data
 ====
 .dockerconfigjson:  4284 bytes
-kubectl apply -f upbound/provider-aws/apis/crossplane-eks-cluster.yaml
 
 anik1@Anik-DevOps MINGW64 /crossplane/project/crossplane-and-argocd
 $ kubectl describe -f upbound/provider-aws/apis/crossplane-eks-cluster.yaml
@@ -800,9 +799,9 @@ bash  upbound/provider-aws/apis/ecrsecret.sh 309272221538 eu-central-1
 
 ```shell
 anik1@Anik-DevOps MINGW64 /crossplane/project/crossplane-and-argocd
-$ kubectl apply -f argocd/infrastructure/aws-eks.yaml
-Warning: metadata.finalizers: "resources-finalizer.argocd.argoproj.io": prefer a domain-qualified finalizer name including a path (/) to avoid accidental conflicts with other finalizer writers
-application.argoproj.io/aws-eks created
+$ kubectl apply -f upbound/provider-aws/apis/crossplane-eks-cluster.yaml
+configuration.pkg.crossplane.io/crossplane-eks-cluster created
+
 ```
 
 That's pretty cool: Now we see all of our installed APIs as Argo Apps:
@@ -821,8 +820,14 @@ Therefore we create the Application [`argocd/infrastructure/aws-eks.yaml`](argoc
 
 Now **this** will deploy our EKS cluster using ArgoCD and our EKS Configuration Package based Nested EKS Composition https://github.com/jonashackt/crossplane-eks-cluster:
 
+Note: if only network required can try below steps else skip
 ```shell
-
+$ kubectl apply -f argocd/infrastructure/aws-net.yaml
+Warning: metadata.finalizers: "resources-finalizer.argocd.argoproj.io": prefer a domain-qualified finalizer name including a path (/) to avoid accidental conflicts with other finalizer writers
+application.argoproj.io/aws-networking created
+```
+setup whole eks package
+```shell
 anik1@Anik-DevOps MINGW64 /crossplane/project/crossplane-and-argocd
 $ kubectl apply -f argocd/infrastructure/aws-eks.yaml
 Warning: metadata.finalizers: "resources-finalizer.argocd.argoproj.io": prefer a domain-qualified finalizer name including a path (/) to avoid accidental conflicts with other finalizer writers
