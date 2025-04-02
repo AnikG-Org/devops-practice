@@ -1,4 +1,14 @@
-###### argocd cluster registration
+#!/bin/bash
+sudo yum update -y
+sudo yum install -y nginx
+sudo systemctl start nginx
+sudo systemctl enable nginx
+echo 'Hello, Everyone from AWSCommunityDAY,2025!' | sudo tee /usr/share/nginx/html/index.html
+
+echo IyEvYmluL2Jhc2gNCnN1ZG8geXVtIHVwZGF0ZSAteQ0Kc3VkbyB5dW0gaW5zdGFsbCAteSBuZ2lueA0Kc3VkbyBzeXN0ZW1jdGwgc3RhcnQgbmdpbngNCnN1ZG8gc3lzdGVtY3RsIGVuYWJsZSBuZ2lueA0KZWNobyAnSGVsbG8sIEV2ZXJ5b25lIGZyb20gQVdTQ29tbXVuaXR5REFZLDIwMjUhJyB8IHN1ZG8gdGVlIC91c3Ivc2hhcmUvbmdpbngvaHRtbC9pbmRleC5odG1sCg== | base64
+
+
+####### argocd cluster registration
 argocd login localhost:31284 --username admin --password $PASTE_PASSWORD
 kubectl config get-contexts
 aws eks update-kubeconfig --name crossplane-ekscluster-dev --region ap-south-1
@@ -33,4 +43,3 @@ kind: ConfigMap
 ########## port fwd
 
 kubectl port-forward <type>/<name> <port-no>
-

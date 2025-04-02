@@ -1,0 +1,38 @@
+version: 0.2
+
+env:
+  variables:
+    AWS_REGION: "ap-south-1"  # Change this to your AWS region
+    ECR_REPO_NAME: "crossplane-ecr"  # Change this to your ECR repository name
+    AWS_ACOUNT_NO: "309272221538"
+    IMAGE_TAG: "latest"
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACOUNT_NO.dkr.ecr.$AWS_REGION.amazonaws.com
+  
+  build:
+    commands:
+      - echo Installing dependencies...
+      - curl --output crank "https://releases.crossplane.io/stable/current/bin/linux_amd64/crank"
+      - chmod +x crank
+      - sudo mv crank /usr/local/bin/crossplane
+      - crossplane --version
+      - echo Installing kubectl...
+      - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+      - chmod +x kubectl
+      - sudo mv kubectl /usr/local/bin/kubectl
+      - kubectl version --client
+      - git clone --depth 1 https://github.com/AnikG-Org/devops-practice.git
+      - cd devops-practice/crossplane/project/
+      - echo Building Crossplane package...
+      - cd eks-cluster/
+      - crossplane xpkg build --package-root=. --examples-root="./examples" --ignore="crossplane-provider/install/,crossplane-provider/provider/" --verbose
+      - echo Pushing package to AWS ECR...
+      - crossplane xpkg push $AWS_ACOUNT_NO.dkr.ecr.$AWS_REGION.amazonaws.com/ECR_REPO_NAME:$IMAGE_TAG --verbose
+
+artifacts:
+  files:
+    - "eks-cluster//*.xpkg"
