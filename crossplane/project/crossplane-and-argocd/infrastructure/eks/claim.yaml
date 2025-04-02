@@ -1,0 +1,21 @@
+# apiVersion: eks.aws.crossplane.awscommunity.io/v1alpha1
+# kind: EKSCluster
+# metadata:
+#   namespace: default
+#   name: deploy-target-eks
+# spec:
+#   id: deploy-target-eks
+#   parameters:
+    # subnetIds:
+    #   - subnet-081d9c6522e24da4b
+    #   - subnet-01eb36fb1351daa27
+    #   - subnet-0a72844f7c42314fc
+    # securityGroupClusterIds:
+    #   - sg-0d73578fc2478a0dd
+#     region: eu-central-1
+#     nodes:
+#       count: 1
+#   # Crossplane creates the secret object in the same namespace as the Claim
+#   # see https://docs.crossplane.io/latest/concepts/claims/#claim-connection-secrets
+#   writeConnectionSecretToRef:
+#     name: eks-cluster-kubeconfig
