@@ -3,7 +3,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: aws-eks
+  name: aws-networking
   namespace: argocd
   labels:
     crossplane.awscommunity.io: infrastructure
