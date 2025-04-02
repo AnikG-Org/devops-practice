@@ -2,7 +2,7 @@
 # Use the spec.group/spec.versions[0].name defined in the XRD
 apiVersion: eks.aws.crossplane.awscommunity.io/v1alpha1
 # Use the spec.claimName or spec.name specified in the XRD
-kind: KubernetesCluster
+kind: EKSCluster
 metadata:
   namespace: default
   name: deploy-target-eks
