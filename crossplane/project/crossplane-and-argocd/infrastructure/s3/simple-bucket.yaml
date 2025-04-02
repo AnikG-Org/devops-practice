@@ -1,7 +1,7 @@
 apiVersion: s3.aws.upbound.io/v1beta1
 kind: Bucket
 metadata:
-  name: crossplane-argocd-simple-bucket
+  name: crossplane-argocd-simple-bucket-awscommunityday2025
 spec:
   forProvider:
     region: eu-central-1
