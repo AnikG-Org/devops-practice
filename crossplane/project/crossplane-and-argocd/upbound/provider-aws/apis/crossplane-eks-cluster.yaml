@@ -6,4 +6,8 @@ metadata:
 spec:
   package: 309272221538.dkr.ecr.eu-central-1.amazonaws.com/crossplane-ecr:latest
   packagePullSecrets:
-    - name: ecr-secret
+    - name: ecr-secret # Secret for ECR authentication
+  packagePullPolicy: Always  # Always pull the latest image 
+  revisionActivationPolicy: Automatic
+  revisionHistoryLimit: 1
+  skipDependencyResolution: false
