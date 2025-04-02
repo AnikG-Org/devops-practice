@@ -6,7 +6,7 @@ metadata:
   namespace: default
 spec:
   forProvider:
-    region: ap-south-1
+    region: eu-central-1
     roleArnRef:
       name: iamroleforeks
     resourcesVpcConfig:
@@ -34,7 +34,7 @@ metadata:
   namespace: default
 spec:
   forProvider:
-    region: ap-south-1
+    region: eu-central-1
     clusterNameRef:
       name: crossplane-ekscluster-dev
     subnetRefs:

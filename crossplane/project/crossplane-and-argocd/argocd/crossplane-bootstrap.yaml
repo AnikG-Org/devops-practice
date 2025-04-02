@@ -6,15 +6,15 @@ metadata:
   name: crossplane-bootstrap
   namespace: argocd
   labels:
-    crossplane.jonashackt.io: bootstrap
+    crossplane.awscommunity.io: bootstrap
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
-    repoURL: https://github.com/jonashackt/crossplane-argocd
+    repoURL: https://github.com/AnikG-Org/devops-practice
     targetRevision: HEAD
-    path: argocd/crossplane-bootstrap
+    path: crossplane/project/crossplane-and-argocd/argocd/crossplane-bootstrap
   destination:
     server: https://kubernetes.default.svc
     namespace: crossplane-system

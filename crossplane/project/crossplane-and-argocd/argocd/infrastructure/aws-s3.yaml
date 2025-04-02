@@ -6,15 +6,15 @@ metadata:
   name: aws-s3
   namespace: argocd
   labels:
-    crossplane.jonashackt.io: infrastructure
+    crossplane.awscommunity.io: infrastructure
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
-    repoURL: https://github.com/jonashackt/crossplane-argocd
+    repoURL: https://github.com/AnikG-Org/devops-practice
     targetRevision: HEAD
-    path: infrastructure/s3
+    path: crossplane/project/crossplane-and-argocd/infrastructure/s3
   destination:
     namespace: default
     server: https://kubernetes.default.svc

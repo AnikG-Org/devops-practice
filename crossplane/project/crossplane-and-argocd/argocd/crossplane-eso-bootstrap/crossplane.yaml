@@ -6,7 +6,7 @@ metadata:
   name: crossplane
   namespace: argocd
   labels:
-    crossplane.jonashackt.io: crossplane
+    crossplane.awscommunity.io: crossplane
   finalizers:
     - resources-finalizer.argocd.argoproj.io
   annotations:
@@ -14,9 +14,9 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/jonashackt/crossplane-argocd
+    repoURL: https://github.com/AnikG-Org/devops-practice
     targetRevision: HEAD
-    path: crossplane
+    path: crossplane/project/crossplane-and-argocd/crossplane
   destination:
     server: https://kubernetes.default.svc
     namespace: crossplane-system

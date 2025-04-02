@@ -4,10 +4,10 @@ metadata:
   namespace: default
   name: crossplane-ecr
   labels:
-    region: ap-south-1
+    region: eu-central-1
 spec:
   forProvider:
-    region: ap-south-1
+    region: eu-central-1
     imageScanningConfiguration:
       scanOnPush: true
     imageTagMutability: MUTABLE
@@ -25,10 +25,10 @@ metadata:
   namespace: default
   name: ecradmin
   labels:
-    region: ap-south-1
+    region: eu-central-1
 spec:
   forProvider:
-    region: ap-south-1
+    region: eu-central-1
     repositoryNameRef: 
       name: crossplane-ecr
     policy:
@@ -51,9 +51,69 @@ metadata:
   name: crossplane-ecr-lcp
 spec:
   forProvider:
-    region: ap-south-1
+    region: eu-central-1
     repositoryNameRef:
       name: crossplane-ecr
+    lifecyclePolicyText: '{"rules":[{"rulePriority":1,"description":"Expire images older than 7 days","selection":{"tagStatus":"untagged","countType":"sinceImagePushed","countUnit":"days","countNumber":7},"action":{"type":"expire"}}]}'
+  providerConfigRef:
+    name: crossplane-
+---
+apiVersion: ecr.aws.crossplane.io/v1beta1
+kind: Repository
+metadata:
+  namespace: default
+  name: crossplane-app
+  labels:
+    region: eu-central-1
+spec:
+  forProvider:
+    region: eu-central-1
+    imageScanningConfiguration:
+      scanOnPush: true
+    imageTagMutability: MUTABLE
+    tags:
+      - key: Name
+        value: crossplane-app
+      - key: project
+        value: crossplane
+  providerConfigRef:
+    name: crossplane-aws
+---
+apiVersion: ecr.aws.crossplane.io/v1beta1
+kind: RepositoryPolicy
+metadata:
+  namespace: default
+  name: ecradmin
+  labels:
+    region: eu-central-1
+spec:
+  forProvider:
+    region: eu-central-1
+    repositoryNameRef: 
+      name: crossplane-app
+    policy:
+      statements:
+        - action:
+            - "ecr:*"
+          effect: Allow
+          principal:
+            awsPrincipals:
+              - iamRoleArnRef:
+                  name: iamroleforeks
+      version: '2012-10-17'
+  providerConfigRef:
+    name: crossplane-aws
+---
+apiVersion: ecr.aws.crossplane.io/v1alpha1
+kind: LifecyclePolicy
+metadata:
+  namespace: default
+  name: crossplane-ecr-lcp
+spec:
+  forProvider:
+    region: eu-central-1
+    repositoryNameRef:
+      name: crossplane-app
     lifecyclePolicyText: '{"rules":[{"rulePriority":1,"description":"Expire images older than 7 days","selection":{"tagStatus":"untagged","countType":"sinceImagePushed","countUnit":"days","countNumber":7},"action":{"type":"expire"}}]}'
   providerConfigRef:
     name: crossplane-aws

@@ -4,7 +4,7 @@ metadata:
   name: microservice-api-spring-boot
   namespace: argocd
   labels:
-    crossplane.jonashackt.io: application
+    crossplane.awscommunity.io: application
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:

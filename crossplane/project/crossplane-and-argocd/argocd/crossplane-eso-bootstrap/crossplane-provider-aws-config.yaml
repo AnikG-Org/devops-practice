@@ -6,7 +6,7 @@ metadata:
   name: crossplane-provider-aws-config
   namespace: argocd
   labels:
-    crossplane.jonashackt.io: crossplane
+    crossplane.awscommunity.io: crossplane
   finalizers:
     - resources-finalizer.argocd.argoproj.io
   annotations:
@@ -14,9 +14,9 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/jonashackt/crossplane-argocd
+    repoURL: https://github.com/AnikG-Org/devops-practice
     targetRevision: HEAD
-    path: upbound/provider-aws/config-eos
+    path: crossplane/project/crossplane-and-argocd/upbound/provider-aws/config-eos
   destination:
     namespace: default
     server: https://kubernetes.default.svc

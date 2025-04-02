@@ -14,9 +14,9 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/jonashackt/crossplane-argocd
+    repoURL: https://github.com/AnikG-Org/devops-practice
     targetRevision: HEAD
-    path: crossplane-contrib/provider-argocd/provider
+    path: crossplane/project/crossplane-and-argocd/crossplane-contrib/provider-argocd/provider
   destination:
     namespace: default
     server: https://kubernetes.default.svc
