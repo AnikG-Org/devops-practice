@@ -1,7 +1,12 @@
 # App deploy manually
 
 
-#before runnig the deployment run below scrit at app deployment namespace if 'ecr-secret' not created before
+#before runnig the deployment run below scrit at app deployment namespace if 'ecr-secret' not created before to the target resouce
+
+```shell
+kubectl config get-contexts
+aws eks update-kubeconfig --name deploy-target-eks --region eu-central-1
+```
 
 ```shell
 anik1@Anik-DevOps MINGW64 /crossplane/project
@@ -14,7 +19,7 @@ $ kubectl get secret -n default
 NAME         TYPE                             DATA   AGE
 ecr-secret   kubernetes.io/dockerconfigjson   1      12s
 ```
-# App deployment with argo cd
+### App deployment with argocd
 
 ```shell
 anik1@Anik-DevOps MINGW64 /crossplane/project
