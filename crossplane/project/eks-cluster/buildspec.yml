@@ -26,7 +26,7 @@ phases:
       - kubectl version --client
       - git clone --depth 1 https://github.com/AnikG-Org/devops-practice.git
       - cd devops-practice/crossplane/project/eks-cluster/
-      - kubectl crossplane install provider upbound/provider-aws:v1.0.0
+      - crossplane install provider upbound/provider-aws:v1.0.0
       - echo Building Crossplane package...
       - crossplane xpkg build --package-root=. --examples-root="./examples" --ignore="crossplane-provider/install/,crossplane-provider/provider/,build*" --verbose
       - echo Pushing package to AWS ECR...
