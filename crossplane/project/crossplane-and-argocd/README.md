@@ -1,3 +1,5 @@
+<div style="font-family: 'Arial', sans-serif;">
+
 # crossplane-argocd
 
 Pproject showing how to use the crossplane together with ArgoCD
@@ -735,3 +737,5 @@ Cluster 'https://736F91649BD7B7A70846AD9F8363EDA8.yl4.eu-central-1.eks.amazonaws
 ```
 
 The new cluster becomes visible in the Argo web ui also:
+
+</div>
