@@ -6,7 +6,7 @@ spec:
   ports:
     - port: 80
       targetPort: 8098
-  type: NodePort  # Change service type to NodePort
+  # type: NodePort  # Change service type to NodePort
   selector:
     app: awscommunityday
     branch: main
