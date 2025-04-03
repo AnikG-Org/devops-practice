@@ -21,4 +21,4 @@ spec:
         - image: 309272221538.dkr.ecr.eu-central-1.amazonaws.com/crossplane-app:latest@sha256:cc370c0a474e2e63fa4f60c90a67399ff911e88abf5e01e16af85073d7f44576
           name: awscommunityday
           ports:
-            - containerPort: 8098
+            - containerPort: 8080
