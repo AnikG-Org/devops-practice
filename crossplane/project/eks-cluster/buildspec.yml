@@ -16,9 +16,7 @@ phases:
   build:
     commands:
       - echo Installing dependencies...
-      - curl --output crank "https://releases.crossplane.io/stable/current/bin/linux_amd64/crank"
-      - chmod +x crank
-      - sudo mv crank /usr/local/bin/crossplane
+      - curl --output crank "https://releases.crossplane.io/stable/current/bin/linux_amd64/crank" &7 chmod +x crank && sudo mv crank /usr/local/bin/crossplane && crossplane -help
       - echo Installing kubectl...
       - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
       - chmod +x kubectl
