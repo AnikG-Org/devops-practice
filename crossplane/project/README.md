@@ -80,6 +80,7 @@ Before initiating the deployment, ensure the following prerequisites are met:
 
 To set up and deploy the project:
 1. **NAVIGATE TO**: Devops-practice/crossplane/project/
+  ```shell
    anik1@Anik-DevOps MINGW64 /crossplane/project
    $ ll
    drwxr-xr-x 1 anik1 197609 0 Apr  3 10:46 Appbuild/
@@ -87,6 +88,7 @@ To set up and deploy the project:
    drwxr-xr-x 1 anik1 197609 0 Apr  3 17:18 controlplane/
    drwxr-xr-x 1 anik1 197609 0 Apr  3 14:17 crossplane-and-argocd/
    drwxr-xr-x 1 anik1 197609 0 Apr  1 22:28 eks-cluster/
+   ```
 
 2. **Deploy the Control Plane**:
    Navigate to the `controlplane` directory and follow the instructions in its README to deploy the base EKS cluster and network infrastructure.
