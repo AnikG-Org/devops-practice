@@ -10,7 +10,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/jonashackt/microservice-api-spring-boot-config
+    repoURL: https://github.com/AnikG-Org/devops-practice
     targetRevision: HEAD
     path: crossplane/project/appdeployment
   destination:
