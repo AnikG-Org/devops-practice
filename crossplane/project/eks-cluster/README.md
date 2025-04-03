@@ -3,7 +3,7 @@
 Manual testing
 ###############################################################################################################
 ```shell
-#Crossplane setup
+#Crossplane cli setup
 curl --output crank "https://releases.crossplane.io/stable/current/bin/linux_amd64/crank"
 chmod +x crank
 sudo mv crank /usr/local/bin/crossplane
@@ -12,19 +12,14 @@ sudo mv crank /usr/local/bin/crossplane
 anik1@Anik-DevOps MINGW64 crossplane/project/
 $ crossplane --version
 v1.15.1
+```
+
 ###############################################################################################################
-setup provider
+setup rall providers for crossplane code compositon testing
 ###############################################################################################################
+```shell
 anik1@Anik-DevOps MINGW64 crossplane/project
 $ cd eks-cluster/crossplane-provider/provider/
-
-anik1@Anik-DevOps MINGW64 crossplane/project/eks-cluster/crossplane-provider/provider
-$ kubectl apply -f upbound-provider-aws-ec2.yaml
-provider.pkg.crossplane.io/upbound-provider-aws-ec2 created
-
-anik1@Anik-DevOps MINGW64 crossplane/project/eks-cluster/crossplane-provider/provider
-$ kubectl delete -f upbound-provider-aws-ec2.yaml
-provider.pkg.crossplane.io "upbound-provider-aws-ec2" deleted
 
 anik1@Anik-DevOps MINGW64 crossplane/project/eks-cluster/crossplane-provider/provider
 $ kubectl apply -f upbound-provider-aws-ec2.yaml
@@ -37,7 +32,12 @@ provider.pkg.crossplane.io/upbound-provider-aws-eks created
 anik1@Anik-DevOps MINGW64 crossplane/project/eks-cluster/crossplane-provider/provider
 $ kubectl apply -f upbound-provider-aws-iam.yaml 
 provider.pkg.crossplane.io/upbound-provider-aws-iam created
-
+###########
+## make sure update file or CICD or env variable for secret.yaml for creds: $AWS_SECRET_BASE64 of $(cat ~/.aws/credencials)
+# apiVersion: v1
+# data:
+#   creds: $AWS_SECRET_BASE64
+###########
 anik1@Anik-DevOps MINGW64 crossplane/project/eks-cluster/crossplane-provider/provider
 $ kubectl apply -f secret.yaml 
 Warning: resource secrets/aws-secret is missing the kubectl.kubernetes.io/last-applied-configuration annotation which is required by kubectl apply. kubectl apply should only be used on resources created declaratively by either kubectl create --save-config or kubectl apply. The missing annotation will be patched automatically.
@@ -58,8 +58,9 @@ anik1@Anik-DevOps MINGW64 crossplane/project/eks-cluster/crossplane-provider/pro
 $ kubectl get -f upbound-provider-aws-ec2.yaml 
 NAME                       INSTALLED   HEALTHY   PACKAGE                                            AGE
 upbound-provider-aws-ec2   True        True      xpkg.upbound.io/upbound/provider-aws-ec2:v1.21.0   11m
+
 ###############################################################################################################
-Setup XRD & composition
+#Manual Setup crossplane XRD & composition
 ###############################################################################################################
 
 
@@ -73,7 +74,7 @@ composition.apiextensions.crossplane.io/networking created
 
 #############################################################################################################
 ##### test the code
-To test the composition & XRD testing with example claims
+To test the crossplane network composition & XRD testing with example claims
 
 #### update eks claim file with subnet ids
 #############################################################################################################
@@ -125,7 +126,7 @@ vpc.ec2.aws.upbound.io/deploy-target-eks   True     True    vpc-0775458b551b0219
 
 #############################################################################################################
 ##### test the code
-To test the composition & XRD testing with example claims
+To test the Crossplane EKS composition & XRD testing with example claims
 
 #### update eks claim file with subnet ids
 #############################################################################################################
@@ -253,15 +254,17 @@ deploymentruntimeconfig.pkg.crossplane.io/default   6d20h
 
 NAME                                        AGE     TYPE         DEFAULT-SCOPE
 storeconfig.secrets.crossplane.io/default   6d20h   Kubernetes   crossplane-system
+```
 #############################################################################################################
 To extract the EKS cluster kubeconfig:
-
+```shell
 kubectl get secret eks-cluster-kubeconfig -o jsonpath='{.data.kubeconfig}' | base64 --decode > ekskubeconfig
 Now integrate the contents of the ekskubeconfig file into your ~/.kube/config (better with VSCode!) and switch over to the new kube context
-
+```
 #############################################################################################################
-Create a ECR before build push: 
+Create a controlplane ECR before build push: 
 #############################################################################################################
+```shell
 anik1@Anik-DevOps MINGW64 crossplane/controlplane/provider
 $ kubectl apply -f secret.yaml 
 secret/aws-secret created
@@ -301,30 +304,31 @@ repositorypolicy.ecr.aws.crossplane.io/ecradmin   True    True     ecradmin
 NAME                                                       READY   SYNCED   EXTERNAL-NAME        AGE
 lifecyclepolicy.ecr.aws.crossplane.io/crossplane-ecr-lcp   True    True     crossplane-ecr-lcp   103s
 
-
+```
 #############################################################################################################
 Building a Configuration Package as OCI container
 
 crossplane xpkg build --package-root=. --examples-root="./examples" --ignore="crossplane-provider/install/*,crossplane-provider/provider/*" --verbose
 #############################################################################################################
-
+```shell
 anik@Anik-DevOps:~$ cd eks-cluster/
 anik@Anik-DevOps:~/eks-cluster$ crossplane xpkg build --package-root=. --examples-root="./examples" --ignore="crossplane-provider/install/*,crossplane-provider/provider/*,build*" --verbose
 2025-04-01T09:08:27Z    INFO    xpkg saved      {"output": "/home/anik/eks-cluster/crossplane-eks-cluster-fa60142b580b.xpkg"}
 anik@Anik-DevOps:~/eks-cluster$
-
+```
 
 #############################################################################################################
 Login to ECR
 #############################################################################################################
-
+```shell
 anik@Anik-DevOps:~/eks-cluster$ aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 309272221538.dkr.ecr.ap-south-1.amazonaws.com
 Login Succeeded
-
+```
 #############################################################################################################
 OCI image push to ECR
 #############################################################################################################
 
+```shell
 anik@Anik-DevOps:~/eks-cluster$ crossplane xpkg push 309272221538.dkr.ecr.ap-south-1.amazonaws.com/crossplane-ecr:latest --verbose
 2025-04-01T10:21:22Z    DEBUG   Found package in directory      {"path": "crossplane-eks-cluster-48f66f345fe8.xpkg"}
 2025-04-01T10:21:22Z    DEBUG   Supplied server URL is not supported by this credentials helper {"serverURL": "309272221538.dkr.ecr.ap-south-1.amazonaws.com", "domain": "upbound.io"}
@@ -332,4 +336,4 @@ anik@Anik-DevOps:~/eks-cluster$ crossplane xpkg push 309272221538.dkr.ecr.ap-sou
 anik@Anik-DevOps:~/eks-cluster$
 #############################################################################################################
 ```
-## use buildspec yaml to automate the build
+## use buildspec yaml to automate the entire build
