@@ -727,7 +727,7 @@ Ref: https://argo-cd.readthedocs.io/en/stable/user-guide/commands/argocd_cluster
 ```shell
 argocd cluster add deploy-target-eks
 #Or
-argocd cluster add aws_eks_arn
+argocd cluster add $aws_eks_arn
 ```
 
 This will add a few resources to the Target cluster like `ServiceAccount`, `ClusterRole` and `ClusterRoleBinding`:
