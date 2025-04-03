@@ -4,9 +4,11 @@ metadata:
   name: awscommunityday
 spec:
   ports:
-    - port: 8090
-      targetPort: 8000
-  # type: NodePort  # Change service type to NodePort
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 8080
+  type: NodePort  # Change service type 
   selector:
     app: awscommunityday
     branch: main
