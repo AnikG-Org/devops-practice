@@ -19,6 +19,7 @@ phases:
       - curl --output crank "https://releases.crossplane.io/stable/current/bin/linux_amd64/crossplane"
       - chmod +x crossplane
       - sudo mv crossplane /usr/local/bin/crossplane
+      - crossplane --version
       - echo Installing kubectl...
       - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
       - chmod +x kubectl
