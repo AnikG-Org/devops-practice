@@ -5,7 +5,7 @@ set -e
 
 AWS_ACCOUNT=$1
 AWS_REGION=$2
-NAMESPACE=crossplane-system
+NAMESPACE=$3
 
 # Create Kubernetes secret for ECR authentication
 kubectl create secret docker-registry ecr-secret \
