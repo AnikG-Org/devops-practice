@@ -26,6 +26,9 @@ phases:
       - kubectl version --client
       - git clone --depth 1 https://github.com/AnikG-Org/devops-practice.git
       - cd devops-practice/crossplane/project/eks-cluster/
+      - kubectl apply -f crossplane-provider/provider/secret.yaml  #$AWS_SECRET_BASE64 env var added to codebuild / secret manager
+      - kubectl apply -f crossplane-provider/provider/upbound-provider-aws-eks.yaml
+      - kubectl apply -f crossplane-provider/provider/provider-config-aws.yaml
       - echo Building Crossplane package...
       - crossplane xpkg build --package-root=. --examples-root="./examples" --ignore="crossplane-provider/install/,crossplane-provider/provider/,build*" --verbose
       - echo Pushing package to AWS ECR...
