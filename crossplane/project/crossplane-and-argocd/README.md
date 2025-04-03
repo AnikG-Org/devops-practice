@@ -680,16 +680,19 @@ Now we use our installed APIs to create a Claim in [`infrastructure/eks/deploy-t
 
 We should also create a Argo App for our EKS cluster Composite Resource Claim to see our infrastructure beeing deployed visually :)
 
-Therefore we create the Application [`argocd/infrastructure/aws-eks.yaml`]:
-
-Now **this** will deploy our EKS cluster using ArgoCD and our EKS Configuration Package based Nested EKS Composition:
-
 Note: if only network required can try below steps else skip
 ```shell
 $ kubectl apply -f argocd/infrastructure/aws-net.yaml
 Warning: metadata.finalizers: "resources-finalizer.argocd.argoproj.io": prefer a domain-qualified finalizer name including a path (/) to avoid accidental conflicts with other finalizer writers
 application.argoproj.io/aws-networking created
 ```
+Deleted as not required later 
+
+Therefore we create the Application [`argocd/infrastructure/aws-eks.yaml`]:
+
+Now **this** will deploy our EKS cluster using ArgoCD and our EKS Configuration Package based Nested EKS Composition:
+
+
 setup whole eks package
 ```shell
 anik1@Anik-DevOps MINGW64 /crossplane/project/crossplane-and-argocd
