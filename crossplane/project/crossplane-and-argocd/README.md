@@ -446,7 +446,8 @@ replicaset.apps/upbound-provider-family-aws-9c2ce8bc65e7-5698b576d4   1         
 And like magic all our Crossplane components get deployed step by step in correct order:
 Be sure to create both `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` configured as GitHub Repository Secrets:
 
-## Doing it all steps
+## Doing it all steps to get argo cd and crossplane ready on target Kuberneties cluster
+Sample yaml 
 ```yaml
 name: crossplane-argocd
 
@@ -455,7 +456,7 @@ name: crossplane-argocd
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   AWS_DEFAULT_REGION: 'eu-central-1'
 
-    runs-this-on: ubuntu-latest
+    runs this on: ubuntu linux
     steps:
       - name: Install ArgoCD into kind
         run: |
