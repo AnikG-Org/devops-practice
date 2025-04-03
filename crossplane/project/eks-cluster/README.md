@@ -332,3 +332,4 @@ anik@Anik-DevOps:~/eks-cluster$ crossplane xpkg push 309272221538.dkr.ecr.ap-sou
 anik@Anik-DevOps:~/eks-cluster$
 #############################################################################################################
 ```
+## use buildspec yaml to automate the build
