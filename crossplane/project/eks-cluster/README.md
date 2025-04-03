@@ -15,7 +15,7 @@ v1.15.1
 ```
 
 ###############################################################################################################
-setup rall providers for crossplane code compositon testing
+setup all providers for crossplane code compositon testing
 ###############################################################################################################
 ```shell
 anik1@Anik-DevOps MINGW64 crossplane/project
