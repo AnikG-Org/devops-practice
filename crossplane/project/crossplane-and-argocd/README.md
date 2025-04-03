@@ -4,15 +4,13 @@
 
 Pproject showing how to use the crossplane together with ArgoCD
 
-### TLDR: Steps from 0 to 100
+###  In short start to end
 
-If you don't want to read much text, do the following steps:
 
 ```shell
 
 # Install ArgoCD
 kubectl apply -k argocd/install
-
 kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=argocd-server --namespace argocd --timeout=300s
 
 # Access ArgoUI
@@ -23,11 +21,17 @@ kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.pas
 # Prepare Secret with ArgoCD API Token for Crossplane ArgoCD Provider (port forward can be run in subshell appending ' &' + Ctrl-C and beeing deleted after running create-argocd-api-token-secret.sh via 'fg 1%' + Ctrl-C)
 kubectl port-forward -n argocd --address='0.0.0.0' service/argocd-server 8443:443
 
+#or 
 
+helm install argocd-demo argo/argo-cd --namespace argocd
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
+kubectl port-forward -n argocd --address='0.0.0.0' service/argocd-demo-server 8443:443
 
+# argocd cli login
+argocd login localhost:8443 --username admin --password $(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo) --insecure
 
 # Bootstrap Crossplane via ArgoCD
-kubectl apply -n argocd -f argocd/crossplane-eso-bootstrap.yaml 
+kubectl apply -n argocd -f argocd/crossplane-bootstrap.yaml 
 
 kubectl get crd
 
@@ -36,25 +40,27 @@ kubectl apply -f argocd/crossplane-apis/crossplane-apis.yaml
 
 # Create actual EKS cluster via Crossplane & register it in ArgoCD via argocd-provider
 kubectl apply -f argocd/infrastructure/aws-eks.yaml
-crossplane beta trace kubernetesclusters.k8s.crossplane.jonashackt.io/deploy-target-eks -o wide
 
 # Optional: If you want, have a look onto the new cluster
 kubectl get secret eks-cluster-kubeconfig -o jsonpath='{.data.kubeconfig}' | base64 --decode > ekskubeconfig
 # integrate the contents of `ekskubeconfig` into your `~/.kube/config` (better w/ VSCode!) & switch over to the new kube context
 
+#before runnig the deployment run below scrit at app deployment namespace if 'ecr-secret' not created before to the target resouce
+kubectl config get-contexts
+aws eks update-kubeconfig --name deploy-target-eks --region eu-central-1
+$ bash appdeployment/ecrsecret.sh 309272221538 eu-central-1 default
+
 # Run Application on EKS cluster using Argo
-kubectl apply -f argocd/applications/microservice-api-spring-boot.yaml
+kubectl apply -f argocd/applications/
 ```
 
 Now you should see both clusters (kind & EKS) running and the app beeing deployed:
-
-![](docs/kind-argo-crossplane-and-eks-fully-working.png)
 
 
 
 # Prerequisites: a management cluster for ArgoCD and crossplane
 
-First we need a simple management cluster for our ArgoCD and crossplane deployments. [As in the base project](https://github.com/jonashackt/crossplane-aws-azure) we simply use kind here:
+First we need a simple management cluster for our ArgoCD and crossplane deployments.
 
 Be sure to have some packages installed.:
 
@@ -227,10 +233,8 @@ argocd-server                             NodePort    10.106.36.164    <none>   
 Now we can access the ArgoCD UI inside your Browser at http://localhost:32366 using `admin` user and the obtained password.
 
 
-
 ### Login ArgoCD CLI into our argocd-server installed in kind
 
-https://argo-cd.readthedocs.io/en/stable/getting_started/#4-login-using-the-cli
 
 In order to be able to add applications to Argo, we should login our ArgoCD CLI into our `argocd-server` installed:
 
@@ -245,11 +249,9 @@ Context 'localhost:8080' updated
 Remember to change the initial password in production environments!
 
 
-
-
 # Let ArgoCD install Crossplane
 
-Is it possible to already use the GitOps approach right from here on to install crossplane? Let's try it.
+GitOps approach right from here on to install crossplane.
 
 ```yaml
 apiVersion: v2
@@ -263,7 +265,7 @@ dependencies:
     version: 1.16.0
 ```
 
-__This Helm chart needs to be picked up by Argo in a declarative GitOps way (not through the UI).__
+__This Helm chart needs to be picked up by Argo in a declarative GitOps way.__
 
 
 
@@ -508,7 +510,7 @@ name: crossplane-argocd
 
 ## Finally provisioning Cloud resources with Crossplane and Argo
 
-Let's create a simple S3 Bucket in AWS. [The docs tell us](https://marketplace.upbound.io/providers/upbound/provider-aws-s3/v0.47.1/resources/s3.aws.upbound.io/Bucket/v1beta1), which config we need. [`infrastructure/s3/simple-bucket.yaml`](infrastructure/s3/simple-bucket.yaml) features a super simply example:
+Let's create a simple S3 Bucket in AWS, which config we need. [`infrastructure/s3/simple-bucket.yaml`] features a super simply example:
 
 
 Apply it with:
@@ -530,13 +532,12 @@ If everything went fine, the Argo app should look `Healthy` like this.
 And inside the AWS console, there should be a new S3 Bucket provisioned
 
 ## Deploy an EKS Cluster
-### Multiple AWS Providers as ArgoCD Application
-### Using the EKS Nested Composition as Configuration Package
+Multiple AWS Providers as ArgoCD Application Using the EKS Nested Composition as Configuration Package
 
 
-Let's try to apply it to our cluster manually to test and use it:
-
+Let's try to apply it to our cluster manually to test and use it.
 To have Configuration connect to private docker image need to run below cmd / sh file
+
 ```shell
 aws ecr get-login-password --region eu-central-1 | kubectl create secret docker-registry ecr-secret \
   --namespace crossplane-system \
@@ -544,7 +545,7 @@ aws ecr get-login-password --region eu-central-1 | kubectl create secret docker-
   --docker-username=AWS \
   --docker-password=$(aws ecr get-login-password --region eu-central-1)
 ```
-
+Output
 ```shell
 
 ########
@@ -555,11 +556,6 @@ $ aws ecr get-login-password --region eu-central-1 | kubectl create secret docke
 >   --docker-username=AWS \
 >   --docker-password=$(aws ecr get-login-password --region eu-central-1)
 secret/ecr-secret created
-
-
-anik1@Anik-DevOps MINGW64 /crossplane/project/crossplane-and-argocd
-$ kubectl describe secret/ecr-secret
-Error from server (NotFound): secrets "ecr-secret" not found
 
 anik1@Anik-DevOps MINGW64 /crossplane/project/crossplane-and-argocd
 $ kubectl describe secret/ecr-secret -n crossplane-system
@@ -575,10 +571,10 @@ Data
 .dockerconfigjson:  4284 bytes
 ```
 
-
 #######
 or 
 #######
+
 ```shell
 anik1@Anik-DevOps MINGW64 /crossplane/project/crossplane-and-argocd
 $ bash  upbound/provider-aws/apis/ecrsecret.sh 309272221538 eu-central-1
@@ -652,11 +648,8 @@ We should create an Argo Application for our EKS Configuration package to make A
 
 Now we can apply this `crossplane-apis` Application to our ArgoCD:
 
-```shell
-bash  upbound/provider-aws/apis/ecrsecret.sh 309272221538 eu-central-1
-```
 
-after ecr-secret generation
+
 
 # manual api deploy testing
 
@@ -665,10 +658,19 @@ anik1@Anik-DevOps MINGW64 /crossplane/project/crossplane-and-argocd
 $ kubectl apply -f upbound/provider-aws/apis/crossplane-eks-cluster.yaml
 configuration.pkg.crossplane.io/crossplane-eks-cluster created
 ```
+
 ### Deploying with argocd 
+# argocd GitOps way deploy
 
 ```shell
 kubectl apply -f argocd/crossplane-apis/crossplane-apis.yaml
+```
+
+
+create ecr-secret using ecrsecret.sh 
+
+```shell
+bash  upbound/provider-aws/apis/ecrsecret.sh 309272221538 eu-central-1
 ```
 
 That's pretty cool: Now we see all of our installed APIs as Argo Apps:
@@ -680,9 +682,10 @@ Now we use our installed APIs to create a Claim in [`infrastructure/eks/deploy-t
 
 ### Crossplane Composite Resource Claims (XRCs) as Argo Application
 
-We should also create a Argo App for our EKS cluster Composite Resource Claim to see our infrastructure beeing deployed visually :)
+We should also create a Argo App for our EKS cluster Composite Resource Claim to see our infrastructure beeing deployed visually
 
-Note: if only network required can try below steps else skip
+
+# testing: if only network required can try below steps else skip
 ```shell
 $ kubectl apply -f argocd/infrastructure/aws-net.yaml
 Warning: metadata.finalizers: "resources-finalizer.argocd.argoproj.io": prefer a domain-qualified finalizer name including a path (/) to avoid accidental conflicts with other finalizer writers
@@ -690,12 +693,13 @@ application.argoproj.io/aws-networking created
 ```
 Deleted as not required later 
 
+# argocd GitOps way deploy
+
 Therefore we create the Application [`argocd/infrastructure/aws-eks.yaml`]:
 
 Now **this** will deploy our EKS cluster using ArgoCD and our EKS Configuration Package based Nested EKS Composition:
 
 
-setup whole eks package
 ```shell
 anik1@Anik-DevOps MINGW64 /crossplane/project/crossplane-and-argocd
 $ kubectl apply -f argocd/infrastructure/aws-eks.yaml
@@ -718,11 +722,12 @@ $ argocd login localhost:8080 --username admin --password $(kubectl -n argocd ge
 'admin:login' logged in successfully
 Context 'localhost:8080' updated
 ```
-
-https://argo-cd.readthedocs.io/en/stable/user-guide/commands/argocd_cluster_add/
+Ref: https://argo-cd.readthedocs.io/en/stable/user-guide/commands/argocd_cluster_add/
 
 ```shell
 argocd cluster add deploy-target-eks
+#Or
+argocd cluster add aws_eks_arn
 ```
 
 This will add a few resources to the Target cluster like `ServiceAccount`, `ClusterRole` and `ClusterRoleBinding`:
