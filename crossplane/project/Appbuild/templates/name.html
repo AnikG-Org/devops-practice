@@ -2,27 +2,82 @@
 
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Hello AWS community Kolkata</title>
+    <title>AWS Community Day Kolkata 2025</title>
     <link rel="stylesheet" href="https://unpkg.com/awsm.css/dist/awsm.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            font-weight: bold;
+            font-size: 1.3rem;
+            color: white;
+            background-color: #232F3E;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+        header {
+            background-color: #FF9900;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        h1 {
+            font-size: 2rem;
+        }
+        main {
+            margin-top: 20px;
+            padding: 20px;
+            background: #37475A;
+            border-radius: 10px;
+            display: inline-block;
+        }
+        input[type="text"] {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: none;
+        }
+        input[type="submit"] {
+            padding: 10px 20px;
+            background-color: #FF9900;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+            font-size: 1rem;
+        }
+        footer {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #131A22;
+            border-radius: 10px;
+        }
+        a {
+            color: #4DA8DA;
+            text-decoration: none;
+        }
+    </style>
 </head>
 
-<body style="font-family: 'Poppins', sans-serif; font-weight: bold; font-size:1.3rem; color: white; background-color: #0F273E">
-      
+<body>
     <header>
-        <h1>Welcome to AWS community,Day Kolkata 2025!!!!!!!</h1>
-        <p>
-            This is crossplane AWS Project 
-        </p>
+        <h1>Welcome to AWS Community Day Kolkata 2025!</h1>
+        <p>This is a Crossplane AWS deployed application</p>
+        <img src="https://d1.awsstatic.com/getting-started-guides/community/community-day-banner-modified.7d7a7c163192fe29497dd11f5f92f0e98a055f36.png" 
+             alt="AWS Community Day Badge" 
+             style="display: block; margin: 20px auto; max-width: 200px;">
     </header>
+    
     <main>
         <form action="/howdy" method="post">
-                Enter Name: <input type="text" name="name">  <br />
-                
-                <input type="submit" name= "form" value="Submit" />
-            </form>
-        
-        <br>
+            <label for="name">Enter Attendee's Name:</label>
+            <input type="text" id="name" name="name">  <br />
+            <input type="submit" name="form" value="Submit">
+        </form>
     </main>
-<p style="font-family: 'Poppins', sans-serif; font-weight: bold; line-height: 2rem; font-size:1.3rem; color: white; text-align: center; padding: 15px; background-color: #1B2731">Website : awscommunitydaykolkata.com <br>Linkdin : https://www.linkedin.com/in/anik-guha/ and https://www.linkedin.com/in/soumadeep-bhattacharya-03222021/ <br>We are : Anik Guha and Soumyadeep Bhattacharya
-</p>
+
+    <footer>
+        <p>Website: <a href="https://awscommunitydaykolkata.com">awscommunitydaykolkata.com</a></p>
+        <p>LinkedIn: <a href="https://www.linkedin.com/in/anik-guha/">Anik Guha</a> and <a href="https://www.linkedin.com/in/soumadeep-bhattacharya-03222021/">Soumyadeep Bhattacharya</a></p>
+        <p>We are: Anik Guha and Soumyadeep Bhattacharya</p>
+    </footer>
 </body>
