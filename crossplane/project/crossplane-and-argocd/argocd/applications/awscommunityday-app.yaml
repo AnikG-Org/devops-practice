@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: awscommunityday
+  namespace: argocd
+  labels:
+    crossplane.awscommunity.io: application
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/jonashackt/microservice-api-spring-boot-config
+    targetRevision: HEAD
+    path: crossplane/project/appdeployment
+  destination:
+    namespace: default
+    # name: deploy-target-eks
+    server: https://kubernetes.default.svc
+  syncPolicy:
+    automated:
+      prune: true    
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s 
+        factor: 2 
+        maxDuration: 1m

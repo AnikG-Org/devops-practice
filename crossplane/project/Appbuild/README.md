@@ -154,5 +154,14 @@ c97da0d72ee3: Pushed
 latest: digest: sha256:cc370c0a474e2e63fa4f60c90a67399ff911e88abf5e01e16af85073d7f44576 size: 6784
 ```
 
-Python app Image is now at ECR crossplane-app 
+Python app Image is now at ECR crossplane-app
+
+#before runnig the deployment run below scrit if 'ecr-secret' not created before
+
+```shell
+anik1@Anik-DevOps MINGW64 /crossplane/project/crossplane-and-argocd
+$ bash  upbound/provider-aws/apis/ecrsecret.sh 309272221538 eu-central-1
+secret/ecr-secret created
+✅ ECR secret 'ecr-secret' created successfully in 'crossplane-system' namespace.
+```
 
