@@ -554,8 +554,6 @@ $ aws ecr get-login-password --region eu-central-1 | kubectl create secret docke
 >   --docker-password=$(aws ecr get-login-password --region eu-central-1)
 secret/ecr-secret created
 
-anik1@Anik-DevOps MINGW64 /crossplane/project/crossplane-and-argocd
-$
 
 anik1@Anik-DevOps MINGW64 /crossplane/project/crossplane-and-argocd
 $ kubectl describe secret/ecr-secret
@@ -652,23 +650,26 @@ We should create an Argo Application for our EKS Configuration package to make A
 
 Now we can apply this `crossplane-apis` Application to our ArgoCD:
 
-after ecrsecret generation
-
 ```shell
 bash  upbound/provider-aws/apis/ecrsecret.sh 309272221538 eu-central-1
 ```
+
+after ecr-secret generation
+
+# manual api deploy testing
 
 ```shell
 anik1@Anik-DevOps MINGW64 /crossplane/project/crossplane-and-argocd
 $ kubectl apply -f upbound/provider-aws/apis/crossplane-eks-cluster.yaml
 configuration.pkg.crossplane.io/crossplane-eks-cluster created
+```
+### Deploying with argocd 
 
-
+```shell
 kubectl apply -f argocd/crossplane-apis/crossplane-apis.yaml
 ```
 
 That's pretty cool: Now we see all of our installed APIs as Argo Apps:
-
 
 
 ### Craft a Composite Resource Claim (XRC) to provision an EKS cluster
