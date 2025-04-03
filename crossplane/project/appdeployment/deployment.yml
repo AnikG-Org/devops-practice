@@ -17,9 +17,11 @@ spec:
     spec:
       imagePullSecrets:
         - name: ecr-secret  # This must match the secret you created
+      terminationGracePeriodSeconds: 5
       containers:
-        - image: 309272221538.dkr.ecr.eu-central-1.amazonaws.com/crossplane-app:latest@sha256:cc370c0a474e2e63fa4f60c90a67399ff911e88abf5e01e16af85073d7f44576
+        - image: saiyam911/ossjapan:sha-9319ddf #309272221538.dkr.ecr.eu-central-1.amazonaws.com/crossplane-app:latest@sha256:cc370c0a474e2e63fa4f60c90a67399ff911e88abf5e01e16af85073d7f44576
           name: awscommunityday
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
           env:
