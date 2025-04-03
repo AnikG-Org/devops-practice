@@ -169,5 +169,5 @@ $ kubectl get secret -n default
 NAME         TYPE                             DATA   AGE
 ecr-secret   kubernetes.io/dockerconfigjson   1      12s
 ```
-
+## use buildspec yaml to automate the build
 
