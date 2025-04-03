@@ -29,7 +29,7 @@ phases:
       - cd devops-practice/crossplane/project/
       - echo Building Crossplane package...
       - cd eks-cluster/
-      - crossplane xpkg build --package-root=. --examples-root="./examples" --ignore="crossplane-provider/install/,crossplane-provider/provider/" --verbose
+      - crossplane xpkg build --package-root=. --examples-root="./examples" --ignore="crossplane-provider/install/,crossplane-provider/provider/,build*" --verbose
       - echo Pushing package to AWS ECR...
       - crossplane xpkg push $AWS_ACOUNT_NO.dkr.ecr.$AWS_REGION.amazonaws.com/ECR_REPO_NAME:$IMAGE_TAG --verbose
 
