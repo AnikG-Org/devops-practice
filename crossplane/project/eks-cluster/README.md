@@ -259,8 +259,15 @@ storeconfig.secrets.crossplane.io/default   6d20h   Kubernetes   crossplane-syst
 To extract the EKS cluster kubeconfig:
 ```shell
 kubectl get secret eks-cluster-kubeconfig -o jsonpath='{.data.kubeconfig}' | base64 --decode > ekskubeconfig
-Now integrate the contents of the ekskubeconfig file into your ~/.kube/config (better with VSCode!) and switch over to the new kube context
 ```
+Now integrate the contents of the ekskubeconfig file into your ~/.kube/config (better with VSCode!) and switch over to the new kube context
+
+EG:
+```shell
+kubectl config get-contexts
+aws eks update-kubeconfig --name deploy-target-eks --region eu-central-1
+```
+
 #############################################################################################################
 Create a controlplane ECR before build push: 
 #############################################################################################################
