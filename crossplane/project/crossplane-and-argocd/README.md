@@ -385,7 +385,11 @@ application.argoproj.io/crossplane-provider-aws-config created
 
 After the config installed crossplane-provider-aws will be healthy
 
-Now we should be able to finally apply our Crossplane App of Apps in Argo:
+That was for testing one by one .
+
+#doinng it all together
+
+#Now we should be able to finally apply our Crossplane App of Apps in Argo:
 
 ```shell
 anik1@Anik-DevOps MINGW64 /crossplane/project/crossplane-and-argocd
