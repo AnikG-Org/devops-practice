@@ -12,7 +12,7 @@ spec:
     region: eu-central-1
     nodes:
       count: 1
-      instanceTypes:
-        - t3a.large
+    instanceTypes:
+      - t3a.large
   writeConnectionSecretToRef:
     name: eks-cluster-kubeconfig

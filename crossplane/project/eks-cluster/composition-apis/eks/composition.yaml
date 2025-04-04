@@ -140,7 +140,7 @@ spec:
                 maxSize: 10
                 desiredSize: 1
             instanceTypes: # TODO: we can support to have that parameterized also
-              - t3a.medium
+              - t3a.large
       patches:
         - fromFieldPath: spec.parameters.instanceTypes
           toFieldPath: spec.forProvider.instanceTypes
