@@ -13,6 +13,6 @@ spec:
     nodes:
       count: 1
       instanceTypes:
-        - t3a.medium
+        - t3.medium
   writeConnectionSecretToRef:
     name: eks-cluster-kubeconfig
