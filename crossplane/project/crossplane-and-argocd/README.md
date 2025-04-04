@@ -35,6 +35,8 @@ kubectl apply -n argocd -f argocd/crossplane-bootstrap.yaml
 
 kubectl get crd
 
+bash  upbound/provider-aws/apis/ecrsecret.sh 309272221538 eu-central-1 #install secret to controlplane server to get image from ecr
+
 # Install Crossplane EKS APIs/Composition
 kubectl apply -f argocd/crossplane-apis/crossplane-apis.yaml
 
