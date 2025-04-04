@@ -104,3 +104,6 @@ To set up and deploy the project:
 
 6. **Deploy the Application**:
    Navigate to the `appdeployment` directory and deploy the application onto the EKS cluster using Argo CD.
+
+**Demo link:**
+https://youtu.be/8g50HyrLEzc
