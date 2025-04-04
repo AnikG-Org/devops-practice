@@ -667,9 +667,13 @@ kubectl apply -f argocd/crossplane-apis/crossplane-apis.yaml
 ```
 
 
-create ecr-secret using ecrsecret.sh 
+create temp ecr-secret using ecrsecret.sh every time 
+
+delete if present 
+
 
 ```shell
+kubectl delete secret ecr-secret -n crossplane-system
 bash  upbound/provider-aws/apis/ecrsecret.sh 309272221538 eu-central-1
 ```
 
