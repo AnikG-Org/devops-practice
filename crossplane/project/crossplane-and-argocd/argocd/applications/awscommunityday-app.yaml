@@ -16,7 +16,7 @@ spec:
   destination:
     namespace: default
     # name: deploy-target-eks
-    server: https://D1BEAC328AF091ED38E5D217EEE1419C.gr7.eu-central-1.eks.amazonaws.com
+    server: https://kubernetes.default.svc
   syncPolicy:
     automated:
       prune: true    
