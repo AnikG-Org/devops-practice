@@ -186,6 +186,17 @@ spec:
                 ]
               }
       
+    - name: containerRegistryRolePolicyAttachment
+      base:
+        apiVersion: iam.aws.upbound.io/v1beta1nodes
+        kind: RolePolicyAttachment
+        spec:
+          forProvider:
+            policyArn: arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+            roleSelector:
+              matchControllerRef: true
+              matchLabels:
+                role: nodegroup
 
     - name: workerNodeRolePolicyAttachment
       base:
@@ -207,18 +218,6 @@ spec:
         spec:
           forProvider:
             policyArn: arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy
-            roleSelector:
-              matchControllerRef: true
-              matchLabels:
-                role: nodegroup
-      
-    - name: containerRegistryRolePolicyAttachment
-      base:
-        apiVersion: iam.aws.upbound.io/v1beta1nodes
-        kind: RolePolicyAttachment
-        spec:
-          forProvider:
-            policyArn: arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
             roleSelector:
               matchControllerRef: true
               matchLabels:
