@@ -142,6 +142,8 @@ spec:
             instanceTypes: # TODO: we can support to have that parameterized also
               - t3a.medium
       patches:
+        - fromFieldPath: spec.parameters.instanceTypes
+          toFieldPath: spec.forProvider.instanceTypes
         - type: PatchSet
           patchSetName: clusterconfig
         - fromFieldPath: spec.parameters.nodes.count
