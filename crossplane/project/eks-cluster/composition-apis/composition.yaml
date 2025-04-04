@@ -56,6 +56,8 @@ spec:
           toFieldPath: spec.parameters.region
         - fromFieldPath: spec.parameters.nodes.count
           toFieldPath: spec.parameters.nodes.count
+        - fromFieldPath: spec.parameters.nodes.instanceTypes
+          toFieldPath: spec.parameters.nodes.instanceTypes
         - fromFieldPath: status.subnetIds
           toFieldPath: spec.parameters.subnetIds
           policy:

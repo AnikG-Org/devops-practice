@@ -7,7 +7,7 @@
 kubectl config get-contexts
 aws eks update-kubeconfig --name deploy-target-eks --region eu-central-1
 ```
-
+If secret/ecr-secret already there do delete(kubectl delete secret ecr-secret -n crossplane-system) and re create
 ```shell
 anik1@Anik-DevOps MINGW64 /crossplane/project
 $ bash appdeployment/ecrsecret.sh 309272221538 eu-central-1 default

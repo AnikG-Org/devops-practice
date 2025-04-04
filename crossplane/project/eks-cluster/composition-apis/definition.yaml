@@ -40,6 +40,11 @@ spec:
                       count:
                         type: integer
                         description: Desired node count, from 1 to 100.
+                      instanceTypes:
+                          type: array
+                          items:
+                            type: string
+                          description: List of EC2 instance types for worker nodes.
                     required:
                     - count
                 required:
