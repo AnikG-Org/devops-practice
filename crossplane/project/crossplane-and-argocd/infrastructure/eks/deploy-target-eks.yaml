@@ -9,7 +9,7 @@ metadata:
 spec:
   id: deploy-target-eks
   parameters:
-    region: ap-south-1
+    region: eu-central-1
     nodes:
       count: 1
       instanceTypes:
