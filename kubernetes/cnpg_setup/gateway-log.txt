@@ -1,0 +1,438 @@
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.1/experimental-install.yaml
+customresourcedefinition.apiextensions.k8s.io/backendtlspolicies.gateway.networking.k8s.io configured
+customresourcedefinition.apiextensions.k8s.io/gatewayclasses.gateway.networking.k8s.io configured
+customresourcedefinition.apiextensions.k8s.io/gateways.gateway.networking.k8s.io configured
+customresourcedefinition.apiextensions.k8s.io/grpcroutes.gateway.networking.k8s.io configured
+customresourcedefinition.apiextensions.k8s.io/referencegrants.gateway.networking.k8s.io configured
+customresourcedefinition.apiextensions.k8s.io/tcproutes.gateway.networking.k8s.io configured
+customresourcedefinition.apiextensions.k8s.io/tlsroutes.gateway.networking.k8s.io configured
+customresourcedefinition.apiextensions.k8s.io/udproutes.gateway.networking.k8s.io configured
+customresourcedefinition.apiextensions.k8s.io/xbackendtrafficpolicies.gateway.networking.x-k8s.io configured
+customresourcedefinition.apiextensions.k8s.io/xlistenersets.gateway.networking.x-k8s.io configured
+customresourcedefinition.apiextensions.k8s.io/xmeshes.gateway.networking.x-k8s.io configured
+The CustomResourceDefinition "httproutes.gateway.networking.k8s.io" is invalid: metadata.annotations: Too long: may not be more than 262144 bytes
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.1/standard-install.yaml 
+customresourcedefinition.apiextensions.k8s.io/backendtlspolicies.gateway.networking.k8s.io configured
+customresourcedefinition.apiextensions.k8s.io/gatewayclasses.gateway.networking.k8s.io configured
+customresourcedefinition.apiextensions.k8s.io/gateways.gateway.networking.k8s.io configured
+customresourcedefinition.apiextensions.k8s.io/grpcroutes.gateway.networking.k8s.io configured
+customresourcedefinition.apiextensions.k8s.io/httproutes.gateway.networking.k8s.io created
+customresourcedefinition.apiextensions.k8s.io/referencegrants.gateway.networking.k8s.io configured
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ kubectl get pods -n gateway-system
+NAME                                        READY   STATUS             RESTARTS        AGE
+nga-nginx-gateway-fabric-57cc65495c-bfdrd   0/1     CrashLoopBackOff   3 (19s ago)     62s
+nga-nginx-gateway-fabric-ddd56cb4d-tcn9g    0/1     CrashLoopBackOff   5 (2m16s ago)   5m22s
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ kubectl rollout restart deployment nga-nginx-gateway-fabric -n gateway-system
+deployment.apps/nga-nginx-gateway-fabric restarted
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ kubectl get pods -n gateway-system
+NAME                                       READY   STATUS    RESTARTS   AGE
+nga-nginx-gateway-fabric-56ddc99bc-fxvb5   1/1     Running   0          11s
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ kubectl logs -n gateway-system -l app.kubernetes.io/name=nginx-gateway-fabric --tail=10
+{"level":"info","ts":"2025-12-30T18:21:57Z","msg":"Starting the NGINX Gateway Fabric control plane","version":"2.3.0","commit":"bd209359a3910ffe9b19ccc12f849a294f07e427","date":"2025-12-18T13:56:38Z","dirty":"true"}
+{"level":"info","ts":"2025-12-30T18:21:57Z","msg":"Starting manager"}
+{"level":"info","ts":"2025-12-30T18:21:57Z","logger":"controller-runtime.metrics","msg":"Starting metrics server"}
+{"level":"info","ts":"2025-12-30T18:21:57Z","msg":"starting server","name":"health probe","addr":"[::]:8081"}
+{"level":"info","ts":"2025-12-30T18:21:57Z","logger":"controller-runtime.metrics","msg":"Serving metrics server","bindAddress":":9113","secure":false}
+{"level":"info","ts":"2025-12-30T18:21:57Z","msg":"attempting to acquire leader lease gateway-system/nga-nginx-gateway-fabric-leader-election..."}
+{"level":"info","ts":"2025-12-30T18:21:57Z","logger":"eventLoop.eventHandler","msg":"Reconfigured control plane.","batchID":2}
+{"level":"info","ts":"2025-12-30T18:22:14Z","msg":"successfully acquired lease gateway-system/nga-nginx-gateway-fabric-leader-election"}
+{"level":"info","ts":"2025-12-30T18:22:14Z","logger":"telemetryJob","msg":"Starting cronjob"}
+
+
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ helm upgrade --install nga oci://ghcr.io/nginx/charts/nginx-gateway-fabric \
+>   -n gateway-system --create-namespace \
+>   --set nginxGateway.gatewayClassName=nginx \
+>   --set nginxGateway.snippetsFilters.enable=true \
+>   --reuse-values
+Release "nga" has been upgraded. Happy Helming!
+NAME: nga
+LAST DEPLOYED: Tue Dec 30 23:56:18 2025
+NAMESPACE: gateway-system
+STATUS: deployed
+REVISION: 2
+TEST SUITE: None
+
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ kubectl get gatewayclass -n gateway-system
+NAME    CONTROLLER                                   ACCEPTED   AGE
+nginx   gateway.nginx.org/nginx-gateway-controller   True       28s
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ k apply -f ./gateway.yaml
+gateway.gateway.networking.k8s.io/pg-app-gateway created
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ k get -f ./gateway.yaml
+NAME             CLASS   ADDRESS   PROGRAMMED   AGE
+pg-app-gateway   nginx             True         8s
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ k apply -f ./gateway-api.yaml
+snippetsfilter.gateway.nginx.org/pg-rate-limit-def unchanged
+snippetsfilter.gateway.nginx.org/pg-rate-limit-app unchanged
+snippetsfilter.gateway.nginx.org/pg-stickiness created
+httproute.gateway.networking.k8s.io/pg-reader-route configured
+
+aanik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ k get -f ./gateway-api.yaml
+NAME                                                 AGE
+snippetsfilter.gateway.nginx.org/pg-rate-limit-def   82s
+snippetsfilter.gateway.nginx.org/pg-rate-limit-app   82s
+snippetsfilter.gateway.nginx.org/pg-stickiness       44s
+
+NAME                                                  HOSTNAMES                 AGE
+httproute.gateway.networking.k8s.io/pg-reader-route   ["pg-explorer.homelab"]   82s
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ kubectl get httproute pg-reader-route -n app -o wide
+NAME              HOSTNAMES                 AGE
+pg-reader-route   ["pg-explorer.homelab"]   2m33s
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ kubectl describe httproute pg-reader-route -n app
+Name:         pg-reader-route
+Namespace:    app
+Labels:       <none>
+Annotations:  <none>
+API Version:  gateway.networking.k8s.io/v1
+Kind:         HTTPRoute
+Metadata:
+  Creation Timestamp:  2026-01-07T18:05:39Z
+  Generation:          1
+  Resource Version:    7633
+  UID:                 c7f5bdad-c80d-4d76-8bfa-b52c1d7d8e01
+Spec:
+  Hostnames:
+    pg-explorer.homelab
+  Parent Refs:
+    Group:      gateway.networking.k8s.io
+    Kind:       Gateway
+    Name:       pg-app-gateway
+    Namespace:  gateway-system
+  Rules:
+    Backend Refs:
+      Group:
+      Kind:    Service
+      Name:    pg-reader-service
+      Port:    80
+      Weight:  1
+    Filters:
+      Extension Ref:
+        Group:  gateway.nginx.org
+        Kind:   SnippetsFilter
+        Name:   pg-rate-limit-def
+      Type:     ExtensionRef
+      Extension Ref:
+        Group:  gateway.nginx.org
+        Kind:   SnippetsFilter
+        Name:   pg-rate-limit-app
+      Type:     ExtensionRef
+      Extension Ref:
+        Group:  gateway.nginx.org
+        Kind:   SnippetsFilter
+        Name:   pg-stickiness
+      Type:     ExtensionRef
+    Matches:
+      Path:
+        Type:   PathPrefix
+        Value:  /
+Status:
+  Parents:
+    Conditions:
+      Last Transition Time:  2026-01-07T18:05:39Z
+      Message:               The Route is accepted
+      Observed Generation:   1
+      Reason:                Accepted
+      Status:                True
+      Type:                  Accepted
+      Last Transition Time:  2026-01-07T18:05:39Z
+      Message:               All references are resolved
+      Observed Generation:   1
+      Reason:                ResolvedRefs
+      Status:                True
+      Type:                  ResolvedRefs
+    Controller Name:         gateway.nginx.org/nginx-gateway-controller
+    Parent Ref:
+      Group:         gateway.networking.k8s.io
+      Kind:          Gateway
+      Name:          pg-app-gateway
+      Namespace:     gateway-system
+      Section Name:  http
+Events:              <none>
+
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ kubectl describe snippetsfilter  pg-rate-limit-app -n app
+Name:         pg-rate-limit-app
+Namespace:    app
+Labels:       <none>
+Annotations:  <none>
+API Version:  gateway.nginx.org/v1alpha1
+Kind:         SnippetsFilter
+Metadata:
+  Creation Timestamp:  2025-12-30T17:57:01Z
+  Generation:          1
+  Resource Version:    6605
+  UID:                 b4c12f7f-aaf9-4219-8e54-8710d50750f6
+Spec:
+  Snippets:
+    Context:  http.server.location
+    Value:    limit_req zone=pg_limit nodelay;
+Status:
+  Controllers:
+    Conditions:
+      Last Transition Time:  2025-12-30T18:27:50Z
+      Message:               The SnippetsFilter is accepted
+      Observed Generation:   1
+      Reason:                Accepted
+      Status:                True
+      Type:                  Accepted
+    Controller Name:         gateway.nginx.org/nginx-gateway-controller
+Events:                      <none>
+
+nik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ kubectl get svc pg-reader-service -n app
+NAME                TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
+pg-reader-service   ClusterIP   10.96.72.199   <none>        80/TCP    48m
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ kubectl get pods -n app
+NAME                             READY   STATUS    RESTARTS   AGE
+pg-reader-app-856d7f8ddb-2fpvg   1/1     Running   0          48m
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ kubectl get svc pg-reader-service -n app -o yaml
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"Service","metadata":{"annotations":{},"name":"pg-reader-service","namespace":"app"},"spec":{"ports":[{"port":80,"protocol":"TCP","targetPort":5000}],"selector":{"app":"pg-reader"}}}
+  creationTimestamp: "2025-12-30T19:26:57Z"
+  name: pg-reader-service
+  namespace: app
+  resourceVersion: "18185"
+  uid: cca9bb98-8890-469f-aad5-c8dff1e21bef
+spec:
+  clusterIP: 10.96.72.199
+  clusterIPs:
+  - 10.96.72.199
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    app: pg-reader
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ kubectl get pods -n app --show-labels
+NAME                             READY   STATUS    RESTARTS   AGE   LABELS
+pg-reader-app-856d7f8ddb-2fpvg   1/1     Running   0          50m   app=pg-reader,pod-template-hash=856d7f8ddb
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ kubectl get endpoints pg-reader-service -n app
+Warning: v1 Endpoints is deprecated in v1.33+; use discovery.k8s.io/v1 EndpointSlice
+NAME                ENDPOINTS          AGE
+pg-reader-service   10.244.1.23:5000   50m
+
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/kind_cluster
+$ kubectl port-forward pod/pg-reader-app-856d7f8ddb-2fpvg 5000:5000 -n app
+Forwarding from 127.0.0.1:5000 -> 5000
+Forwarding from [::1]:5000 -> 5000
+Handling connection for 5000
+Handling connection for 5000
+Handling connection for 5000
+Handling connection for 5000
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ curl -I http://localhost:5000/
+HTTP/1.1 200 OK
+Server: Werkzeug/3.1.4 Python/3.11.14
+Date: Tue, 30 Dec 2025 20:18:10 GMT
+Content-Type: text/html; charset=utf-8
+Content-Length: 6705
+Connection: close
+
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ kubectl get pods -A
+NAMESPACE            NAME                                                     READY   STATUS      RESTARTS      AGE
+app                  pg-reader-app-856d7f8ddb-2fpvg                           1/1     Running     0             66m
+cnpg-system          cnpg-cloudnative-pg-5646fcbcf9-zntms                     1/1     Running     1 (95m ago)   97m
+database             manual-sync-test-tmc7b                                   0/1     Completed   0             32m
+database             minio-backup-5487b585b7-n76ch                            1/1     Running     0             76m
+database             minio-mirror-sync-29452110-56np8                         0/1     Completed   0             3m8s
+database             minio-primary-769755c75c-6j7pb                           1/1     Running     0             76m
+database             pg-homelab-1                                             1/1     Running     0             70m
+database             pg-homelab-2                                             1/1     Running     0             68m
+database             pg-homelab-3                                             1/1     Running     0             68m
+database             pg-homelab-pooler-84c7f958c6-8hp6t                       1/1     Running     0             74m
+database             pg-homelab-pooler-84c7f958c6-fl6dq                       1/1     Running     0             74m
+database             pg-homelab-pooler-84c7f958c6-k54lb                       1/1     Running     0             74m
+gateway-system       nga-nginx-gateway-fabric-854f5f6cf9-qb6sz                1/1     Running     1 (95m ago)   126m
+gateway-system       pg-app-gateway-nginx-6449885996-b9nqh                    1/1     Running     0             125m
+keda                 keda-admission-webhooks-b6d54584-2hldl                   1/1     Running     0             97m
+keda                 keda-operator-67f67b94b6-cf5g6                           1/1     Running     1 (95m ago)   97m
+keda                 keda-operator-metrics-apiserver-665c8594cd-4sf8x         1/1     Running     0             97m
+kube-system          coredns-7d764666f9-6vgtd                                 1/1     Running     0             175m
+kube-system          coredns-7d764666f9-dlkj2                                 1/1     Running     0             175m
+kube-system          etcd-cnpg-cluster-control-plane                          1/1     Running     0             175m
+kube-system          kindnet-7hsdd                                            1/1     Running     0             175m
+kube-system          kindnet-d7msp                                            1/1     Running     0             175m
+kube-system          kindnet-pqq42                                            1/1     Running     0             175m
+kube-system          kindnet-rl4rz                                            1/1     Running     0             175m
+kube-system          kindnet-xcnv8                                            1/1     Running     0             175m
+kube-system          kube-apiserver-cnpg-cluster-control-plane                1/1     Running     0             175m
+kube-system          kube-controller-manager-cnpg-cluster-control-plane       1/1     Running     1 (95m ago)   175m
+kube-system          kube-proxy-5dvpp                                         1/1     Running     0             175m
+kube-system          kube-proxy-dm94s                                         1/1     Running     0             175m
+kube-system          kube-proxy-x9hmb                                         1/1     Running     0             175m
+kube-system          kube-proxy-xnqtm                                         1/1     Running     0             175m
+kube-system          kube-proxy-xt6km                                         1/1     Running     0             175m
+kube-system          kube-scheduler-cnpg-cluster-control-plane                1/1     Running     1 (95m ago)   175m
+kube-system          metrics-server-57cc6887c8-bxjbz                          1/1     Running     0             85m
+local-path-storage   local-path-provisioner-67b8995b4b-xwx5b                  1/1     Running     0             175m
+monitoring           alertmanager-prometheus-kube-prometheus-alertmanager-0   2/2     Running     0             97m
+monitoring           prometheus-grafana-5877878795-4sm2n                      3/3     Running     0             99m
+monitoring           prometheus-kube-prometheus-operator-8475cfd5db-mwvjf     1/1     Running     0             99m
+monitoring           prometheus-kube-state-metrics-6c496d6848-pxxrx           1/1     Running     0             99m
+monitoring           prometheus-prometheus-kube-prometheus-prometheus-0       2/2     Running     0             97m
+monitoring           prometheus-prometheus-node-exporter-47jkw                1/1     Running     0             99m
+monitoring           prometheus-prometheus-node-exporter-54gcq                1/1     Running     0             99m
+monitoring           prometheus-prometheus-node-exporter-p8gjj                1/1     Running     0             99m
+monitoring           prometheus-prometheus-node-exporter-tx982                1/1     Running     0             99m
+monitoring           prometheus-prometheus-node-exporter-wtprm                1/1     Running     0             99m
+
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ kubectl get svc -n gateway-system
+NAME                       TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)        AGE
+nga-nginx-gateway-fabric   ClusterIP      10.96.149.28    <none>        443/TCP        38m
+pg-app-gateway-nginx       LoadBalancer   10.96.136.217   <pending>     80:30714/TCP   27m
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ kubectl port-forward -n gateway-system svc/pg-app-gateway-nginx 8080:80
+Forwarding from 127.0.0.1:8080 -> 80
+Forwarding from [::1]:8080 -> 80
+Handling connection for 8080
+Handling connection for 8080
+Handling connection for 8080
+Handling connection for 8080
+Handling connection for 8080
+Handling connection for 8080
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/kind_cluster
+$ curl -i --resolve pg-explorer.homelab:8080:127.0.0.1 http://pg-explorer.homelab:8080/
+HTTP/1.1 200 OK
+Server: nginx
+Date: Wed, 07 Jan 2026 18:21:52 GMT
+Content-Type: text/html; charset=utf-8
+Content-Length: 6705
+Connection: keep-alive
+Set-Cookie: pg_sticky=10.244.3.15:5000; Path=/; HttpOnly
+
+
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>CNPG Data Explorer WebSite</title>
+            <style>
+                body { font-family: sans-serif; margin: 40px; background-color: #f4f7f6; }
+                table { width: 100%; border-collapse: collapse; background: white; }
+                th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+                th { background-color: #2c3e50; color: white; }
+                .badge { background: #27ae60; color: white; padding: 5px 10px; border-radius: 4px; }
+            </style>
+        </head>
+        <body>
+            <h1>PostgreSQL User Data App</h1>
+            <span class="badge">Source: pg-homelab-ro.database.svc.cluster.local</span>
+            <table>
+                <tr><th>Name</th><th>Email</th><th>Contact</th></tr>
+
+                <tr><td>User_3949279e</td><td>user50@example.com</td><td>+1-852-555-8696</td></tr>
+
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/kind_cluster
+$ curl -s -D - -o /dev/null --resolve pg-explorer.homelab:8080:127.0.0.1 http://pg-explorer.homelab:8080/
+HTTP/1.1 200 OK
+Server: nginx
+Date: Wed, 07 Jan 2026 18:33:40 GMT
+Content-Type: text/html; charset=utf-8
+Content-Length: 6705
+Connection: keep-alive
+Set-Cookie: pg_sticky=10.244.3.15:5000; Path=/; HttpOnly
+
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/kind_cluster
+$ for i in {1..8}; do    echo "Request $i:";   curl -s -D - -o /dev/null --resolve pg-explorer.homelab:8080:127.0.0.1 http://pg-explorer.homelab:8080/ | grep "HTTP/";   sleep 10; done
+Request 1:
+HTTP/1.1 503 Service Temporarily Unavailable
+Request 2:
+HTTP/1.1 200 OK
+Request 3:
+HTTP/1.1 503 Service Temporarily Unavailable
+Request 4:
+HTTP/1.1 503 Service Temporarily Unavailable
+Request 5:
+HTTP/1.1 200 OK
+Request 6:
+HTTP/1.1 503 Service Temporarily Unavailable
+Request 7:
+HTTP/1.1 503 Service Temporarily Unavailable
+Request 8:
+HTTP/1.1 200 OK
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/kind_cluster
+$ for i in {1..3}; do
+>   echo "--- Call $i ---"
+>   curl -s -D - -o /dev/null -b cookies.txt --resolve pg-explorer.homelab:8080:127.0.0.1 http://pg-explorer.homelab:8080/ | grep -E "HTTP|Set-Cookie"
+>   sleep 1
+> done
+--- Call 1 ---
+HTTP/1.1 200 OK
+Set-Cookie: pg_sticky=10.244.3.15:5000; Path=/; HttpOnly
+--- Call 2 ---
+HTTP/1.1 503 Service Temporarily Unavailable
+--- Call 3 ---
+HTTP/1.1 503 Service Temporarily Unavailable
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/kind_cluster
+$ for i in {1..3}; do   echo "--- Call $i ---";   curl -s -D - -o /dev/null -c cookies.txt --resolve pg-explorer.homelab:8080:127.0.0.1 http://pg-explorer.homelab:8080/ | grep -E "HTTP|Set-Cookie";   sleep 1; done
+--- Call 1 ---
+HTTP/1.1 503 Service Temporarily Unavailable
+--- Call 2 ---
+HTTP/1.1 503 Service Temporarily Unavailable
+--- Call 3 ---
+HTTP/1.1 503 Service Temporarily Unavailable
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/kind_cluster
+$ for i in {1..3}; do   echo "--- Call $i ---";   curl -s -D - -o /dev/null -c cookies.txt --resolve pg-explorer.homelab:8080:127.0.0.1 http://pg-explorer.homelab:8080/ | grep -E "HTTP|Set-Cookie";   sleep 1; done
+--- Call 1 ---
+HTTP/1.1 200 OK
+Set-Cookie: pg_sticky=10.244.3.15:5000; Path=/; HttpOnly
+--- Call 2 ---
+HTTP/1.1 503 Service Temporarily Unavailable
+--- Call 3 ---
+HTTP/1.1 503 Service Temporarily Unavailable

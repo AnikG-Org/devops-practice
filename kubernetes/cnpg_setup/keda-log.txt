@@ -1,0 +1,18 @@
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ k apply -f ./keda-pg-scaler.yaml
+triggerauthentication.keda.sh/pg-autoscaler-secret-bridge created
+scaledobject.keda.sh/pg-homelab-autoscaler created
+scaledobject.keda.sh/pg-homelab-pooler-autoscaler created
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ k get hpa -n database
+NAME                                    REFERENCE                  TARGETS                                  MINPODS   MAXPODS   REPLICAS   AGE
+keda-hpa-pg-homelab-autoscaler          Cluster/pg-homelab         <unknown>/50 (avg), cpu: <unknown>/75%   3         5         3          3m11s  
+keda-hpa-pg-homelab-pooler-autoscaler   Pooler/pg-homelab-pooler   <unknown>/80 (avg), <unknown>/75 (avg)   3         10        3          3m11s
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ k get ScaledObject -n database
+NAME                           SCALETARGETKIND                 SCALETARGETNAME     MIN   MAX   READY   ACTIVE   FALLBACK   PAUSED   TRIGGERS         AUTHENTICATIONS               AGE
+pg-homelab-autoscaler          postgresql.cnpg.io/v1.Cluster   pg-homelab          3     5     True    True     False      False    cpu,postgresql   pg-autoscaler-secret-bridge   111s
+pg-homelab-pooler-autoscaler   postgresql.cnpg.io/v1.Pooler    pg-homelab-pooler   3     10    True    True     False      False    prometheus                                     110s
+

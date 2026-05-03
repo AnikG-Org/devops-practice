@@ -1,0 +1,215 @@
+# --- APP USER CREDENTIALS FOR POSTGRES --- 
+#CNPG operator setup 
+#source cnpg-env.sh && envsubst < cnpg.yaml | kubectl apply -f - --dry-run=client -o yaml
+
+# --- APP USER CREDENTIALS ---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pg-app-user-creds
+  namespace: database
+  labels:
+    app.kubernetes.io/instance: pg-homelab
+type: Opaque
+stringData:
+  username: "${APP_USER}"
+  password: "${APP_PASSWORD}"
+  dbname: "${APP_DB_NAME}"
+---
+# --- POSTGRES CLUSTER CONFIGURATION ---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: pg-homelab
+  namespace: database
+  labels:
+    app.kubernetes.io/instance: pg-homelab
+    app.kubernetes.io/component: database
+spec:
+  # FAILOVER SETUP: 3 instances ensure high availability
+  instances: 3
+  imageName: ghcr.io/cloudnative-pg/postgresql:16
+
+  # Automated Failover Strategy switchover/restart
+  primaryUpdateMethod: switchover 
+  failoverDelay: 5 # Instant failover detection
+
+  monitoring:
+    enablePodMonitor: false
+  # podDisruptionBudget:
+  #   maxUnavailable: 1
+  managed:
+    roles:
+      - name: "${APP_USER}"
+        ensure: present
+        login: true
+        inRoles:
+          - pg_monitor  # Critical for KEDA
+        passwordSecret:
+          name: pg-app-user-creds
+
+ # --- STRICT DURABILITY ---
+  postgresql:
+    parameters:
+      max_connections: "500"
+      shared_buffers: "256MB"
+      # work_mem: "32MB"
+    synchronous:
+      method: any
+      number: 1
+      dataDurability: required
+
+# Set resource limits to prevent the DB from crashing your nodes
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1Gi"
+    limits:
+      cpu: "1"
+      memory: "2Gi"
+
+# --- PERFORMANCE & RELIABILITY ---
+  # Move Write-Ahead Logs to a separate volume to prevent I/O wait
+  walStorage:
+    size: 2Gi
+    storageClass: standard
+
+  # --- STORAGE CONFIGURATION ---
+  storage:
+    size: 5Gi
+    storageClass: standard
+
+  # --- CONTINUOUS BACKUP (MinIO Primary) ---
+  backup:
+    barmanObjectStore:
+      destinationPath: "s3://postgres-data/"
+      endpointURL: "http://minio-primary-api.database.svc.cluster.local:9000"
+      s3Credentials:
+        accessKeyId: { name: primary-creds, key: ACCESS_KEY_ID }
+        secretAccessKey: { name: primary-creds, key: ACCESS_SECRET_KEY }
+      wal:
+        compression: gzip
+        # encryption: AES256
+    retentionPolicy: "7d" # Keep 7 days of WALs on Primary
+
+  # --- EXTERNAL DESTINATION DEFINITION (MinIO Backup) ---
+  externalClusters:
+    - name: remote-backup-server
+      barmanObjectStore:
+        destinationPath: "s3://pg-backups/"
+        endpointURL: "http://minio-backup-api.database.svc.cluster.local:9000"
+        s3Credentials:
+          accessKeyId: { name: backup-creds, key: ACCESS_KEY_ID }
+          secretAccessKey: { name: backup-creds, key: ACCESS_SECRET_KEY }
+
+  bootstrap:
+    initdb:
+      database: "production_db"
+      owner: "my_app_admin"
+      secret:
+        name: pg-app-user-creds
+     
+# # --- HIGH AVAILABILITY ---
+#   # Ensure pods don't all land on the same physical node
+#   affinity:
+#     enablePodAntiAffinity: true
+#     topologyKey: "kubernetes.io/hostname"
+  # Dedicated Nodes for CNPG
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: dedicated
+            operator: In
+            values:
+            - cnpg
+    tolerations:
+    - {key: "dedicated", operator: "Equal", value: "cnpg", effect: "NoSchedule"}
+
+---
+# --- SCHEDULED BACKUP (Targets the External Cluster) ---
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: pg-remote-scheduled-backup
+  namespace: database
+  labels:
+    app.kubernetes.io/instance: pg-homelab
+spec:
+  schedule: "0 0 0 * * *" # Daily at Midnight
+  immediate: true
+  cluster:
+    name: pg-homelab
+  # CHANGED: Offloads the backup work to a Replica/Standby pod
+  target: prefer-standby
+  method: barmanObjectStore
+---
+# CONNECTION POOLER (PgBouncer)
+# Apps should connect to this, not the Cluster directly
+apiVersion: postgresql.cnpg.io/v1
+kind: Pooler
+metadata:
+  name: pg-homelab-pooler
+  namespace: database
+  labels:
+    app.kubernetes.io/name: pgbouncer
+    app.kubernetes.io/instance: pg-homelab
+    app.kubernetes.io/component: pooler
+spec:
+  cluster:
+    name: pg-homelab
+  instances: 3
+  type: rw
+  template:
+    spec:
+      containers:
+        - name: pgbouncer
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+      # 1. FORCE pods to land on your dedicated nodes
+      nodeSelector:
+        dedicated: cnpg
+      
+      # 2. ALLOW pods to bypass the "NoSchedule" taint on those nodes
+      tolerations:
+        - key: "dedicated"
+          operator: "Equal"
+          value: "cnpg"
+          effect: "NoSchedule"
+  pgbouncer:
+    poolMode: transaction
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: pg-homelab-cnpg-podmonitor
+  namespace: database
+  labels:
+    release: prometheus
+    app.kubernetes.io/component: monitoring
+    app.kubernetes.io/instance: pg-homelab
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: pg-homelab
+  podMetricsEndpoints:
+  - port: metrics
+    path: /metrics
+    interval: 30s
+  - port: metrics
+    # relabelings:
+    # # Fix 1: Map the pod name to a 'pod' label
+    # - sourceLabels: [__meta_kubernetes_pod_name]
+    #   targetLabel: pod
+    # # Fix 2: Map the CNPG cluster label so our queries are clean
+    # - sourceLabels: [__meta_kubernetes_pod_label_cnpg_io_cluster]
+    #   targetLabel: cnpg_io_cluster
+    # # Fix 3: Map the namespace
+    # - sourceLabels: [__meta_kubernetes_namespace]
+    #   targetLabel: namespace

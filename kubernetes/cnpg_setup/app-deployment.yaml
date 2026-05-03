@@ -1,0 +1,193 @@
+#source cnpg-env.sh && envsubst < app-deployment.yaml | kubectl apply -f - --dry-run=client -o yaml
+# --- THE APP NAMESPACE ---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: app
+---
+# ---  THE MIRROR SECRET (In 'app') ---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pg-app-user-creds
+  namespace: app
+  labels:
+    app.kubernetes.io/instance: pg-homelab
+type: Opaque
+stringData:
+  username: "${APP_USER}"
+  password: "${APP_PASSWORD}"
+  dbname: "${APP_DB_NAME}"
+---
+# ---  SEEDER JOB (Writes to database) ---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: seed-db-job
+  namespace: app
+spec:
+  ttlSecondsAfterFinished: 100
+  template:
+    spec:
+      containers:
+      - name: seed
+        image: postgres:16
+        env:
+        - name: PGHOST
+          # Points across namespaces to the CNPG pooler
+          value: "pg-homelab-pooler.database.svc.cluster.local"
+        - name: PGDATABASE
+          valueFrom: { secretKeyRef: { name: pg-app-user-creds, key: dbname } }
+        - name: PGUSER
+          valueFrom: { secretKeyRef: { name: pg-app-user-creds, key: username } }
+        - name: PGPASSWORD
+          valueFrom: { secretKeyRef: { name: pg-app-user-creds, key: password } }
+        command:
+        - /bin/sh
+        - -c
+        - |
+          psql <<EOF
+          CREATE TABLE IF NOT EXISTS users (
+              id SERIAL PRIMARY KEY,
+              name TEXT UNIQUE NOT NULL,
+              email TEXT UNIQUE NOT NULL,
+              contact TEXT UNIQUE,
+              created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+          );
+          INSERT INTO users (name, email, contact)
+          SELECT 
+              'User_' || substr(md5(random()::text), 1, 8),
+              'user' || i || '@example.com',
+              '+1-' || floor(random() * 900 + 100)::text || '-555-' || floor(random() * 9000 + 1000)::text
+          FROM generate_series(1, 50) AS i
+          ON CONFLICT DO NOTHING;
+          SELECT count(*) || ' total users now in database.' FROM users;
+          EOF
+      restartPolicy: OnFailure
+---
+# ---  APP CODE (ConfigMap) ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pg-reader-code
+  namespace: app
+data:
+  app.py: |
+    import os
+    from flask import Flask, render_template_string
+    import psycopg2
+
+    app = Flask(__name__)
+
+    def get_db_connection():
+        return psycopg2.connect(
+            host=os.environ.get('PGHOST'),
+            database=os.environ.get('PGDATABASE'),
+            user=os.environ.get('PGUSER'),
+            password=os.environ.get('PGPASSWORD')
+        )
+
+    @app.route('/')
+    def index():
+        try:
+            conn = get_db_connection()
+            cur = conn.cursor()
+            cur.execute('SELECT name, email, contact FROM users ORDER BY id DESC LIMIT 50;')
+            rows = cur.fetchall()
+            cur.close()
+            conn.close()
+            
+            html_template = """
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>CNPG Data Explorer WebSite</title>
+                <style>
+                    body { font-family: sans-serif; margin: 40px; background-color: #f4f7f6; }
+                    table { width: 100%; border-collapse: collapse; background: white; }
+                    th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+                    th { background-color: #2c3e50; color: white; }
+                    .badge { background: #27ae60; color: white; padding: 5px 10px; border-radius: 4px; }
+                </style>
+            </head>
+            <body>
+                <h1>PostgreSQL User Data App</h1>
+                <span class="badge">Source: {{ host }}</span>
+                <table>
+                    <tr><th>Name</th><th>Email</th><th>Contact</th></tr>
+                    {% for row in rows %}
+                    <tr><td>{{ row[0] }}</td><td>{{ row[1] }}</td><td>{{ row[2] }}</td></tr>
+                    {% endfor %}
+                </table>
+            </body>
+            </html>
+            """
+            return render_template_string(html_template, rows=rows, host=os.environ.get('PGHOST'))
+        except Exception as e:
+            return f"<h2 style='color:red'>DB Error</h2><p>{str(e)}</p>"
+
+    if __name__ == '__main__':
+        app.run(host='0.0.0.0', port=5000)
+---
+# --- DEPLOYMENT ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pg-reader-app
+  namespace: app
+  annotations:
+    reloader.stakater.com/reload: "pg-reader-code"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: pg-reader
+  template:
+    metadata:
+      labels:
+        app: pg-reader
+      annotations:
+        checksum/config: ${CONFIG_CHECKSUM}
+    spec:
+      containers:
+      - name: flask-app
+        image: python:3.11-slim
+        command: ["sh", "-c"]
+        args:
+        - |
+          pip install flask psycopg2-binary
+          python /app/app.py
+        env:
+        - name: PGHOST
+          # Connects across namespaces to the Read-Only replica
+          value: "pg-homelab-ro.database.svc.cluster.local"
+        - name: PGDATABASE
+          valueFrom: { secretKeyRef: { name: pg-app-user-creds, key: dbname } }
+        - name: PGUSER
+          valueFrom: { secretKeyRef: { name: pg-app-user-creds, key: username } }
+        - name: PGPASSWORD
+          valueFrom: { secretKeyRef: { name: pg-app-user-creds, key: password } }
+        volumeMounts:
+        - name: code
+          mountPath: /app
+      volumes:
+      - name: code
+        configMap:
+          name: pg-reader-code
+---
+# --- 6. SERVICE ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pg-reader-service
+  namespace: app
+spec:
+  selector:
+    app: pg-reader
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5000
+########
+# for i in {1..25}; do echo -e "\n[Req #$i]"; curl -s http://localhost:8080/ | \
+# grep -E "Source:|User_" | sed 's/<[^>]*>//g' | head -n 3; echo "---"; sleep 5; done

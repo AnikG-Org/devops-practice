@@ -1,0 +1,82 @@
+# --- 1. RATE LIMIT DEFINITION ---
+apiVersion: gateway.nginx.org/v1alpha1
+kind: SnippetsFilter
+metadata:
+  name: pg-rate-limit-def
+  namespace: app
+spec:
+  snippets:
+    - context: http
+      value: "limit_req_zone $binary_remote_addr zone=pg_limit:10m rate=2r/m;"
+---
+# --- 2. RATE LIMIT APPLICATION ---
+apiVersion: gateway.nginx.org/v1alpha1
+kind: SnippetsFilter
+metadata:
+  name: pg-rate-limit-app
+  namespace: app
+spec:
+  snippets:
+    - context: http.server.location
+      value: "limit_req zone=pg_limit nodelay;"
+---
+# --- 3. SESSION STICKINESS (Location Context Fix) ---
+apiVersion: gateway.nginx.org/v1alpha1
+kind: SnippetsFilter
+metadata:
+  name: pg-stickiness
+  namespace: app
+spec:
+  snippets:
+    - context: http.server.location
+      # We use a rewrite/header approach since upstream context is blocked
+      value: |
+        proxy_set_header X-Sticky-Session $cookie_pg_sticky;
+        add_header Set-Cookie "pg_sticky=$upstream_addr; Path=/; HttpOnly";
+---
+# --- 4. HTTP ROUTE ---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: pg-reader-route
+  namespace: app
+spec:
+  parentRefs:
+  - name: pg-app-gateway
+    namespace: gateway-system
+  hostnames:
+  - "pg-explorer.homelab"
+  rules:
+  - filters:
+    - type: ExtensionRef
+      extensionRef:
+        group: gateway.nginx.org
+        kind: SnippetsFilter
+        name: pg-rate-limit-def
+    - type: ExtensionRef
+      extensionRef:
+        group: gateway.nginx.org
+        kind: SnippetsFilter
+        name: pg-rate-limit-app
+    - type: ExtensionRef
+      extensionRef:
+        group: gateway.nginx.org
+        kind: SnippetsFilter
+        name: pg-stickiness
+    matches:
+    - path:
+        type: PathPrefix
+        value: /
+    backendRefs:
+    - name: pg-reader-service
+      port: 80
+#############################################
+# # Find your Entry Point:
+# kubectl get gateway -n gateway-system
+#kubectl describe snippetsfilter  pg-rate-limit-app -n app
+# # Test the "2 per minute" limit:
+# # This will succeed 2 times and then fail with 429
+# Run this in a quick loop
+# for i in {1..8}; do    echo "Request $i:";   curl -s -D - -o /dev/null --resolve pg-explorer.homelab:8080:127.0.0.1 http://pg-explorer.homelab:8080/ | grep "HTTP/";   sleep 10; done
+# curl -c cookies.txt --resolve pg-explorer.homelab:8080:127.0.0.1 http://pg-explorer.homelab:8080/
+# for i in {1..30}; do   echo "--- Call $i ---";   curl -s -D - -o /dev/null -c cookies.txt --resolve pg-explorer.homelab:8080:127.0.0.1 http://pg-explorer.homelab:8080/ | grep -E "HTTP|Set-Cookie";   sleep 10; done

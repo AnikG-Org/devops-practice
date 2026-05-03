@@ -1,0 +1,21 @@
+# apiVersion: v1
+# kind: Namespace
+# metadata:
+#   name: app
+---
+# --- 1. GATEWAY (Cluster Entry Point) ---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: pg-app-gateway
+  namespace: gateway-system
+spec:
+  gatewayClassName: nginx  #kubectl get gatewayclass name = nginx
+  listeners:
+  - name: http
+    port: 80
+    protocol: HTTP
+    hostname: "pg-explorer.homelab"
+    allowedRoutes:
+      namespaces:
+        from: All

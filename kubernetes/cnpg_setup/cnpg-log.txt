@@ -1,0 +1,510 @@
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ helm upgrade --install cnpg \
+>   --namespace cnpg-system \
+>   --create-namespace \
+>   --set tolerations[0].key="dedicated" \
+>   --set tolerations[0].operator="Equal" \
+>   --set tolerations[0].value="cnpg" \
+>   --set tolerations[0].effect="NoSchedule" \
+>   cnpg/cloudnative-pg
+Release "cnpg" does not exist. Installing it now.
+NAME: cnpg
+LAST DEPLOYED: Thu Dec 25 12:52:13 2025
+NAMESPACE: cnpg-system
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NOTES:
+CloudNativePG operator should be installed in namespace "cnpg-system".
+You can now create a PostgreSQL cluster with 3 nodes as follows:
+
+cat <<EOF | kubectl apply -f -
+# Example of PostgreSQL cluster
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: cluster-example
+
+spec:
+  instances: 3
+  storage:
+    size: 1Gi
+EOF
+
+kubectl get -A cluster
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ kubectl get all -n cnpg-system -o wide
+NAME                                       READY   STATUS    RESTARTS   AGE    IP           NODE                  NOMINATED NODE   READINESS GATES
+
+pod/cnpg-cloudnative-pg-5646fcbcf9-qcj8k   1/1     Running   0          119s   10.244.2.2   cnpg-cluster-worker   <none>           <none>
+
+NAME                           TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE    SELECTOR
+service/cnpg-webhook-service   ClusterIP   10.96.229.97   <none>        443/TCP   119s   app.kubernetes.io/instance=cnpg,app.kubernetes.io/name=cloudnative-pg
+
+NAME                                  READY   UP-TO-DATE   AVAILABLE   AGE    CONTAINERS   IMAGES                                         SELECTOR
+
+deployment.apps/cnpg-cloudnative-pg   1/1     1            1           119s   manager      ghcr.io/cloudnative-pg/cloudnative-pg:1.28.0   app.kubernetes.io/instance=cnpg,app.kubernetes.io/name=cloudnative-pg
+
+NAME                                             DESIRED   CURRENT   READY   AGE    CONTAINERS   IMAGES                                         SELECTOR
+replicaset.apps/cnpg-cloudnative-pg-5646fcbcf9   1         1         1       119s   manager      ghcr.io/cloudnative-pg/cloudnative-pg:1.28.0   app.kubernetes.io/instance=cnpg,app.kubernetes.io/name=cloudnative-pg,pod-template-hash=5646fcbcf9
+
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ source cnpg-env.sh && envsubst < cnpg.yaml | kubectl apply -f -
+secret/pg-app-user-creds created
+Warning: Native support for Barman Cloud backups and recovery is deprecated and will be completely removed in CloudNativePG 1.29.0. Found usage in: spec.backup.barmanObjectStore, spec.externalClusters.0.barmanObjectStore. Please migrate existing clusters to the new Barman Cloud Plugin to ensure a smooth transition.
+cluster.postgresql.cnpg.io/pg-homelab created
+scheduledbackup.postgresql.cnpg.io/pg-remote-scheduled-backup created
+pooler.postgresql.cnpg.io/pg-homelab-pooler created
+podmonitor.monitoring.coreos.com/pg-homelab-pooler created
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ k get all -n database -o wide | grep pg-home
+pod/pg-homelab-1-initdb-ztqlk        0/1     Init:0/1    0          15s     <none>       cnpg-cluster-worker2   <none>           <none>
+service/pg-homelab-r            ClusterIP   10.96.141.31    <none>        5432/TCP   16s     cnpg.io/cluster=pg-homelab,cnpg.io/podRole=instance
+service/pg-homelab-ro           ClusterIP   10.96.121.244   <none>        5432/TCP   16s     cnpg.io/cluster=pg-homelab,cnpg.io/instanceRole=replica
+service/pg-homelab-rw           ClusterIP   10.96.12.144    <none>        5432/TCP   16s     cnpg.io/cluster=pg-homelab,cnpg.io/instanceRole=primary
+job.batch/pg-homelab-1-initdb    Running    0/1           15s        15s     initdb       ghcr.io/cloudnative-pg/postgresql:16   batch.kubernetes.io/controller-uid=32fe3945-efd4-4d7b-90f8-a07d4927ade9
+
+$ k get po -n database -o wide
+NAME                             READY   STATUS            RESTARTS   AGE     IP           NODE                   NOMINATED NODE   READINESS GATES
+create-minio-buckets-xk9mx       0/1     Completed         0          4m21s   10.244.4.4   cnpg-cluster-worker3   <none>           <none>
+minio-backup-55584cd965-pl6r6    1/1     Running           0          4m21s   10.244.4.3   cnpg-cluster-worker3   <none>           <none>
+minio-primary-7fb67f9d7f-hql65   1/1     Running           0          4m21s   10.244.4.2   cnpg-cluster-worker3   <none>           <none>
+pg-homelab-1-initdb-ztqlk        0/1     PodInitializing   0          52s     10.244.2.3   cnpg-cluster-worker2   <none>           <none>
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$k get scheduledbackups -n database
+NAME                         AGE   CLUSTER      LAST BACKUP
+pg-remote-scheduled-backup   2m    pg-homelab   2m
+
+$ kubectl get backups -n database
+NAME                                        AGE     CLUSTER      METHOD              PHASE     ERROR
+pg-remote-scheduled-backup-20251225093202   2m24s   pg-homelab   barmanObjectStore   pending
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ kubectl get clusters -n database -o wide
+NAME         AGE     INSTANCES   READY   STATUS               PRIMARY
+pg-homelab   2m33s   1                   Setting up primary
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+
+$ k get clusters -n database
+NAME         AGE   INSTANCES   READY   STATUS                   PRIMARY
+pg-homelab   2m54s   3           2       Creating a new replica   pg-homelab-1
+
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ k get po -n database -o wide -w
+NAME                             READY   STATUS            RESTARTS   AGE     IP           NODE                   NOMINATED NODE   READINESS GATES
+create-minio-buckets-xk9mx       0/1     Completed         0          7m18s   10.244.4.4   cnpg-cluster-worker3   <none>           <none>
+minio-backup-55584cd965-pl6r6    1/1     Running           0          7m18s   10.244.4.3   cnpg-cluster-worker3   <none>           <none>
+minio-primary-7fb67f9d7f-hql65   1/1     Running           0          7m18s   10.244.4.2   cnpg-cluster-worker3   <none>           <none>
+pg-homelab-1-initdb-ztqlk        0/1     PodInitializing   0          3m49s   10.244.2.3   cnpg-cluster-worker2   <none>           <none>
+pg-homelab-1-initdb-ztqlk        1/1     Running           0          4m37s   10.244.2.3   cnpg-cluster-worker2   <none>           <none>
+pg-homelab-1-initdb-ztqlk        0/1     Completed         0          4m35s   10.244.2.3   cnpg-cluster-worker2   <none>           <none>
+pg-homelab-1-initdb-ztqlk        0/1     Completed         0          4m36s   10.244.2.3   cnpg-cluster-worker2   <none>           <none>
+pg-homelab-1-initdb-ztqlk        0/1     Completed         0          4m37s   10.244.2.3   cnpg-cluster-worker2   <none>           <none>
+pg-homelab-1                     0/1     Pending           0          0s      <none>       <none>                 <none>           <none>
+pg-homelab-1                     0/1     Pending           0          0s      <none>       cnpg-cluster-worker2   <none>           <none>
+pg-homelab-1                     0/1     Init:0/1          0          0s      <none>       cnpg-cluster-worker2   <none>           <none>
+pg-homelab-1                     0/1     Init:0/1          0          1s      10.244.2.4   cnpg-cluster-worker2   <none>           <none>
+pg-homelab-1                     0/1     PodInitializing   0          2s      10.244.2.4   cnpg-cluster-worker2   <none>           <none>
+pg-homelab-1                     0/1     Running           0          8s      10.244.2.4   cnpg-cluster-worker2   <none>           <none>
+pg-homelab-1                     0/1     Running           0          3s      10.244.2.4   cnpg-cluster-worker2   <none>           <none>
+pg-homelab-1                     0/1     Running           0          10s     10.244.2.4   cnpg-cluster-worker2   <none>           <none>
+pg-homelab-1                     1/1     Running           0          10s     10.244.2.4   cnpg-cluster-worker2   <none>           <none>
+pg-homelab-2-join-bt4lf          0/1     Pending           0          0s      <none>       <none>                 <none>           <none>
+pg-homelab-2-join-bt4lf          0/1     Pending           0          0s      <none>       <none>                 cnpg-cluster-worker   <none>
+pg-homelab-2-join-bt4lf          0/1     Pending           0          4s      <none>       cnpg-cluster-worker    <none>                <none>
+pg-homelab-2-join-bt4lf          0/1     Init:0/1          0          4s      <none>       cnpg-cluster-worker    <none>                <none>
+pg-homelab-2-join-bt4lf          0/1     Init:0/1          0          55s     10.244.5.3   cnpg-cluster-worker    <none>                <none>
+pg-homelab-2-join-bt4lf          0/1     PodInitializing   0          56s     10.244.5.3   cnpg-cluster-worker    <none>                <none>
+pg-homelab-2-join-bt4lf          1/1     Running           0          5m8s    10.244.5.3   cnpg-cluster-worker    <none>                <none>
+pg-homelab-2-join-bt4lf          0/1     Completed         0          5m11s   10.244.5.3   cnpg-cluster-worker    <none>                <none>
+pg-homelab-2-join-bt4lf          0/1     Completed         0          5m18s   10.244.5.3   cnpg-cluster-worker    <none>                <none>
+pg-homelab-2-join-bt4lf          0/1     Completed         0          5m19s   10.244.5.3   cnpg-cluster-worker    <none>                <none>
+pg-homelab-2                     0/1     Pending           0          0s      <none>       <none>                 <none>                <none>
+pg-homelab-2                     0/1     Pending           0          0s      <none>       cnpg-cluster-worker    <none>                <none>
+pg-homelab-2                     0/1     Init:0/1          0          0s      <none>       cnpg-cluster-worker    <none>                <none>
+pg-homelab-2                     0/1     Init:0/1          0          2s      10.244.5.4   cnpg-cluster-worker    <none>                <none>
+pg-homelab-2                     0/1     PodInitializing   0          3s      10.244.5.4   cnpg-cluster-worker    <none>                <none>
+pg-homelab-2                     0/1     Running           0          4s      10.244.5.4   cnpg-cluster-worker    <none>                <none>
+pg-homelab-2                     0/1     Running           0          6s      10.244.5.4   cnpg-cluster-worker    <none>                <none>
+pg-homelab-2                     0/1     Running           0          10s     10.244.5.4   cnpg-cluster-worker    <none>                <none>
+pg-homelab-2                     1/1     Running           0          11s     10.244.5.4   cnpg-cluster-worker    <none>                <none>
+pg-homelab-3-join-kvjqk          0/1     Pending           0          0s      <none>       <none>                 <none>                <none>
+pg-homelab-3-join-kvjqk          0/1     Pending           0          0s      <none>       <none>                 cnpg-cluster-worker2   <none>
+pg-homelab-3-join-kvjqk          0/1     Pending           0          0s      <none>       cnpg-cluster-worker2   <none>                 <none>
+pg-homelab-3-join-kvjqk          0/1     Init:0/1          0          0s      <none>       cnpg-cluster-worker2   <none>                 <none>
+pg-homelab-3-join-kvjqk          0/1     Init:0/1          0          0s      10.244.2.6   cnpg-cluster-worker2   <none>                 <none>
+pg-homelab-3-join-kvjqk          0/1     PodInitializing   0          0s      10.244.2.6   cnpg-cluster-worker2   <none>                 <none>
+pg-homelab-3-join-kvjqk          1/1     Running           0          2s      10.244.2.6   cnpg-cluster-worker2   <none>                 <none>
+pg-homelab-3-join-kvjqk          0/1     Completed         0          3s      10.244.2.6   cnpg-cluster-worker2   <none>                 <none>
+pg-homelab-3-join-kvjqk          0/1     Completed         0          4s      10.244.2.6   cnpg-cluster-worker2   <none>                 <none>
+pg-homelab-3-join-kvjqk          0/1     Completed         0          5s      10.244.2.6   cnpg-cluster-worker2   <none>                 <none>
+pg-homelab-3                     0/1     Pending           0          0s      <none>       <none>                 <none>                 <none>
+pg-homelab-3                     0/1     Pending           0          0s      <none>       cnpg-cluster-worker2   <none>                 <none>
+pg-homelab-3                     0/1     Init:0/1          0          0s      <none>       cnpg-cluster-worker2   <none>                 <none>
+pg-homelab-3                     0/1     PodInitializing   0          2s      10.244.2.7   cnpg-cluster-worker2   <none>                 <none>
+pg-homelab-3                     0/1     Running           0          3s      10.244.2.7   cnpg-cluster-worker2   <none>                 <none>
+pg-homelab-3                     0/1     Running           0          5s      10.244.2.7   cnpg-cluster-worker2   <none>                 <none>
+pg-homelab-3                     0/1     Running           0          9s      10.244.2.7   cnpg-cluster-worker2   <none>                 <none>
+pg-homelab-3                     1/1     Running           0          10s     10.244.2.7   cnpg-cluster-worker2   <none>                 <none>
+pg-homelab-1-initdb-ztqlk        0/1     Completed         0          10m     10.244.2.3   cnpg-cluster-worker2   <none>                 <none>
+pg-homelab-2-join-bt4lf          0/1     Completed         0          5m47s   10.244.5.3   cnpg-cluster-worker    <none>                 <none>
+pg-homelab-1-initdb-ztqlk        0/1     Completed         0          10m     10.244.2.3   cnpg-cluster-worker2   <none>                 <none>
+pg-homelab-2-join-bt4lf          0/1     Completed         0          5m47s   10.244.5.3   cnpg-cluster-worker    <none>                 <none>
+pg-homelab-3-join-kvjqk          0/1     Completed         0          17s     10.244.2.6   cnpg-cluster-worker2   <none>                 <none>
+pg-homelab-3-join-kvjqk          0/1     Completed         0          17s     10.244.2.6   cnpg-cluster-worker2   <none>                 <none>
+
+
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ k get po -n database -o wide
+NAME                             READY   STATUS      RESTARTS   AGE     IP           NODE                   NOMINATED NODE   READINESS GATES
+create-minio-buckets-xk9mx       0/1     Completed   0          19m     10.244.4.4   cnpg-cluster-worker3   <none>           <none>
+minio-backup-55584cd965-pl6r6    1/1     Running     0          19m     10.244.4.3   cnpg-cluster-worker3   <none>           <none>
+minio-primary-7fb67f9d7f-hql65   1/1     Running     0          19m     10.244.4.2   cnpg-cluster-worker3   <none>           <none>
+pg-homelab-1                     1/1     Running     0          11m     10.244.2.4   cnpg-cluster-worker2   <none>           <none>
+pg-homelab-2                     1/1     Running     0          6m10s   10.244.5.4   cnpg-cluster-worker    <none>           <none>
+pg-homelab-3                     1/1     Running     0          5m53s   10.244.2.7   cnpg-cluster-worker2   <none>           <none>
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ kubectl get clusters -n database -o wide
+NAME         AGE   INSTANCES   READY   STATUS                     PRIMARY
+pg-homelab   16m   3           3       Cluster in healthy state   pg-homelab-1
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ k get backups -n database
+NAME                                        AGE     CLUSTER      METHOD              PHASE       ERROR
+pg-remote-scheduled-backup-20251225105306   3m28s   pg-homelab   barmanObjectStore   completed
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ kubectl describe cluster pg-homelab -n database
+Name:         pg-homelab
+Namespace:    database
+Labels:       <none>
+Annotations:  <none>
+API Version:  postgresql.cnpg.io/v1
+Kind:         Cluster
+Metadata:
+  Creation Timestamp:  2025-12-25T14:07:12Z
+  Generation:          1
+  Resource Version:    25810
+  UID:                 ee85fa45-c141-4f40-aa7b-5a8124e68448
+Spec:
+  Affinity:
+    Node Affinity:
+      Required During Scheduling Ignored During Execution:
+        Node Selector Terms:
+          Match Expressions:
+            Key:       dedicated
+            Operator:  In
+            Values:
+              cnpg
+    Pod Anti Affinity Type:  preferred
+    Tolerations:
+      Effect:    NoSchedule
+      Key:       dedicated
+      Operator:  Equal
+      Value:     cnpg
+  Backup:
+    Barman Object Store:
+      Destination Path:  s3://postgres-data/
+      Endpoint URL:      http://minio-primary-api.database.svc.cluster.local:9000
+      s3Credentials:
+        Access Key Id:
+          Key:   ACCESS_KEY_ID
+          Name:  primary-creds
+        Secret Access Key:
+          Key:   ACCESS_SECRET_KEY
+          Name:  primary-creds
+      Wal:
+        Compression:   gzip
+    Retention Policy:  7d
+    Target:            prefer-standby
+  Bootstrap:
+    Initdb:
+      Database:        app
+      Encoding:        UTF8
+      Locale C Type:   C
+      Locale Collate:  C
+      Owner:           app
+      Secret:
+        Name:               pg-app-user-creds
+  Enable PDB:               true
+  Enable Superuser Access:  false
+  External Clusters:
+    Barman Object Store:
+      Destination Path:  s3://pg-backups/
+      Endpoint URL:      http://minio-backup-api.database.svc.cluster.local:9000
+      s3Credentials:
+        Access Key Id:
+          Key:   ACCESS_KEY_ID
+          Name:  backup-creds
+        Secret Access Key:
+          Key:        ACCESS_SECRET_KEY
+          Name:       backup-creds
+    Name:             remote-backup-server
+  Failover Delay:     2
+  Image Name:         ghcr.io/cloudnative-pg/postgresql:16
+  Instances:          3
+  Log Level:          info
+  Max Sync Replicas:  0
+  Min Sync Replicas:  0
+  Monitoring:
+    Custom Queries Config Map:
+      Key:                    queries
+      Name:                   cnpg-default-monitoring
+    Disable Default Queries:  false
+    Enable Pod Monitor:       true
+  Postgres GID:               26
+  Postgres UID:               26
+  Postgresql:
+    Parameters:
+      archive_mode:                on
+      archive_timeout:             5min
+      dynamic_shared_memory_type:  posix
+      full_page_writes:            on
+      log_destination:             csvlog
+      log_directory:               /controller/log
+      log_filename:                postgres
+      log_rotation_age:            0
+      log_rotation_size:           0
+      log_truncate_on_rotation:    false
+      logging_collector:           on
+      max_connections:             500
+      max_parallel_workers:        32
+      max_replication_slots:       32
+      max_worker_processes:        32
+      shared_buffers:              256MB
+      shared_memory_type:          mmap
+      shared_preload_libraries:
+      ssl_max_protocol_version:    TLSv1.3
+      ssl_min_protocol_version:    TLSv1.3
+      wal_keep_size:               512MB
+      wal_level:                   logical
+      wal_log_hints:               on
+      wal_receiver_timeout:        5s
+      wal_sender_timeout:          5s
+    Sync Replica Election Constraint:
+      Enabled:  false
+    Synchronous:
+      Data Durability:      required
+      Failover Quorum:      false
+      Method:               any
+      Number:               1
+  Primary Update Method:    switchover
+  Primary Update Strategy:  unsupervised
+  Probes:
+    Liveness:
+      Isolation Check:
+        Connection Timeout:  1000
+        Enabled:             true
+        Request Timeout:     1000
+  Replication Slots:
+    High Availability:
+      Enabled:      true
+      Slot Prefix:  _cnpg_
+    Synchronize Replicas:
+      Enabled:        true
+    Update Interval:  30
+  Resources:
+    Limits:
+      Cpu:     1
+      Memory:  2Gi
+    Requests:
+      Cpu:                 500m
+      Memory:              1Gi
+  Smart Shutdown Timeout:  180
+  Start Delay:             3600
+  Stop Delay:              1800
+  Storage:
+    Resize In Use Volumes:  true
+    Size:                   5Gi
+    Storage Class:          standard
+  Switchover Delay:         3600
+  Wal Storage:
+    Resize In Use Volumes:  true
+    Size:                   2Gi
+    Storage Class:          standard
+Status:
+  Available Architectures:
+    Go Arch:  amd64
+    Hash:     527e2e3b680dfba7f7578b98530f755f36156e7be00acda3318ef36fe4f4418f
+    Go Arch:  arm64
+    Hash:     aaa74c6061f3fe30f230a664b4f6076bb886c9a89d4eba3293483525c5cff533
+  Certificates:
+    Client CA Secret:  pg-homelab-ca
+    Expirations:
+      Pg - Homelab - Ca:           2026-03-25 14:02:12 +0000 UTC
+      Pg - Homelab - Replication:  2026-03-25 14:02:12 +0000 UTC
+      Pg - Homelab - Server:       2026-03-25 14:02:12 +0000 UTC
+    Replication TLS Secret:        pg-homelab-replication
+    Server Alt DNS Names:
+      pg-homelab-rw
+      pg-homelab-rw.database
+      pg-homelab-rw.database.svc
+      pg-homelab-rw.database.svc.cluster.local
+      pg-homelab-r
+      pg-homelab-r.database
+      pg-homelab-r.database.svc
+      pg-homelab-r.database.svc.cluster.local
+      pg-homelab-ro
+      pg-homelab-ro.database
+      pg-homelab-ro.database.svc
+      pg-homelab-ro.database.svc.cluster.local
+    Server CA Secret:             pg-homelab-ca
+    Server TLS Secret:            pg-homelab-server
+  Cloud Native PG Commit Hash:    a9696201f
+  Cloud Native PG Operator Hash:  527e2e3b680dfba7f7578b98530f755f36156e7be00acda3318ef36fe4f4418f
+  Conditions:
+    Last Transition Time:  2025-12-25T14:07:36Z
+    Message:               A single, unique system ID was found across reporting instances.
+    Reason:                Unique
+    Status:                True
+    Type:                  ConsistentSystemID
+    Last Transition Time:  2025-12-25T14:08:47Z
+    Message:               Cluster is Ready
+    Reason:                ClusterIsReady
+    Status:                True
+    Type:                  Ready
+    Last Transition Time:  2025-12-25T14:07:42Z
+    Message:               Continuous archiving is working
+    Reason:                ContinuousArchivingSuccess
+    Status:                True
+    Type:                  ContinuousArchiving
+    Last Transition Time:  2025-12-25T14:09:39Z
+    Message:               Backup was successful
+    Reason:                LastBackupSucceeded
+    Status:                True
+    Type:                  LastBackupSucceeded
+  Config Map Resource Version:
+    Metrics:
+      Cnpg - Default - Monitoring:  24983
+  Current Primary:                  pg-homelab-1
+  Current Primary Timestamp:        2025-12-25T14:07:33.053874Z
+  First Recoverability Point:       2025-12-25T14:07:53Z
+  First Recoverability Point By Method:
+    Barman Object Store:  2025-12-25T14:07:53Z
+  Healthy PVC:
+    pg-homelab-1
+    pg-homelab-1-wal
+    pg-homelab-2
+    pg-homelab-2-wal
+    pg-homelab-3
+    pg-homelab-3-wal
+  Image:  ghcr.io/cloudnative-pg/postgresql:16
+  Instance Names:
+    pg-homelab-1
+    pg-homelab-2
+    pg-homelab-3
+  Instances:  3
+  Instances Reported State:
+    pg-homelab-1:
+      Ip:            10.244.5.7
+      Is Primary:    true
+      Time Line ID:  1
+    pg-homelab-2:
+      Ip:            10.244.2.15
+      Is Primary:    false
+      Time Line ID:  1
+    pg-homelab-3:
+      Ip:            10.244.5.11
+      Is Primary:    false
+      Time Line ID:  1
+  Instances Status:
+    Healthy:
+      pg-homelab-1
+      pg-homelab-2
+      pg-homelab-3
+  Last Successful Backup:  2025-12-25T14:09:42Z
+  Last Successful Backup By Method:
+    Barman Object Store:  2025-12-25T14:09:42Z
+  Latest Generated Node:  3
+  Managed Roles Status:
+  Pg Data Image Info:
+    Image:          ghcr.io/cloudnative-pg/postgresql:16
+    Major Version:  16
+  Phase:            Cluster in healthy state
+  Pooler Integrations:
+    Pg Bouncer Integration:
+      Secrets:
+        pg-homelab-pooler
+  Pvc Count:        6
+  Read Service:     pg-homelab-r
+  Ready Instances:  3
+  Secrets Resource Version:
+    Application Secret Version:  24943
+    Client Ca Secret Version:    24948
+    Replication Secret Version:  24953
+    Server Ca Secret Version:    24948
+    Server Secret Version:       24950
+  Switch Replica Cluster Status:
+  System ID:                 7587796949643276311
+  Target Primary:            pg-homelab-1
+  Target Primary Timestamp:  2025-12-25T14:07:12.607849Z
+  Timeline ID:               1
+  Topology:
+    Instances:
+      pg-homelab-1:
+      pg-homelab-2:
+      pg-homelab-3:
+    Nodes Used:              2
+    Successfully Extracted:  true
+  Write Service:             pg-homelab-rw
+Events:                      <none>
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ kubectl describe cluster pg-homelab -n database | grep -A 5 ContinuousArchiving
+    Reason:                ContinuousArchivingSuccess
+    Status:                True
+    Type:                  ContinuousArchiving
+    Last Transition Time:  2025-12-25T10:53:45Z
+    Message:               Backup was successful
+    Reason:                LastBackupSucceeded
+    Status:                True
+    Type:                  LastBackupSucceeded
+
+$ k get pdb -n database
+NAME                 MIN AVAILABLE   MAX UNAVAILABLE   ALLOWED DISRUPTIONS   AGE
+pg-homelab           1               N/A               1                     5m35s
+pg-homelab-primary   1               N/A               0                     5m35s
+
+$  k get all -n database -o wide | grep pg-home
+pod/pg-homelab-1                         1/1     Running     0             4m43s   10.244.5.7    cnpg-cluster-worker    <none>           <none>
+pod/pg-homelab-2                         1/1     Running     0             4m13s   10.244.2.15   cnpg-cluster-worker2   <none>           <none>
+pod/pg-homelab-3                         1/1     Running     0             3m36s   10.244.5.11   cnpg-cluster-worker    <none>           <none>
+pod/pg-homelab-pooler-78c4dcccbd-96jh7   1/1     Running     0             4m58s   10.244.1.4    cnpg-cluster-worker2   <none>           <none>
+pod/pg-homelab-pooler-78c4dcccbd-gw7rb   1/1     Running     0             4m58s   10.244.1.5    cnpg-cluster-worker   <none>           <none>
+pod/pg-homelab-pooler-78c4dcccbd-pcpv4   1/1     Running     0             4m58s   10.244.1.3    cnpg-cluster-worker2   <none>           <none>
+service/pg-homelab-pooler       ClusterIP   10.96.133.243   <none>        5432/TCP   4m59s   cnpg.io/poolerName=pg-homelab-pooler
+service/pg-homelab-r            ClusterIP   10.96.206.11    <none>        5432/TCP   4m59s   cnpg.io/cluster=pg-homelab,cnpg.io/podRole=instance
+service/pg-homelab-ro           ClusterIP   10.96.5.73      <none>        5432/TCP   4m59s   cnpg.io/cluster=pg-homelab,cnpg.io/instanceRole=replica
+service/pg-homelab-rw           ClusterIP   10.96.68.235    <none>        5432/TCP   4m59s   cnpg.io/cluster=pg-homelab,cnpg.io/instanceRole=primary
+deployment.apps/pg-homelab-pooler   3/3     3            3           4m52s   pgbouncer    ghcr.io/cloudnative-pg/pgbouncer:1.25.1   cnpg.io/poolerName=pg-homelab-pooler
+replicaset.apps/pg-homelab-pooler-78c4dcccbd   3         3         3       4m58s   pgbouncer    ghcr.io/cloudnative-pg/pgbouncer:1.25.1   cnpg.io/poolerName=pg-homelab-pooler,pod-template-hash=78c4dcccbd
+
+$ kubectl describe cluster pg-homelab -n database | grep -A 5 monitoring
+      Name:                   cnpg-default-monitoring
+    Disable Default Queries:  false
+    Enable Pod Monitor:       true
+  Postgres GID:               26
+  Postgres UID:               26
+  Postgresql:
+
+$  k get pooler -n database
+NAME                AGE    CLUSTER      TYPE
+pg-homelab-pooler   4h3m   pg-homelab   rw
+
+$ kubectl get podmonitor -n database
+NAME                         AGE
+pg-homelab-cnpg-podmonitor   112m
+
+$ kubectl get ScaledObject -n database
+NAME                           SCALETARGETKIND                 SCALETARGETNAME     MIN   MAX   READY   ACTIVE   FALLBACK   PAUSED   TRIGGERS     AUTHENTICATIONS   AGE
+pg-homelab-autoscaler          postgresql.cnpg.io/v1.Cluster   pg-homelab          3     5     True    True     False      False    cpu                            50s
+pg-homelab-pooler-autoscaler   postgresql.cnpg.io/v1.Pooler    pg-homelab-pooler   3     10    True    True     False      False    prometheus                     50s
+
+# Exec into your primary pod
+kubectl exec -it pg-homelab-1 -n database -- psql -U postgres

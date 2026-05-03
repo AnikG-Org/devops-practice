@@ -1,0 +1,292 @@
+#MinIO is an open-source, high-performance object storage server. Think of it as a private, self-hosted version of Amazon S3.
+#source minio-env.sh && envsubst < minio.yaml | kubectl apply -f -  --dry-run=client -o yaml
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: database
+---
+# --- MINIO 1: PRIMARY ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minio-primary
+  namespace: database
+  labels:
+    app.kubernetes.io/instance: pg-homelab
+spec:
+  selector: { matchLabels: { app: minio-primary } }
+  template:
+    metadata: { labels: { app: minio-primary } }
+    spec:
+      containers:
+      - name: minio
+        image: quay.io/minio/minio:latest
+        args: ["server", "/data", "--console-address", ":9001"]
+        env:
+        - { name: MINIO_ROOT_USER, value: "${MINIO_ROOT_USER}" }
+        - { name: MINIO_ROOT_PASSWORD, value: "${MINIO_ROOT_PASSWORD}" }
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - cnpg-cluster-worker3
+      tolerations:
+      - key: dedicated
+        operator: Equal
+        value: minio
+        effect: NoSchedule
+---
+# INTERNAL API (ClusterIP) - For Postgres/Apps inside the cluster
+apiVersion: v1
+kind: Service
+metadata:
+  name: minio-primary-api
+  namespace: database
+  labels:
+    app.kubernetes.io/instance: pg-homelab
+spec:
+  type: ClusterIP
+  ports:
+    - name: s3-api
+      port: 9000
+      targetPort: 9000
+  selector: { app: minio-primary }
+---
+# EXTERNAL CONSOLE (ClusterIP) - For your Windows Laptop
+apiVersion: v1
+kind: Service
+metadata:
+  name: minio-primary-console
+  namespace: database
+  labels:
+    app.kubernetes.io/instance: pg-homelab
+spec:
+  type: ClusterIP
+  ports:
+    - name: console
+      port: 9001
+      targetPort: 9001
+  selector: { app: minio-primary }
+---
+# --- MINIO 2: BACKUP ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minio-backup
+  namespace: database
+  labels:
+    app.kubernetes.io/instance: pg-homelab
+spec:
+  selector: { matchLabels: { app: minio-backup } }
+  template:
+    metadata: { labels: { app: minio-backup } }
+    spec:
+      containers:
+      - name: minio
+        image: quay.io/minio/minio:latest
+        args: ["server", "/data", "--console-address", ":9001"]
+        env:
+        - { name: MINIO_ROOT_USER, value: "${MINIO_BACKUP_USER}" }
+        - { name: MINIO_ROOT_PASSWORD, value: "${MINIO_BACKUP_PASSWORD}" }
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - cnpg-cluster-worker3
+      tolerations:
+      - key: dedicated
+        operator: Equal
+        value: minio
+        effect: NoSchedule
+---
+# INTERNAL API (ClusterIP)
+apiVersion: v1
+kind: Service
+metadata:
+  name: minio-backup-api
+  namespace: database
+  labels:
+    app.kubernetes.io/instance: pg-homelab
+spec:
+  type: ClusterIP
+  ports:
+    - name: s3-api
+      port: 9000
+      targetPort: 9000
+  selector: { app: minio-backup }
+---
+# EXTERNAL CONSOLE (ClusterIP)
+apiVersion: v1
+kind: Service
+metadata:
+  name: minio-backup-console
+  namespace: database
+  labels:
+    app.kubernetes.io/instance: pg-homelab
+spec:
+  type: ClusterIP
+  ports:
+    - name: console
+      port: 9001
+      targetPort: 9001
+  selector: { app: minio-backup }
+---
+# --- CREDENTIALS FOR primary ---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: primary-creds
+  namespace: database
+  labels:
+    app.kubernetes.io/instance: pg-homelab
+stringData:
+  ACCESS_KEY_ID: "${MINIO_ROOT_USER}"
+  ACCESS_SECRET_KEY: "${MINIO_ROOT_PASSWORD}"
+---
+# --- CREDENTIALS FOR BACKUP TARGET ---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: backup-creds
+  namespace: database
+  labels:
+    app.kubernetes.io/instance: pg-homelab
+stringData:
+  ACCESS_KEY_ID: "${MINIO_BACKUP_USER}"
+  ACCESS_SECRET_KEY: "${MINIO_BACKUP_PASSWORD}"
+---
+# minio bucket creation job
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: create-minio-buckets
+  namespace: database
+  labels:
+    app.kubernetes.io/instance: pg-homelab
+spec:
+  ttlSecondsAfterFinished: 100
+  template:
+    spec:
+      containers:
+      - name: mc
+        image: minio/mc
+        command:
+        - /bin/sh
+        - -c
+        - |
+          # --- WAIT LOGIC FOR BOTH SERVICES ---
+          echo "Waiting for MinIO Primary..."
+          until mc alias set primary http://minio-primary-api:9000 "${MINIO_ROOT_USER}" "${MINIO_ROOT_PASSWORD}"; do
+            echo "Primary not ready... sleeping"
+            sleep 2
+          done
+
+          echo "Waiting for MinIO Backup..."
+          until mc alias set backup http://minio-backup-api:9000 "${MINIO_BACKUP_USER}" "${MINIO_BACKUP_PASSWORD}"; do
+            echo "Backup not ready... sleeping"
+            sleep 2
+          done
+          
+          # --- BUCKET CREATION ---
+          echo "Creating buckets..."
+          mc mb --ignore-existing primary/postgres-data;
+          mc mb --ignore-existing backup/pg-backups;
+          
+          echo "All buckets created successfully!"
+          exit 0;
+      restartPolicy: OnFailure
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - cnpg-cluster-worker3
+      tolerations:
+      - key: dedicated
+        operator: Equal
+        value: minio
+        effect: NoSchedule
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: minio-mirror-sync
+  namespace: database
+spec:
+  timeZone: "Asia/Kolkata"
+  schedule: "0 * * * *" 
+  concurrencyPolicy: Forbid # Prevents a new sync from starting if the old one is still running
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: mc
+            image: minio/mc
+            env:
+            - name: MINIO_ROOT_USER
+              valueFrom:
+                secretKeyRef:
+                  name: primary-creds
+                  key: ACCESS_KEY_ID
+            - name: MINIO_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: primary-creds
+                  key: ACCESS_SECRET_KEY
+            - name: MINIO_BACKUP_USER
+              valueFrom:
+                secretKeyRef:
+                  name: backup-creds
+                  key: ACCESS_KEY_ID
+            - name: MINIO_BACKUP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: backup-creds
+                  key: ACCESS_SECRET_KEY
+            command:
+            - /bin/sh
+            - -c
+            - |
+              # Setup Aliases
+              mc alias set primary http://minio-primary-api:9000 "$MINIO_ROOT_USER" "$MINIO_ROOT_PASSWORD";
+              mc alias set backup http://minio-backup-api:9000 "$MINIO_BACKUP_USER" "$MINIO_BACKUP_PASSWORD";
+
+              # Sync data
+              echo "Starting sync from Primary to Backup..."
+              mc mirror --overwrite --remove primary/postgres-data backup/pg-backups;
+              echo "Sync completed successfully."
+          restartPolicy: OnFailure
+          affinity:
+            nodeAffinity:
+              requiredDuringSchedulingIgnoredDuringExecution:
+                nodeSelectorTerms:
+                - matchExpressions:
+                  - key: kubernetes.io/hostname
+                    operator: In
+                    values:
+                    - cnpg-cluster-worker3
+          tolerations:
+          - key: dedicated
+            operator: Equal
+            value: minio
+            effect: NoSchedule
+---
+#To forward the Console (Web UI): 
+#kubectl port-forward svc/minio-primary-console 9001:9001 -n database
+#kubectl port-forward svc/minio-backup-console 9001:9001 -n database
+#To forward the S3 API (for your apps or mc client):
+#kubectl port-forward svc/minio-primary-api 9000:9000 -n database
+#kubectl port-forward svc/minio-backup-api 9000:9000 -n database

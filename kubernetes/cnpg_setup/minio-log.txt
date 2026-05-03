@@ -1,0 +1,134 @@
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ ./minio-env.sh
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ source minio-env.sh && envsubst < minio.yaml | kubectl apply -f -
+namespace/database created
+deployment.apps/minio-primary created
+service/minio-primary-api created
+service/minio-primary-console created
+deployment.apps/minio-backup created
+service/minio-backup-api created
+service/minio-backup-console created
+secret/primary-creds created
+secret/backup-creds created
+job.batch/create-minio-buckets created
+cronjob.batch/minio-mirror-sync created
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ kubectl get po -o wide -n database -w
+NAME                             READY   STATUS      RESTARTS   AGE     IP           NODE                   NOMINATED NODE   READINESS GATES
+create-minio-buckets-c225l       0/1     Completed   0          2m29s   10.244.4.4   cnpg-cluster-worker3   <none>           <none>
+minio-backup-55584cd965-zt8xb    1/1     Running     0          2m29s   10.244.4.3   cnpg-cluster-worker3   <none>           <none>
+minio-primary-7fb67f9d7f-lggnm   1/1     Running     0          2m29s   10.244.4.2   cnpg-cluster-worker3   <none>           <none>
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ k get secret -n database
+NAME            TYPE     DATA   AGE
+backup-creds    Opaque   2      2m59s
+primary-creds   Opaque   2      2m59s
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ k get svc -n database
+NAME                    TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)    AGE
+minio-backup-api        ClusterIP   10.96.170.80    <none>        9000/TCP   3m12s
+minio-backup-console    ClusterIP   10.96.178.201   <none>        9001/TCP   3m12s
+minio-primary-api       ClusterIP   10.96.38.5      <none>        9000/TCP   3m12s
+minio-primary-console   ClusterIP   10.96.10.148    <none>        9001/TCP   3m12s
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ kubectl get job -n database
+NAME                   STATUS     COMPLETIONS   DURATION   AGE
+create-minio-buckets   Complete   1/1           17s        36s
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ kubectl get cronjob -n database
+NAME                SCHEDULE    TIMEZONE       SUSPEND   ACTIVE   LAST SCHEDULE   AGE
+minio-mirror-sync   0 * * * *   Asia/Kolkata   False     0        <none>          2m11s
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ kubectl create job --from=cronjob/minio-mirror-sync manual-sync-test -n database
+job.batch/manual-sync-test created
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ kubectl get pods -n database -l job-name=manual-sync-test
+NAME                     READY   STATUS    RESTARTS   AGE
+manual-sync-test-tmc7b   1/1     Running   0          4s
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ kubectl get pods -n database -l job-name=manual-sync-test
+NAME                     READY   STATUS      RESTARTS   AGE
+manual-sync-test-tmc7b   0/1     Completed   0          115s
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ kubectl logs pod/manual-sync-test-tmc7b -n database
+Added `primary` successfully.
+Added `backup` successfully.
+Starting sync from Primary to Backup...
+`primary/postgres-data/pg-homelab/base/20251230T192254/data.tar` -> `backup/pg-backups/pg-homelab/base/20251230T192254/data.tar`
+`primary/postgres-data/pg-homelab/base/20251230T192254/backup.info` -> `backup/pg-backups/pg-homelab/base/20251230T192254/backup.info`
+`primary/postgres-data/pg-homelab/wals/0000000100000000/000000010000000000000002.gz` -> `backup/pg-backups/pg-homelab/wals/0000000100000000/000000010000000000000002.gz`
+`primary/postgres-data/pg-homelab/wals/0000000100000000/000000010000000000000001.gz` -> `backup/pg-backups/pg-homelab/wals/0000000100000000/000000010000000000000001.gz`
+`primary/postgres-data/pg-homelab/wals/0000000100000000/000000010000000000000003.gz` -> `backup/pg-backups/pg-homelab/wals/0000000100000000/000000010000000000000003.gz`
+`primary/postgres-data/pg-homelab/wals/0000000100000000/000000010000000000000006.gz` -> `backup/pg-backups/pg-homelab/wals/0000000100000000/000000010000000000000006.gz`
+`primary/postgres-data/pg-homelab/wals/0000000100000000/000000010000000000000005.gz` -> `backup/pg-backups/pg-homelab/wals/0000000100000000/000000010000000000000005.gz`
+`primary/postgres-data/pg-homelab/wals/0000000100000000/000000010000000000000003.00000060.backup.gz` -> `backup/pg-backups/pg-homelab/wals/0000000100000000/000000010000000000000003.00000060.backup.gz`
+`primary/postgres-data/pg-homelab/wals/0000000100000000/000000010000000000000005.00000028.backup.gz` -> `backup/pg-backups/pg-homelab/wals/0000000100000000/000000010000000000000005.00000028.backup.gz`
+`primary/postgres-data/pg-homelab/wals/0000000100000000/000000010000000000000004.gz` -> `backup/pg-backups/pg-homelab/wals/0000000100000000/000000010000000000000004.gz`
+`primary/postgres-data/pg-homelab/wals/0000000100000000/000000010000000000000007.gz` -> `backup/pg-backups/pg-homelab/wals/0000000100000000/000000010000000000000007.gz`
+`primary/postgres-data/pg-homelab/wals/0000000100000000/000000010000000000000007.00000028.backup.gz` -> `backup/pg-backups/pg-homelab/wals/0000000100000000/000000010000000000000007.00000028.backup.gz`
+`primary/postgres-data/pg-homelab/wals/0000000100000000/000000010000000000000008.gz` -> `backup/pg-backups/pg-homelab/wals/0000000100000000/000000010000000000000008.gz`
+`primary/postgres-data/pg-homelab/wals/0000000100000000/000000010000000000000009.gz` -> `backup/pg-backups/pg-homelab/wals/0000000100000000/000000010000000000000009.gz`
+┌───────────┬─────────────┬──────────┬─────────────┐
+│ Total     │ Transferred │ Duration │ Speed       │
+│ 34.42 MiB │ 34.42 MiB   │ 00m01s   │ 30.66 MiB/s │
+└───────────┴─────────────┴──────────┴─────────────┘
+Sync completed successfully.
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ kubectl logs -n database job/create-minio-buckets
+Waiting for MinIO Primary...
+Added `primary` successfully.
+Waiting for MinIO Backup...
+Added `backup` successfully.
+Creating buckets...
+Bucket created successfully `primary/postgres-data`.
+Bucket created successfully `backup/pg-backups`.
+All buckets created successfully!
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ kubectl port-forward svc/minio-primary-console 9001:9001 -n database --address 0.0.0.0
+Forwarding from 0.0.0.0:9001 -> 9001
+Handling connection for 9001
+Handling connection for 9001
+Handling connection for 9001
+Handling connection for 9001
+Handling connection for 9001
+Handling connection for 9001
+Handling connection for 9001
+Handling connection for 9001
+Handling connection for 9001
+Handling connection for 9001
+Handling connection for 9001
+Handling connection for 9001
+Handling connection for 9001
+Handling connection for 9001
+Handling connection for 9001
+Handling connection for 9001
+Handling connection for 9001
+Handling connection for 9001
+Handling connection for 9001
+Handling connection for 9001
+Handling connection for 9001
+Handling connection for 9001
+
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ kubectl port-forward svc/minio-backup-console 9001:9001 -n database --address 0.0.0.0
+Forwarding from 0.0.0.0:9001 -> 9001
+Handling connection for 9001
+Handling connection for 9001
+Handling connection for 9001
+Handling connection for 9001
+

@@ -1,0 +1,83 @@
+#
+### KEDA ScaledObject for PostgreSQL Cluster Autoscaling
+apiVersion: keda.sh/v1alpha1
+kind: TriggerAuthentication
+metadata:
+  name: pg-autoscaler-secret-bridge
+  namespace: database
+spec:
+  secretTargetRef:
+    - parameter: userName
+      name: pg-app-user-creds
+      key: username
+    - parameter: password
+      name: pg-app-user-creds
+      key: password
+    - parameter: dbName
+      name: pg-app-user-creds
+      key: dbname
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: pg-homelab-autoscaler
+  namespace: database
+spec:
+  scaleTargetRef:
+    apiVersion: postgresql.cnpg.io/v1
+    kind: Cluster
+    name: pg-homelab
+  
+  minReplicaCount: 3
+  maxReplicaCount: 5
+  
+  pollingInterval: 30
+  cooldownPeriod:  300 
+  
+  triggers:
+    - type: cpu
+      metricType: Utilization 
+      metadata:
+        value: "75"
+    ##Trigger 2: Scale based on Active Connections (Read-Only Host)
+    - type: postgresql
+      metadata:
+        # We still define the network path
+        host: "pg-homelab-ro.database.svc.cluster.local"
+        port: "5432"
+        sslmode: "disable"
+        query: "SELECT count(*) FROM pg_stat_activity WHERE state = 'active'"
+        targetQueryValue: "50"
+      # This pulls username, password, and dbName from the bridge above
+      authenticationRef:
+        name: pg-autoscaler-secret-bridge
+
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: pg-homelab-pooler-autoscaler
+  namespace: database
+spec:
+  scaleTargetRef:
+    apiVersion: postgresql.cnpg.io/v1
+    kind: Pooler
+    name: pg-homelab-pooler
+  minReplicaCount: 3
+  maxReplicaCount: 10
+  pollingInterval: 15  # Check more frequently for connection layer
+  cooldownPeriod:  300 
+  triggers:
+    - type: prometheus
+      metadata:
+        serverAddress: http://prometheus-operated.monitoring.svc.cluster.local:9090
+        metricName: pg_pooler_active_connections  # This query looks at the active connections specifically for your pooler
+        query: |
+          sum(cnpg_pgbouncer_pools_cl_active{pod=~"pg-homelab-pooler-.*"})
+        threshold: "80"
+    - type: prometheus
+      metadata:
+        serverAddress: http://prometheus-operated.monitoring.svc.cluster.local:9090
+        metricName: pgbouncer_cpu_usage
+        query: (sum(rate(container_cpu_usage_seconds_total{pod=~"pg-homelab-pooler-.*", container="pgbouncer"}[2m])) / sum(kube_pod_container_resource_requests{pod=~"pg-homelab-pooler-.*", resource="cpu"})) * 100
+        threshold: "75"

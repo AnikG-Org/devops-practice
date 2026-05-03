@@ -1,0 +1,169 @@
+#wsl2 on windows
+
+winget install -e --id Docker.DockerDesktop
+winget install -e --id Kubernetes.kind
+winget install -e --id Kubernetes.kubectl
+winget install -e --id Helm.Helm
+########################################optional
+winget install k9s
+##################   Open Git Bash. Type this command to open the file in Notepad:
+
+notepad ~/.bashrc
+#If it asks to create a new file, click Yes.
+
+#Paste these lines into the Notepad window:
+#----
+# Kubernetes Alias
+alias k='kubectl'
+
+# Speed up kubectl with autocompletion (Tab key)
+source <(kubectl completion bash)
+complete -o default -F __start_kubectl k
+#----- #Save and close Notepad.
+
+#2. Make sure Git Bash "Sees" the file
+#On Windows, Git Bash sometimes needs a "nudge" to look at the .bashrc file. We do this by creating a .bash_profile.
+
+#In Git Bash, type:
+#-----
+notepad ~/.bash_profile             #Paste this single line: 
+#-----
+[ -f ~/.bashrc ]] && . ~/.bashrc
+#----- #Save and close.
+
+source ~/.bashrc
+#-----
+k get pods
+##################
+### CNPGCLI on windows
+
+download krew.exe from https://github.com/kubernetes-sigs/krew/releases and store it to "C:\Program Files\krew"  and add it to the env variables
+and
+C:\Program Files\krew>.\krew install krew
+Adding "default" plugin index from https://github.com/kubernetes-sigs/krew-index.git.
+Updated the local copy of plugin index.
+Installing plugin: krew
+Installed plugin: krew
+\
+ | Use this plugin:
+ |      kubectl krew
+ | Documentation:
+ |      https://krew.sigs.k8s.io/
+ | Caveats:
+ | \
+ |  | krew is now installed! To start using kubectl plugins, you need to add
+ |  | krew's installation directory to your PATH:
+ |  |
+ |  |   * macOS/Linux:
+ |  |     - Add the following to your ~/.bashrc or ~/.zshrc:
+ |  |         export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+ |  |     - Restart your shell.
+ |  |
+ |  |   * Windows: Add %USERPROFILE%\.krew\bin to your PATH environment variable
+ |  |
+ |  | To list krew commands and to get help, run:
+ |  |   $ kubectl krew
+ |  | For a full list of available plugins, run:
+ |  |   $ kubectl krew search
+ |  |
+ |  | You can find documentation at
+ |  |   https://krew.sigs.k8s.io/docs/user-guide/quickstart/.
+ | /
+/
+
+C:\Program Files\krew> krew install cnpg
+---------------------------------------------
+
+#Open Notepad as Administrator > C:\Windows\System32\drivers\etc\hosts.
+
+#Add this line:
+
+127.0.0.1  pg-explorer.homelab
+
+##################   Kind Cluster config      ##################
+
+
+
+kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+kubectl patch deployment metrics-server -n kube-system --type='json' -p='[{"op": "add", "path": "/spec/template/spec/containers/0/args/-", "value": "--kubelet-insecure-tls"}]' 
+
+
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm install prometheus prometheus-community/kube-prometheus-stack \
+  --namespace monitoring --create-namespace                                
+
+#---
+kubectl --namespace monitoring get pods -l "release=prometheus"
+kubectl get prometheus -n monitoring -o jsonpath='{.items[0].spec.podMonitorSelector}'
+kubectl --namespace monitoring get secrets prometheus-grafana -o jsonpath="{.data.admin-password}" | base64 -d ; echo                    #Get Grafana 'admin' user password by running:
+
+export POD_NAME=$(kubectl --namespace monitoring get pod -l "app.kubernetes.io/name=grafana,app.kubernetes.io/instance=prometheus" -oname)
+kubectl --namespace monitoring port-forward $POD_NAME 3000                                                                                 #Access Grafana local instance: #import cnpg grafana id 20417
+#---
+#to setup CNPG Operator
+#---
+helm repo add cnpg https://cloudnative-pg.github.io/charts
+helm upgrade --install cnpg \
+  --namespace cnpg-system \
+  --create-namespace \
+  --set tolerations[0].key="dedicated" \
+  --set tolerations[0].operator="Equal" \
+  --set tolerations[0].value="cnpg" \
+  --set tolerations[0].effect="NoSchedule" \
+  cnpg/cloudnative-pg
+  
+
+helm repo add kedacore https://kedacore.github.io/charts
+helm upgrade --install keda kedacore/keda \
+  --namespace keda \
+  --create-namespace \
+  --set "tolerations[0].key=dedicated" \
+  --set "tolerations[0].operator=Equal" \
+  --set "tolerations[0].value=cnpg" \
+  --set "tolerations[0].effect=NoSchedule"
+#---
+#Install Gateway API CRDs
+#---
+kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.1/standard-install.yaml 
+kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.1/experimental-install.yaml
+
+helm upgrade --install nga oci://ghcr.io/nginx/charts/nginx-gateway-fabric \
+  -n gateway-system --create-namespace \
+  --set nginxGateway.gatewayClassName=nginx \
+  --set nginxGateway.snippetsFilters.enable=true \
+  --reuse-values
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+####
+my-postgres-chart/
+  ├── Chart.yaml
+  ├── values.yaml
+  └── templates/
+      ├── secrets.yaml
+      ├── cluster.yaml
+      ├── scheduled-backup.yaml
+      ├── keda-auth.yaml
+      └── keda-scaler.yaml
+

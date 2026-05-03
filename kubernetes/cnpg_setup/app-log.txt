@@ -1,0 +1,113 @@
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ source cnpg-env.sh && envsubst < app-deployment.yaml | kubectl apply -f -
+namespace/app created
+secret/pg-app-user-creds created
+job.batch/seed-db-job created
+configmap/pg-reader-code created
+deployment.apps/pg-reader-app created
+service/pg-reader-service created
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ kubectl logs -f job/seed-db-job -n app
+error: error from server (NotFound): jobs.batch "seed-db-job" not found in namespace "app"
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ k get -f ./app-deployment.yaml
+NAME            STATUS   AGE
+namespace/app   Active   19s
+
+NAME                       TYPE     DATA   AGE
+secret/pg-app-user-creds   Opaque   3      19s
+
+NAME                    STATUS    COMPLETIONS   DURATION   AGE
+job.batch/seed-db-job   Running   0/1           19s        19s
+
+NAME                       DATA   AGE
+configmap/pg-reader-code   1      19s
+
+NAME                            READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/pg-reader-app   1/1     1            1           19s
+
+NAME                        TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE
+service/pg-reader-service   ClusterIP   10.96.160.171   <none>        80/TCP    19s
+
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ kubectl logs -f job/seed-db-job -n app
+CREATE TABLE
+INSERT 0 50
+            ?column?
+---------------------------------
+ 50 total users now in database.
+(1 row)
+
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ k get -f ./app-deployment.yaml
+NAME            STATUS   AGE
+namespace/app   Active   79s
+
+NAME                       TYPE     DATA   AGE
+secret/pg-app-user-creds   Opaque   3      79s
+
+NAME                    STATUS     COMPLETIONS   DURATION   AGE
+job.batch/seed-db-job   Complete   1/1           64s        79s
+
+NAME                       DATA   AGE
+configmap/pg-reader-code   1      79s
+
+NAME                            READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/pg-reader-app   1/1     1            1           79s
+
+NAME                        TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE
+service/pg-reader-service   ClusterIP   10.96.160.171   <none>        80/TCP    79s
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ kubectl port-forward svc/pg-reader-service 8080:80 -n app
+Forwarding from 127.0.0.1:8080 -> 5000
+Forwarding from [::1]:8080 -> 5000
+Handling connection for 8080
+Handling connection for 8080
+Handling connection for 8080
+Handling connection for 8080
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$  curl http://localhost:8080/
+
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>CNPG Data Explorer</title>
+            <style>
+                body { font-family: sans-serif; margin: 40px; background-color: #f4f7f6; }
+                table { width: 100%; border-collapse: collapse; background: white; }
+                th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+                th { background-color: #2c3e50; color: white; }
+                .badge { background: #27ae60; color: white; padding: 5px 10px; border-radius: 4px; }
+            </style>
+        </head>
+        <body>
+            <h1>PostgreSQL User Data App</h1>
+            <span class="badge">Source: pg-homelab-ro.database.svc.cluster.local</span>
+            <table>
+                <tr><th>Name</th><th>Email</th><th>Contact</th></tr>
+
+                <tr><td>User_a09e773f</td><td>user50@example.com</td><td>+1-498-555-1465</td></tr>
+
+
+anik1@Anik-DevOps MINGW64 /e/Dev/sand-fold/cnpg_setup
+$ k get -f ./app-deployment.yaml
+NAME            STATUS   AGE
+namespace/app   Active   4m36s
+
+NAME                       TYPE     DATA   AGE
+secret/pg-app-user-creds   Opaque   3      4m36s
+
+NAME                       DATA   AGE
+configmap/pg-reader-code   1      4m36s
+
+NAME                            READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/pg-reader-app   1/1     1            1           4m36s
+
+NAME                        TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE
+service/pg-reader-service   ClusterIP   10.96.160.171   <none>        80/TCP    4m36s
+Error from server (NotFound): jobs.batch "seed-db-job" not found
